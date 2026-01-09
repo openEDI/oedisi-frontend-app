@@ -34,28 +34,28 @@ interface Component {
 
 const components: Component[] = [
   {
-    id: 'simulator',
-    name: 'Simulator',
-    description: 'Main simulation engine',
+    id: 'feeder',
+    name: 'Feeder',
+    description: 'OpenDSS simulation engine',
     icon: Zap,
   },
   {
-    id: 'datasource',
-    name: 'Data Source',
-    description: 'Input data source',
-    icon: Database,
+    id: 'wls_se_algorihtm',
+    name: 'State Estimator',
+    description: 'WSL State Estimator',
+    icon: Settings,
   },
   {
-    id: 'connector',
-    name: 'Connector',
-    description: 'Interface connector',
+    id: 'sensor',
+    name: 'Sensor',
+    description: 'Sensor model',
     icon: Network,
   },
   {
-    id: 'config',
-    name: 'Configuration',
-    description: 'Setup parameters',
-    icon: Settings,
+    id: 'recorder',
+    name: 'Recorder',
+    description: 'Records simulation results',
+    icon: Database,
   },
 ]
 

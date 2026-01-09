@@ -156,10 +156,26 @@ const router = useRouter()
 const navigate = (path: string) => router.push(path)
 
 const components: Component[] = [
-  { id: 'simulator', name: 'Simulator', description: 'Main simulation engine' },
-  { id: 'datasource', name: 'Data Source', description: 'Input data source' },
-  { id: 'connector', name: 'Connector', description: 'Interface connector' },
-  { id: 'config', name: 'Configuration', description: 'Setup parameters' },
+  {
+    id: 'feeder',
+    name: 'Feeder',
+    description: 'OpenDSS simulation engine',
+  },
+  {
+    id: 'wls_se_algorihtm',
+    name: 'State Estimator',
+    description: 'WSL State Estimator',
+  },
+  {
+    id: 'sensor',
+    name: 'Sensor',
+    description: 'Sensor model',
+  },
+  {
+    id: 'recorder',
+    name: 'Recorder',
+    description: 'Records simulation results',
+  },
 ]
 
 const nodes = ref<Node[]>([])
