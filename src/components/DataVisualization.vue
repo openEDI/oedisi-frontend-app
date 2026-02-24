@@ -23,41 +23,25 @@
 </template>
 
 <script setup lang="ts">
+import type { Component as VueComponent } from 'vue'
 import { Zap, Database, Network, Settings } from 'lucide-vue-next'
+import { COMPONENT_CATALOG, type ComponentDefinition } from '@/lib/componentCatalog'
 
-interface Component {
-  id: string
-  name: string
-  description: string
-  icon: any
+interface ComponentWithIcon extends ComponentDefinition {
+  icon: VueComponent
 }
 
-const components: Component[] = [
-  {
-    id: 'feeder',
-    name: 'Feeder',
-    description: 'OpenDSS simulation engine',
-    icon: Zap,
-  },
-  {
-    id: 'wls_se_algorihtm',
-    name: 'State Estimator',
-    description: 'WSL State Estimator',
-    icon: Settings,
-  },
-  {
-    id: 'sensor',
-    name: 'Sensor',
-    description: 'Sensor model',
-    icon: Network,
-  },
-  {
-    id: 'recorder',
-    name: 'Recorder',
-    description: 'Records simulation results',
-    icon: Database,
-  },
-]
+const componentIcons: Record<string, VueComponent> = {
+  feeder: Zap,
+  wls_se_algorihtm: Settings,
+  sensor: Network,
+  recorder: Database,
+}
+
+const components: ComponentWithIcon[] = COMPONENT_CATALOG.map(component => ({
+  ...component,
+  icon: componentIcons[component.id],
+}))
 
 const onDragStart = (componentId: string, dragEvent: DragEvent) => {
   if (dragEvent.dataTransfer) {

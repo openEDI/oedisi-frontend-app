@@ -144,39 +144,13 @@ import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import CustomNode from '@/components/CustomNode.vue'
 import { api } from '@/lib/api'
+import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, NodeClickEvent, EdgeClickEvent, PaneClickEvent, Connection } from '@vue-flow/core'
-
-interface Component {
-  id: string
-  name: string
-  description: string
-}
 
 const router = useRouter()
 const navigate = (path: string) => router.push(path)
 
-const components: Component[] = [
-  {
-    id: 'feeder',
-    name: 'Feeder',
-    description: 'OpenDSS simulation engine',
-  },
-  {
-    id: 'wls_se_algorihtm',
-    name: 'State Estimator',
-    description: 'WSL State Estimator',
-  },
-  {
-    id: 'sensor',
-    name: 'Sensor',
-    description: 'Sensor model',
-  },
-  {
-    id: 'recorder',
-    name: 'Recorder',
-    description: 'Records simulation results',
-  },
-]
+const components = COMPONENT_CATALOG
 
 const nodes = ref<Node[]>([])
 const edges = ref<Edge[]>([])
