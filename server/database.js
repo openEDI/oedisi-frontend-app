@@ -1,4 +1,3 @@
-import Database from 'better-sqlite3'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
@@ -7,80 +6,108 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const DATA_DIR = path.join(__dirname, '..', 'data')
-const DB_PATH = path.join(DATA_DIR, 'templates.cblite2')
+const TEMPLATES_DIR = path.join(DATA_DIR, 'templates')
+const TEMPLATE_ID_PATTERN = /^[a-zA-Z0-9_-]+$/
 
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true })
-}
-
-// Initialize database
-let db = null
-
-export function getDatabase() {
-  if (!db) {
-    db = new Database(DB_PATH)
-    initializeDatabase(db)
+function ensureStorageDirectories() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true })
   }
-  return db
+
+  if (!fs.existsSync(TEMPLATES_DIR)) {
+    fs.mkdirSync(TEMPLATES_DIR, { recursive: true })
+  }
 }
 
-function initializeDatabase(database) {
-  // Create documents table (Couchbase Lite compatible structure)
-  // Using TEXT for body to store JSON strings (better-sqlite3 handles conversion)
-  database.exec(`
-    CREATE TABLE IF NOT EXISTS kv_default (
-      key TEXT PRIMARY KEY,
-      version BLOB,
-      flags INTEGER,
-      expiration INTEGER,
-      body TEXT,
-      deleted INTEGER DEFAULT 0
-    );
-    
-    CREATE INDEX IF NOT EXISTS idx_kv_default_deleted ON kv_default(deleted);
-    CREATE INDEX IF NOT EXISTS idx_kv_default_expiration ON kv_default(expiration);
-  `)
+function validateTemplateId(id) {
+  if (!id || typeof id !== 'string') {
+    throw new Error('Template id is required')
+  }
+
+  if (!TEMPLATE_ID_PATTERN.test(id)) {
+    throw new Error('Invalid template id format')
+  }
+}
+
+function getTemplateFilePath(id) {
+  validateTemplateId(id)
+  return path.join(TEMPLATES_DIR, `${id}.json`)
+}
+
+function validateTemplate(template) {
+  if (!template || typeof template !== 'object') {
+    throw new Error('Template payload is required')
+  }
+
+  validateTemplateId(template.id)
+
+  if (typeof template.name !== 'string') {
+    throw new Error('Template name is required')
+  }
+
+  if (typeof template.description !== 'string') {
+    throw new Error('Template description is required')
+  }
+
+  if (!Array.isArray(template.nodes)) {
+    throw new Error('Template nodes must be an array')
+  }
+
+  if (!Array.isArray(template.edges)) {
+    throw new Error('Template edges must be an array')
+  }
+
+  if (typeof template.createdAt !== 'string') {
+    throw new Error('Template createdAt is required')
+  }
 }
 
 export function saveTemplate(template) {
-  const db = getDatabase()
-  const stmt = db.prepare(`
-    INSERT OR REPLACE INTO kv_default (key, body, deleted, flags)
-    VALUES (?, ?, 0, 0)
-  `)
-  
-  const body = JSON.stringify(template)
-  stmt.run(`template:${template.id}`, body)
-  
+  ensureStorageDirectories()
+  validateTemplate(template)
+
+  const targetPath = getTemplateFilePath(template.id)
+  const tempPath = `${targetPath}.tmp-${process.pid}-${Date.now()}`
+  const body = JSON.stringify(template, null, 2)
+
+  fs.writeFileSync(tempPath, body, 'utf8')
+  fs.renameSync(tempPath, targetPath)
+
   return { success: true, id: template.id }
 }
 
 export function getTemplate(id) {
-  const db = getDatabase()
-  const stmt = db.prepare(`
-    SELECT body FROM kv_default 
-    WHERE key = ? AND deleted = 0
-  `)
-  
-  const row = stmt.get(`template:${id}`)
-  if (row) {
-    return JSON.parse(row.body)
+  ensureStorageDirectories()
+  const filePath = getTemplateFilePath(id)
+
+  if (!fs.existsSync(filePath)) {
+    return null
   }
-  return null
+
+  const raw = fs.readFileSync(filePath, 'utf8')
+  return JSON.parse(raw)
 }
 
 export function getAllTemplates() {
-  const db = getDatabase()
-  const stmt = db.prepare(`
-    SELECT body FROM kv_default 
-    WHERE key LIKE 'template:%' AND deleted = 0
-  `)
-  
-  const rows = stmt.all()
-  const templates = rows.map(row => JSON.parse(row.body))
-  
-  // Sort by creation date (newest first)
+  ensureStorageDirectories()
+
+  const files = fs
+    .readdirSync(TEMPLATES_DIR)
+    .filter(fileName => fileName.endsWith('.json'))
+
+  const templates = []
+
+  for (const fileName of files) {
+    const filePath = path.join(TEMPLATES_DIR, fileName)
+    try {
+      const raw = fs.readFileSync(filePath, 'utf8')
+      const template = JSON.parse(raw)
+      templates.push(template)
+    } catch (error) {
+      console.error(`Failed to parse template file ${fileName}:`, error)
+    }
+  }
+
   templates.sort((a, b) => {
     const dateA = new Date(a.createdAt || 0).getTime()
     const dateB = new Date(b.createdAt || 0).getTime()
@@ -92,42 +119,22 @@ export function getAllTemplates() {
 
 export function deleteTemplate(id) {
   try {
-    const db = getDatabase()
-    
-    // First check if template exists
-    const checkStmt = db.prepare(`
-      SELECT key FROM kv_default 
-      WHERE key = ? AND deleted = 0
-    `)
-    
-    const existing = checkStmt.get(`template:${id}`)
-    if (!existing) {
+    ensureStorageDirectories()
+    const filePath = getTemplateFilePath(id)
+
+    if (!fs.existsSync(filePath)) {
       throw new Error('Template not found')
     }
-    
-    // Hard delete the template (remove from database)
-    const stmt = db.prepare(`
-      DELETE FROM kv_default 
-      WHERE key = ?
-    `)
-    
-    const result = stmt.run(`template:${id}`)
-    
-    if (result.changes === 0) {
-      throw new Error('Failed to delete template - no rows affected')
-    }
-    
+
+    fs.unlinkSync(filePath)
     return { success: true }
   } catch (error) {
-    console.error('Database delete error:', error)
+    console.error('File delete error:', error)
     throw error
   }
 }
 
 export function closeDatabase() {
-  if (db) {
-    db.close()
-    db = null
-  }
+  return
 }
 

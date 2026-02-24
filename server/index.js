@@ -1,7 +1,6 @@
 import express from 'express'
 import cors from 'cors'
 import {
-  getDatabase,
   saveTemplate,
   getTemplate,
   getAllTemplates,
@@ -102,7 +101,7 @@ app.delete('/api/templates/:id', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`)
-  console.log(`Couchbase Lite database: data/templates.cblite2`)
+  console.log('Template storage: data/templates/*.json')
 })
 
 // Graceful shutdown

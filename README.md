@@ -9,18 +9,18 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 - **Component Library**: Pre-built components (Simulator, Data Source, Connector, Configuration)
 - **Node Connections**: Connect components with visual edges in the flowchart
 - **Responsive UI**: Built with Tailwind CSS and Radix UI Vue components
-- **Backend API**: Express.js server with Couchbase Lite database storage
-- **Persistent Storage**: Templates stored in Couchbase Lite database (`.cblite2` file)
+- **Backend API**: Express.js server with file-based JSON storage
+- **Persistent Storage**: Templates stored as JSON files in `data/templates/`
 
 ## Project Structure
 
 ```
 ├── server/              # Backend API server
 │   ├── index.js         # Express.js server and API routes
-│   ├── database.js      # Couchbase Lite database operations
+│   ├── database.js      # File-based template storage operations
 │   └── README.md        # Server documentation
-├── data/                # Database storage directory
-│   └── templates.cblite2 # Couchbase Lite database file
+├── data/                # Template storage directory
+│   └── templates/       # JSON template files ({id}.json)
 ├── src/
 │   ├── components/
 │   │   ├── ui/              # Reusable UI components (Button, Card, Dialog, etc.)
@@ -145,8 +145,7 @@ Monitor active simulations and their progress (placeholder for future implementa
 
 ### Backend
 - **Express.js**: Web application framework
-- **better-sqlite3**: SQLite database driver
-- **Couchbase Lite**: Document database (`.cblite2` format)
+- **Node.js fs/path**: File system template persistence
 - **CORS**: Cross-origin resource sharing
 
 ## Styling
@@ -176,12 +175,12 @@ Each page is a standalone component that uses the router and UI components.
 
 ## Data Storage
 
-Templates are stored in a **Couchbase Lite database** file located at `data/templates.cblite2`.
+Templates are stored as **JSON files** in `data/templates/`.
 
-### Database Structure
-- Single `.cblite2` file contains all templates
-- Each template is stored as a document with key format: `template:{id}`
-- Templates are stored as JSON documents in the database
+### Storage Structure
+- Each template is stored as one JSON file: `data/templates/{id}.json`
+- Files contain template metadata plus `nodes` and `edges`
+- `GET /api/templates` returns all files sorted by `createdAt` (newest first)
 
 ### Template Schema
 Each template document contains:

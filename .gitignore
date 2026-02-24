@@ -28,8 +28,7 @@ dist-ssr
 .env.local
 .env.*.local
 
-# Data folder (Couchbase Lite database)
-data/*.cblite2
-data/*.cblite2-shm
-data/*.cblite2-wal
+# Data folder (template storage)
+data/templates/*.json
 !data/.gitkeep
+!data/templates/.gitkeep

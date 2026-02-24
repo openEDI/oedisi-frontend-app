@@ -35,12 +35,12 @@ The server will run on `http://localhost:3001`
 
 ## Data Storage
 
-Templates are stored in a single Couchbase Lite database file: `data/templates.cblite2`
+Templates are stored as individual JSON files in: `data/templates/`
 
-The database uses a Couchbase Lite-compatible structure:
-- All templates are stored as documents in the `kv_default` table
-- Each template is stored with a key format: `template:{id}`
-- Template data is stored as JSON in the `body` column
+Storage model:
+- Each template is one file named `{id}.json`
+- Files contain full template JSON payloads
+- Templates are listed by reading all JSON files and sorting by `createdAt` (newest first)
 
 Each template document contains:
 - `id`: Unique identifier
@@ -49,6 +49,4 @@ Each template document contains:
 - `nodes`: Array of node objects
 - `edges`: Array of edge/connection objects
 - `createdAt`: ISO timestamp
-
-The `.cblite2` file is a SQLite database that follows Couchbase Lite's document storage format, making it compatible with Couchbase Lite tools and clients.
 
