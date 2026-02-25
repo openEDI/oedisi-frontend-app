@@ -1,15 +1,15 @@
 <template>
   <div class="custom-node">
-    <Handle type="target" position="left" />
+    <Handle type="target" :position=Position.Left />
     <div class="node-content">
       <div class="node-label">{{ data.label }}</div>
     </div>
-    <Handle type="source" position="right" />
+    <Handle type="source" :position=Position.Right />
   </div>
 </template>
 
 <script setup lang="ts">
-import { Handle } from '@vue-flow/core'
+import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
 
 interface CustomNodeData {
@@ -58,4 +58,3 @@ const props = defineProps<NodeProps<CustomNodeData>>()
   border-radius: 50%;
 }
 </style>
-
