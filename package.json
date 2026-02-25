@@ -33,6 +33,6 @@
     "concurrently": "^8.2.2",
     "typescript": "^5.3.3",
     "vite": "^6.3.5",
-    "vue-tsc": "^1.8.27"
+    "vue-tsc": "^3.2.5"
   }
 }
