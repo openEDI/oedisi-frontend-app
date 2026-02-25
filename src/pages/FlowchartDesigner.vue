@@ -47,9 +47,10 @@
           @pane-click="onPaneClick"
           @connect="onConnect"
           :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }"
-          :default-edge-options="{ type: 'default' }"
+          :default-edge-options="{ type: 'wiring' }"
           :fit-view-on-init="true"
           :node-types="nodeTypes"
+          :edge-types="edgeTypes"
         >
           <Background pattern-color="#e5e7eb" :gap="16" />
           <Controls />
@@ -65,6 +66,25 @@
         
         <!-- Node Properties -->
         <div v-else-if="selectedNode" class="space-y-4">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold">Static Inputs</label>
+            <div v-if="selectedNodeStaticInputs.length > 0" class="space-y-2">
+              <div
+                v-for="input in selectedNodeStaticInputs"
+                :key="input.port_id"
+                class="space-y-1"
+              >
+                <label class="text-xs font-medium text-gray-600">{{ input.port_id }}</label>
+                <input
+                  :value="getSelectedNodeConfigValue(input.port_id)"
+                  @input="onStaticInputChange(input.port_id, $event)"
+                  class="flex h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  :placeholder="`Enter ${input.port_id}`"
+                />
+              </div>
+            </div>
+            <p v-else class="text-sm text-gray-500">No static inputs for this component.</p>
+          </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Component Type</label>
             <p class="text-sm text-gray-600">{{ selectedNode.data.label }}</p>
@@ -97,6 +117,52 @@
           <div class="space-y-2" v-if="selectedEdge.type">
             <label class="text-sm font-semibold">Connection Type</label>
             <p class="text-sm text-gray-600">{{ selectedEdge.type }}</p>
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold">Wiring Selection</label>
+            <p v-if="compatibleWireOptions.length === 0" class="text-sm text-gray-500">
+              No compatible dynamic output/input intersections for this connection.
+            </p>
+            <div v-else class="space-y-2">
+              <select
+                v-model="selectedWireOption"
+                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              >
+                <option value="" disabled>Select compatible signal</option>
+                <option
+                  v-for="option in compatibleWireOptions"
+                  :key="wireOptionKey(option)"
+                  :value="wireOptionKey(option)"
+                >
+                  {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
+                </option>
+              </select>
+              <button
+                @click="addWireToSelectedEdge"
+                :disabled="!selectedWireOption"
+                class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2"
+              >
+                Add Wiring
+              </button>
+            </div>
+          </div>
+          <div class="space-y-2" v-if="selectedEdgeWires.length > 0">
+            <label class="text-sm font-semibold">Wiring Diagram Entries</label>
+            <div class="space-y-1">
+              <div
+                v-for="wire in selectedEdgeWires"
+                :key="wireOptionKey(wire)"
+                class="flex items-center justify-between gap-2 text-xs text-gray-600 font-mono bg-gray-50 rounded px-2 py-1"
+              >
+                <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
+                <button
+                  @click="removeWireFromSelectedEdge(wire)"
+                  class="inline-flex items-center justify-center rounded border border-gray-300 bg-white px-2 py-0.5 text-[11px] font-medium text-gray-700 hover:bg-gray-100"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
           </div>
           <button @click="deleteEdge(selectedEdge.id)" class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4">
             Delete Connection
@@ -136,16 +202,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import CustomNode from '@/components/CustomNode.vue'
+import CustomEdge from '@/components/CustomEdge.vue'
 import { api } from '@/lib/api'
 import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
-import type { Node, Edge, NodeClickEvent, EdgeClickEvent, PaneClickEvent, Connection } from '@vue-flow/core'
+import type { Node, Edge, Connection } from '@vue-flow/core'
 
 const router = useRouter()
 const navigate = (path: string) => router.push(path)
@@ -160,10 +227,36 @@ const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
 const vueFlowRef = ref<any>(null)
+const selectedWireOption = ref('')
+
+interface PortDefinition {
+  type: string
+  port_id: string
+}
+
+interface NodeData {
+  label: string
+  config?: Record<string, string>
+  componentType?: string
+}
+
+interface EdgeWire {
+  type: string
+  sourcePortId: string
+  targetPortId: string
+}
+
+interface EdgeData {
+  wires?: EdgeWire[]
+}
 
 // Register custom node types
 const nodeTypes = {
   custom: CustomNode,
+}
+
+const edgeTypes = {
+  wiring: CustomEdge,
 }
 
 const addNode = (type: string, position: { x: number; y: number }) => {
@@ -226,17 +319,17 @@ const onDragStart = (componentId: string, dragEvent: DragEvent) => {
   }
 }
 
-const onNodeClick = (event: NodeClickEvent) => {
+const onNodeClick = (event: { node: Node }) => {
   selectedNode.value = event.node
   selectedEdge.value = null
 }
 
-const onEdgeClick = (event: EdgeClickEvent) => {
+const onEdgeClick = (event: { edge: Edge }) => {
   selectedEdge.value = event.edge
   selectedNode.value = null
 }
 
-const onPaneClick = (event: PaneClickEvent) => {
+const onPaneClick = () => {
   selectedNode.value = null
   selectedEdge.value = null
 }
@@ -252,12 +345,255 @@ const onConnect = (connection: Connection) => {
         id: `edge-${connection.source}-${connection.target}-${Date.now()}`,
         source: connection.source,
         target: connection.target,
-        type: 'default',
+        type: 'wiring',
+        data: {
+          wires: [],
+        },
       }
       edges.value.push(newEdge)
     }
   }
 }
+
+const wireOptionKey = (wire: EdgeWire) => `${wire.type}::${wire.sourcePortId}::${wire.targetPortId}`
+
+const parseWireOption = (value: string): EdgeWire | null => {
+  const [type, sourcePortId, targetPortId] = value.split('::')
+  if (!type || !sourcePortId || !targetPortId) {
+    return null
+  }
+
+  return {
+    type,
+    sourcePortId,
+    targetPortId,
+  }
+}
+
+const getNodeComponentType = (nodeId: string): string | null => {
+  const node = nodes.value.find((n) => n.id === nodeId)
+  const data = node?.data as Record<string, unknown> | undefined
+  const componentType = data?.componentType
+  return typeof componentType === 'string' ? componentType : null
+}
+
+const normalizePorts = (ports: Array<Record<string, unknown>>): PortDefinition[] => {
+  return ports
+    .map((port) => ({
+      type: typeof port.type === 'string' ? port.type : '',
+      port_id: typeof port.port_id === 'string' ? port.port_id : '',
+    }))
+    .filter((port) => port.type && port.port_id)
+}
+
+const getCompatibleWireOptions = (edge: Edge | null): EdgeWire[] => {
+  if (!edge) {
+    return []
+  }
+
+  const sourceComponentType = getNodeComponentType(edge.source)
+  const targetComponentType = getNodeComponentType(edge.target)
+
+  if (!sourceComponentType || !targetComponentType) {
+    return []
+  }
+
+  const sourceComponent = components.find((component) => component.id === sourceComponentType)
+  const targetComponent = components.find((component) => component.id === targetComponentType)
+
+  if (!sourceComponent || !targetComponent) {
+    return []
+  }
+
+  const outputs = normalizePorts(sourceComponent.definition.dynamic_outputs)
+  const inputs = normalizePorts(targetComponent.definition.dynamic_inputs)
+  const options: EdgeWire[] = []
+  const seen = new Set<string>()
+
+  outputs.forEach((output) => {
+    inputs.forEach((input) => {
+      if (output.type === input.type) {
+        const wire: EdgeWire = {
+          type: output.type,
+          sourcePortId: output.port_id,
+          targetPortId: input.port_id,
+        }
+        const key = wireOptionKey(wire)
+        if (!seen.has(key)) {
+          seen.add(key)
+          options.push(wire)
+        }
+      }
+    })
+  })
+
+  return options
+}
+
+const compatibleWireOptions = computed<EdgeWire[]>(() => getCompatibleWireOptions(selectedEdge.value))
+
+const selectedEdgeWires = computed<EdgeWire[]>(() => {
+  if (!selectedEdge.value) {
+    return []
+  }
+
+  const edgeData = selectedEdge.value.data as EdgeData | undefined
+  return edgeData?.wires ?? []
+})
+
+const selectedNodeStaticInputs = computed<PortDefinition[]>(() => {
+  if (!selectedNode.value) {
+    return []
+  }
+
+  const nodeData = selectedNode.value.data as NodeData | undefined
+  const componentType = nodeData?.componentType
+  if (!componentType) {
+    return []
+  }
+
+  const component = components.find((item) => item.id === componentType)
+  if (!component) {
+    return []
+  }
+
+  return component.definition.static_inputs
+    .map((port) => ({
+      type: typeof port.type === 'string' ? port.type : '',
+      port_id: typeof port.port_id === 'string' ? port.port_id : '',
+    }))
+    .filter((port) => port.port_id)
+})
+
+const getSelectedNodeConfigValue = (portId: string): string => {
+  if (!selectedNode.value) {
+    return ''
+  }
+
+  const nodeData = selectedNode.value.data as NodeData | undefined
+  return nodeData?.config?.[portId] ?? ''
+}
+
+const updateNodeConfig = (nodeId: string, portId: string, value: string) => {
+  nodes.value = nodes.value.map((node) => {
+    if (node.id !== nodeId) {
+      return node
+    }
+
+    const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
+    const currentConfig = currentData.config ?? {}
+
+    return {
+      ...node,
+      data: {
+        ...currentData,
+        config: {
+          ...currentConfig,
+          [portId]: value,
+        },
+      },
+    }
+  })
+
+  if (selectedNode.value?.id === nodeId) {
+    selectedNode.value = nodes.value.find((node) => node.id === nodeId) || null
+  }
+}
+
+const onStaticInputChange = (portId: string, event: Event) => {
+  if (!selectedNode.value) {
+    return
+  }
+
+  const target = event.target as HTMLInputElement
+  updateNodeConfig(selectedNode.value.id, portId, target.value)
+}
+
+const wireDisplayLabel = (wire: EdgeWire): string => wire.type
+
+const buildEdgeLabel = (wires: EdgeWire[]): string | undefined => {
+  if (wires.length === 0) {
+    return undefined
+  }
+
+  return wires.map(wireDisplayLabel).join('\n')
+}
+
+const updateEdgeData = (edgeId: string, wires: EdgeWire[]) => {
+  const nextLabel = buildEdgeLabel(wires)
+  edges.value = edges.value.map((edge) => {
+    if (edge.id !== edgeId) {
+      return edge
+    }
+
+    return {
+      ...edge,
+      data: {
+        ...(edge.data as Record<string, unknown> | undefined),
+        wires,
+      },
+      label: nextLabel,
+      type: 'wiring',
+    }
+  })
+
+  if (selectedEdge.value?.id === edgeId) {
+    const updatedEdge = edges.value.find((edge) => edge.id === edgeId) || null
+    selectedEdge.value = updatedEdge
+  }
+}
+
+const addWireToSelectedEdge = () => {
+  if (!selectedEdge.value || !selectedWireOption.value) {
+    return
+  }
+
+  const selectedWire = parseWireOption(selectedWireOption.value)
+  if (!selectedWire) {
+    return
+  }
+
+  const validOptions = compatibleWireOptions.value
+  const isValidOption = validOptions.some((option) => wireOptionKey(option) === wireOptionKey(selectedWire))
+  if (!isValidOption) {
+    return
+  }
+
+  const existingWires = selectedEdgeWires.value
+  const alreadyExists = existingWires.some((wire) => wireOptionKey(wire) === wireOptionKey(selectedWire))
+  if (alreadyExists) {
+    return
+  }
+
+  updateEdgeData(selectedEdge.value.id, [...existingWires, selectedWire])
+}
+
+const removeWireFromSelectedEdge = (wireToRemove: EdgeWire) => {
+  if (!selectedEdge.value) {
+    return
+  }
+
+  const updatedWires = selectedEdgeWires.value.filter(
+    (wire) => wireOptionKey(wire) !== wireOptionKey(wireToRemove)
+  )
+  updateEdgeData(selectedEdge.value.id, updatedWires)
+}
+
+watch(
+  [selectedEdge, compatibleWireOptions],
+  ([edge, options]) => {
+    if (!edge || options.length === 0) {
+      selectedWireOption.value = ''
+      return
+    }
+
+    const currentIsValid = options.some((option) => wireOptionKey(option) === selectedWireOption.value)
+    if (!currentIsValid) {
+      selectedWireOption.value = wireOptionKey(options[0])
+    }
+  },
+  { immediate: true }
+)
 
 const deleteNode = (nodeId: string) => {
   nodes.value = nodes.value.filter((n) => n.id !== nodeId)
@@ -321,7 +657,15 @@ onMounted(() => {
     try {
       const config = JSON.parse(loadTemplateData)
       nodes.value = config.nodes || []
-      edges.value = config.edges || []
+      edges.value = (config.edges || []).map((edge: Edge) => {
+        const edgeData = edge.data as EdgeData | undefined
+        const wires = edgeData?.wires ?? []
+        return {
+          ...edge,
+          type: 'wiring',
+          label: buildEdgeLabel(wires),
+        }
+      })
       // Clear the sessionStorage after loading
       sessionStorage.removeItem('loadTemplate')
     } catch (error) {
