@@ -11,8 +11,8 @@
         <Label class="block mb-2">Label</Label>
         <Input
           :value="selected.data.label"
-          @input="$emit('update-node', selected.id, { label: $event.target.value })"
           placeholder="Node label"
+          @input="$emit('update-node', selected.id, { label: $event.target.value })"
         />
       </div>
 

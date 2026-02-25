@@ -2,16 +2,16 @@
   <div class="h-screen flex flex-col">
     <div class="bg-white border-b px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <button @click="navigate('/')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-10 w-10">
+        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-10 w-10" @click="navigate('/')">
           🏠
         </button>
         <h1 class="text-xl font-semibold">OEDISI Simulation Designer</h1>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="navigate('/configs')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2">
+        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2" @click="navigate('/configs')">
           📁 Saved Templates
         </button>
-        <button @click="saveDialogOpen = true" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2">
+        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2" @click="saveDialogOpen = true">
           💾 Save Template
         </button>
       </div>
@@ -40,17 +40,17 @@
           v-model:nodes="nodes"
           v-model:edges="edges"
           class="vue-flow-container"
+          :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }"
+          :default-edge-options="{ type: 'wiring' }"
+          :fit-view-on-init="true"
+          :node-types="nodeTypes"
+          :edge-types="edgeTypes"
           @drop="onDrop"
           @dragover="onDragOver"
           @node-click="onNodeClick"
           @edge-click="onEdgeClick"
           @pane-click="onPaneClick"
           @connect="onConnect"
-          :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }"
-          :default-edge-options="{ type: 'wiring' }"
-          :fit-view-on-init="true"
-          :node-types="nodeTypes"
-          :edge-types="edgeTypes"
         >
           <Background pattern-color="#e5e7eb" :gap="16" />
           <Controls />
@@ -77,9 +77,9 @@
                 <label class="text-xs font-medium text-gray-600">{{ input.port_id }}</label>
                 <input
                   :value="getSelectedNodeConfigValue(input.port_id)"
-                  @input="onStaticInputChange(input.port_id, $event)"
                   class="flex h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                   :placeholder="`Enter ${input.port_id}`"
+                  @input="onStaticInputChange(input.port_id, $event)"
                 />
               </div>
             </div>
@@ -93,7 +93,7 @@
             <label class="text-sm font-semibold">Node ID</label>
             <p class="text-sm text-gray-600 font-mono">{{ selectedNode.id }}</p>
           </div>
-          <button @click="deleteNode(selectedNode.id)" class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4">
+          <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4" @click="deleteNode(selectedNode.id)">
             Delete Component
           </button>
         </div>
@@ -114,7 +114,7 @@
             <p class="text-sm text-gray-600">{{ getNodeLabel(selectedEdge.target) }}</p>
             <p class="text-xs text-gray-500 font-mono">{{ selectedEdge.target }}</p>
           </div>
-          <div class="space-y-2" v-if="selectedEdge.type">
+          <div v-if="selectedEdge.type" class="space-y-2">
             <label class="text-sm font-semibold">Connection Type</label>
             <p class="text-sm text-gray-600">{{ selectedEdge.type }}</p>
           </div>
@@ -138,15 +138,15 @@
                 </option>
               </select>
               <button
-                @click="addWireToSelectedEdge"
                 :disabled="!selectedWireOption"
                 class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2"
+                @click="addWireToSelectedEdge"
               >
                 Add Wiring
               </button>
             </div>
           </div>
-          <div class="space-y-2" v-if="selectedEdgeWires.length > 0">
+          <div v-if="selectedEdgeWires.length > 0" class="space-y-2">
             <label class="text-sm font-semibold">Wiring Diagram Entries</label>
             <div class="space-y-1">
               <div
@@ -156,15 +156,15 @@
               >
                 <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
                 <button
-                  @click="removeWireFromSelectedEdge(wire)"
                   class="inline-flex items-center justify-center rounded border border-gray-300 bg-white px-2 py-0.5 text-[11px] font-medium text-gray-700 hover:bg-gray-100"
+                  @click="removeWireFromSelectedEdge(wire)"
                 >
                   Remove
                 </button>
               </div>
             </div>
           </div>
-          <button @click="deleteEdge(selectedEdge.id)" class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4">
+          <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4" @click="deleteEdge(selectedEdge.id)">
             Delete Connection
           </button>
         </div>
@@ -189,10 +189,10 @@
           </div>
         </div>
         <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6 pt-0">
-          <button @click="saveDialogOpen = false" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2">
+          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2" @click="saveDialogOpen = false">
             Cancel
           </button>
-          <button @click="saveTemplate" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2">
+          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2" @click="saveTemplate">
             Save Template
           </button>
         </div>
