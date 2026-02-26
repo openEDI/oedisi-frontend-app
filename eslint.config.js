@@ -9,4 +9,10 @@ export default [
   ...pluginVue.configs['flat/recommended'],
   ...vueTsEslintConfig(),
   prettierConfig,
+  {
+    files: ['src/components/ui/*.vue'],
+    rules: {
+        'vue/multi-word-component-names': 'off',
+    }
+  }
 ]

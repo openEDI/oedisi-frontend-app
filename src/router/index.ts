@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@/pages/Home.vue'
+import Home from '@/pages/HomePage.vue'
 import FlowchartDesigner from '@/pages/FlowchartDesigner.vue'
 import SavedConfigs from '@/pages/SavedConfigs.vue'
 import SimulationResults from '@/pages/SimulationResults.vue'

@@ -18,7 +18,7 @@ interface CustomNodeData {
   config?: Record<string, any>
 }
 
-const props = defineProps<NodeProps<CustomNodeData>>()
+defineProps<NodeProps<CustomNodeData>>()
 </script>
 
 <style scoped>
