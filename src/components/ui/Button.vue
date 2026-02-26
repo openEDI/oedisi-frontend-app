@@ -46,5 +46,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
   size: 'default',
+  class: ''
 })
 </script>

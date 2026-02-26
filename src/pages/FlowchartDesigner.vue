@@ -202,17 +202,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, watch } from 'vue'
+import { ref, nextTick, onMounted, computed, watch, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
-import { VueFlow } from '@vue-flow/core'
+import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import CustomNode from '@/components/CustomNode.vue'
-import CustomEdge from '@/components/CustomEdge.vue'
 import { api } from '@/lib/api'
+import type {PortDefinition, EdgeWire, EdgeData, NodeData} from '@/lib/flowTypes'
 import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
+import CustomNode from '@/components/CustomNode.vue'
+import CustomEdge from '@/components/CustomEdge.vue'
+
+// Register custom node types
+const nodeTypes = {
+  custom: markRaw(CustomNode),
+}
+
+const edgeTypes = {
+  wiring: markRaw(CustomEdge),
+}
 
 const router = useRouter()
 const navigate = (path: string) => router.push(path)
@@ -226,38 +236,8 @@ const selectedEdge = ref<Edge | null>(null)
 const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
-const vueFlowRef = ref<any>(null)
 const selectedWireOption = ref('')
-
-interface PortDefinition {
-  type: string
-  port_id: string
-}
-
-interface NodeData {
-  label: string
-  config?: Record<string, string>
-  componentType?: string
-}
-
-interface EdgeWire {
-  type: string
-  sourcePortId: string
-  targetPortId: string
-}
-
-interface EdgeData {
-  wires?: EdgeWire[]
-}
-
-// Register custom node types
-const nodeTypes = {
-  custom: CustomNode,
-}
-
-const edgeTypes = {
-  wiring: CustomEdge,
-}
+const { screenToFlowCoordinate } = useVueFlow()
 
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
@@ -279,28 +259,11 @@ const onDrop = async (event: DragEvent) => {
   const type = event.dataTransfer?.getData('application/node')
   if (type) {
     await nextTick()
-    let position = { x: 0, y: 0 }
     
-    // Try to get the Vue Flow instance and use screenToFlowCoordinate if available
-    const instance = vueFlowRef.value
-    if (instance?.screenToFlowCoordinate) {
-      position = instance.screenToFlowCoordinate({
+    const position = screenToFlowCoordinate({
         x: event.clientX,
         y: event.clientY,
       })
-    } else {
-      // Fallback: calculate position relative to the pane
-      const pane = (event.target as HTMLElement).closest('.vue-flow__viewport') || 
-                   (event.target as HTMLElement).closest('.vue-flow')
-      if (pane) {
-        const rect = pane.getBoundingClientRect()
-        // Simple position calculation (will be improved when instance is available)
-        position = {
-          x: event.clientX - rect.left - 100,
-          y: event.clientY - rect.top - 100,
-        }
-      }
-    }
     addNode(type, position)
   }
 }

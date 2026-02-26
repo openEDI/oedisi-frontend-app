@@ -1,10 +1,10 @@
 <template>
   <div class="custom-node">
-    <Handle type="target" :position=Position.Left />
+    <Handle type="target" :position="Position.Left" />
     <div class="node-content">
       <div class="node-label">{{ data.label }}</div>
     </div>
-    <Handle type="source" :position=Position.Right />
+    <Handle type="source" :position="Position.Right" />
   </div>
 </template>
 
@@ -15,7 +15,7 @@ import type { NodeProps } from '@vue-flow/core'
 interface CustomNodeData {
   label: string
   componentType?: string
-  config?: Record<string, any>
+  config?: Record<string, string>
 }
 
 defineProps<NodeProps<CustomNodeData>>()
