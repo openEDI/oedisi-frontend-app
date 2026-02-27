@@ -2,18 +2,18 @@
   <div class="h-screen flex flex-col">
     <div class="bg-white border-b px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-10 w-10" @click="navigate('/')">
+        <Button variant="outline" @click="navigate('/')">
           🏠
-        </button>
+        </Button>
         <h1 class="text-xl font-semibold">OEDISI Simulation Designer</h1>
       </div>
       <div class="flex items-center gap-2">
-        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2" @click="navigate('/configs')">
+        <Button variant="outline" @click="navigate('/configs')">
           📁 Saved Templates
-        </button>
-        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2" @click="saveDialogOpen = true">
+        </Button>
+        <Button variant="outline" @click="saveDialogOpen = true">
           💾 Save Template
-        </button>
+        </Button>
       </div>
     </div>
 
@@ -93,9 +93,9 @@
             <label class="text-sm font-semibold">Node ID</label>
             <p class="text-sm text-gray-600 font-mono">{{ selectedNode.id }}</p>
           </div>
-          <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4" @click="deleteNode(selectedNode.id)">
+          <Button variant="destructive" @click="deleteNode(selectedNode.id)">
             Delete Component
-          </button>
+          </Button>
         </div>
 
         <!-- Edge Properties -->
@@ -137,13 +137,12 @@
                   {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
                 </option>
               </select>
-              <button
+              <Button
                 :disabled="!selectedWireOption"
-                class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2"
                 @click="addWireToSelectedEdge"
               >
                 Add Wiring
-              </button>
+              </Button>
             </div>
           </div>
           <div v-if="selectedEdgeWires.length > 0" class="space-y-2">
@@ -155,18 +154,17 @@
                 class="flex items-center justify-between gap-2 text-xs text-gray-600 font-mono bg-gray-50 rounded px-2 py-1"
               >
                 <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
-                <button
-                  class="inline-flex items-center justify-center rounded border border-gray-300 bg-white px-2 py-0.5 text-[11px] font-medium text-gray-700 hover:bg-gray-100"
+                <Button
                   @click="removeWireFromSelectedEdge(wire)"
                 >
                   Remove
-                </button>
+                </Button>
               </div>
             </div>
           </div>
-          <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4" @click="deleteEdge(selectedEdge.id)">
+          <Button @click="deleteEdge(selectedEdge.id)">
             Delete Connection
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -189,12 +187,12 @@
           </div>
         </div>
         <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6 pt-0">
-          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2" @click="saveDialogOpen = false">
+          <Button variant="outline" @click="saveDialogOpen = false">
             Cancel
-          </button>
-          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2" @click="saveTemplate">
+          </Button>
+          <Button @click="saveTemplate">
             Save Template
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -214,6 +212,7 @@ import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
+import { Button } from '@/components/ui/button'
 
 // Register custom node types
 const nodeTypes = {

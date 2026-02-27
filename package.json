@@ -23,6 +23,7 @@
     "cors": "^2.8.5",
     "express": "^4.22.1",
     "lucide-vue-next": "^0.428.0",
+    "reka-ui": "^2.8.2",
     "tailwind-merge": "^2.6.1",
     "tailwindcss": "^4.1.12",
     "vue": "^3.4.21",

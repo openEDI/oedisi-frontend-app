@@ -13,9 +13,9 @@
       <div v-else-if="savedConfigs.length === 0" class="bg-white rounded-lg p-8 text-center">
         <p class="text-gray-500 mb-4">No saved templates yet</p>
         <router-link to="/designer">
-          <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2">
+          <Button>
             Create Your First Template
-          </button>
+          </Button>
         </router-link>
       </div>
 
@@ -51,30 +51,18 @@
               </div>
             </div>
             <div class="flex flex-col gap-2">
-              <button
-                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white hover:bg-green-700 h-10 px-4 py-2"
-                @click="runTemplate(config)"
-              >
+              <Button @click="runTemplate(config)">
                 ▶ Run
-              </button>
-              <button
-                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2"
-                @click="loadTemplate(config)"
-              >
+              </Button>
+              <Button variant="secondary" @click="loadTemplate(config)">
                 Load
-              </button>
-              <button
-                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 h-10 px-4 py-2"
-                @click="downloadTemplate(config)"
-              >
+              </Button>
+              <Button variant="outline" @click="downloadTemplate(config)">
                 Download JSON
-              </button>
-              <button
-                class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2"
-                @click="deleteTemplate(config.id)"
-              >
+              </Button>
+              <Button variant="destructive" @click="deleteTemplate(config.id)">
                 Delete
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -87,6 +75,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { api, type SavedConfig } from '@/lib/api'
+import { Button } from '@/components/ui/button'
 
 const router = useRouter()
 const savedConfigs = ref<SavedConfig[]>([])

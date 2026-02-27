@@ -10,7 +10,7 @@ export default [
   ...vueTsEslintConfig(),
   prettierConfig,
   {
-    files: ['src/components/ui/*.vue'],
+    files: ['src/components/ui/*/*.vue'],
     rules: {
         'vue/multi-word-component-names': 'off',
     }

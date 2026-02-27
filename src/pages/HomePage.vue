@@ -26,9 +26,9 @@
           </div>
           <div class="flex items-center p-6 pt-0">
             <router-link to="/designer" class="w-full">
-              <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2">
+              <Button>
                 Start Designing
-              </button>
+              </Button>
             </router-link>
           </div>
         </div>
@@ -50,9 +50,9 @@
           </div>
           <div class="flex items-center p-6 pt-0">
             <router-link to="/configs" class="w-full">
-              <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2">
+              <Button variant="outline">
                 View Saved Configs
-              </button>
+              </Button>
             </router-link>
           </div>
         </div>
@@ -74,9 +74,9 @@
           </div>
           <div class="flex items-center p-6 pt-0">
             <router-link to="/simulation" class="w-full">
-              <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2">
+              <Button variant="outline">
                 View Results
-              </button>
+              </Button>
             </router-link>
           </div>
         </div>
@@ -98,9 +98,9 @@
           </div>
           <div class="flex items-center p-6 pt-0">
             <router-link to="/status" class="w-full">
-              <button class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2">
+              <Button variant="outline">
                 View Status
-              </button>
+              </Button>
             </router-link>
           </div>
         </div>
@@ -110,4 +110,5 @@
 </template>
 
 <script setup lang="ts">
+import { Button } from '@/components/ui/button'
 </script>
