@@ -9,11 +9,13 @@ This document describes the reusable UI components available in the application.
 A versatile button component with multiple variants and sizes.
 
 ### Props
+
 - `variant`: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link' (default: 'default')
 - `size`: 'default' | 'sm' | 'lg' | 'icon' (default: 'default')
 - `class`: Additional CSS classes to apply
 
 ### Usage
+
 ```vue
 <Button>Click me</Button>
 <Button variant="outline" size="lg">Large outline button</Button>
@@ -30,14 +32,17 @@ A versatile button component with multiple variants and sizes.
 A container component for content with optional header and footer sections.
 
 ### Slots
+
 - `header`: Content for the header section
 - `default`: Main content
 - `footer`: Content for the footer section
 
 ### Props
+
 - `class`: Additional CSS classes
 
 ### Usage
+
 ```vue
 <Card>
   <template #header>
@@ -57,18 +62,22 @@ A container component for content with optional header and footer sections.
 A modal dialog that appears on top of the page content.
 
 ### Props
+
 - `open`: Boolean to control visibility (v-model)
 
 ### Emits
+
 - `update:open`: Emitted when dialog should close
 
 ### Child Components
+
 - `DialogHeader`: Container for header content
 - `DialogTitle`: Title of the dialog
 - `DialogDescription`: Description text
 - `DialogFooter`: Container for action buttons
 
 ### Usage
+
 ```vue
 <Dialog v-model:open="isOpen">
   <DialogHeader>
@@ -90,16 +99,14 @@ A modal dialog that appears on top of the page content.
 A text input field with consistent styling.
 
 ### Props
+
 - `class`: Additional CSS classes
 - All standard HTML input attributes (type, placeholder, value, etc.)
 
 ### Usage
+
 ```vue
-<Input 
-  v-model="username" 
-  type="text"
-  placeholder="Enter username"
-/>
+<Input v-model="username" type="text" placeholder="Enter username" />
 ```
 
 ## Textarea Component
@@ -109,16 +116,14 @@ A text input field with consistent styling.
 A multi-line text input for longer text content.
 
 ### Props
+
 - `class`: Additional CSS classes
 - All standard HTML textarea attributes
 
 ### Usage
+
 ```vue
-<Textarea 
-  v-model="description" 
-  placeholder="Enter description"
-  rows="4"
-/>
+<Textarea v-model="description" placeholder="Enter description" rows="4" />
 ```
 
 ## Label Component
@@ -128,30 +133,15 @@ A multi-line text input for longer text content.
 A form label for labeling inputs.
 
 ### Props
+
 - `class`: Additional CSS classes
 
 ### Usage
+
 ```vue
 <Label for="username">Username</Label>
 <Input id="username" v-model="username" />
 ```
-
-## Layout Components
-
-### LeftSidebar
-**File**: `src/components/LeftSidebar.vue`
-
-Displays available components that can be dragged to the designer canvas.
-
-### RightSidebar
-**File**: `src/components/RightSidebar.vue`
-
-Shows properties and configuration options for selected elements.
-
-### DataVisualization
-**File**: `src/components/DataVisualization.vue`
-
-Component for visualizing simulation data and results.
 
 ## Styling
 
@@ -170,6 +160,7 @@ Customize theme colors by modifying the CSS variables in the `:root` selector.
 ## Utility Functions
 
 ### cn() - Class Name Merge
+
 **File**: `src/lib/utils.ts`
 
 Merges Tailwind CSS classes intelligently, handling conflicts.
@@ -181,7 +172,7 @@ import { cn } from '@/lib/utils'
 const buttonClass = cn(
   'px-4 py-2 rounded',
   'bg-blue-500',
-  className // Override with custom class
+  className, // Override with custom class
 )
 ```
 
@@ -190,21 +181,18 @@ const buttonClass = cn(
 Components use `class-variance-authority` for managing variant styling. This allows for type-safe variant definitions:
 
 ```typescript
-const buttonVariants = cva(
-  'base styles...',
-  {
-    variants: {
-      variant: {
-        default: '...',
-        outline: '...',
-      },
-      size: {
-        default: '...',
-        sm: '...',
-      },
+const buttonVariants = cva('base styles...', {
+  variants: {
+    variant: {
+      default: '...',
+      outline: '...',
     },
-  }
-)
+    size: {
+      default: '...',
+      sm: '...',
+    },
+  },
+})
 ```
 
 ## Best Practices
@@ -226,6 +214,7 @@ To create a new component:
 5. Use the `cn()` utility for class merging
 
 Example:
+
 ```vue
 <template>
   <div :class="cn('base-styles', props.class)">

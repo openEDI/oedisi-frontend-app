@@ -25,9 +25,6 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 │   ├── components/
 │   │   ├── ui/              # Reusable UI components (Button, Card, Dialog, etc.)
 │   │   ├── CustomNode.vue   # Custom Vue Flow node component
-│   │   ├── LeftSidebar.vue  # Component palette sidebar
-│   │   ├── RightSidebar.vue # Properties editor sidebar
-│   │   └── DataVisualization.vue
 │   ├── pages/
 │   │   ├── Home.vue                # Landing page
 │   │   ├── FlowchartDesigner.vue   # Main designer interface with Vue Flow
@@ -55,11 +52,13 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 ### Installation
 
 1. Navigate to the project directory:
+
 ```bash
 cd /Users/alatif/Documents/GitHub/oedisi-frontend-app
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -69,6 +68,7 @@ pnpm install
 3. Start the development servers:
 
 **Option 1: Run both frontend and backend together (recommended):**
+
 ```bash
 npm run dev:all
 ```
@@ -76,11 +76,13 @@ npm run dev:all
 **Option 2: Run separately:**
 
 Terminal 1 - Backend server:
+
 ```bash
 npm run dev:server
 ```
 
 Terminal 2 - Frontend:
+
 ```bash
 npm run dev
 ```
@@ -101,14 +103,18 @@ pnpm build
 ## Pages
 
 ### Home
+
 Landing page with quick access to main features:
+
 - Create new simulation templates
 - View saved templates
 - Access simulation results
 - Monitor simulation status
 
 ### Flowchart Designer
+
 Main interface for creating simulation workflows using Vue Flow:
+
 - Drag components from the left sidebar to the canvas
 - Connect components by dragging from node handles (left/right sides)
 - Edit component properties in the right sidebar
@@ -118,7 +124,9 @@ Main interface for creating simulation workflows using Vue Flow:
 - Minimap for overview of the flowchart
 
 ### Saved Configs
+
 Manage previously created templates:
+
 - View all saved templates with metadata
 - See all components in each template
 - Load templates back into the designer
@@ -127,14 +135,17 @@ Manage previously created templates:
 - Delete templates
 
 ### Simulation Results
+
 View and analyze simulation outputs (placeholder for future implementation)
 
 ### Simulation Status
+
 Monitor active simulations and their progress (placeholder for future implementation)
 
 ## Technology Stack
 
 ### Frontend
+
 - **Vue 3**: Progressive JavaScript framework
 - **Vite**: Next generation frontend build tool
 - **TypeScript**: Typed JavaScript
@@ -144,6 +155,7 @@ Monitor active simulations and their progress (placeholder for future implementa
 - **Lucide Vue**: Beautiful SVG icons
 
 ### Backend
+
 - **Express.js**: Web application framework
 - **Node.js fs/path**: File system template persistence
 - **CORS**: Cross-origin resource sharing
@@ -155,7 +167,9 @@ The application uses Tailwind CSS with custom CSS variables for theming. Colors 
 ## Component System
 
 ### UI Components
+
 Located in `src/components/ui/`:
+
 - `Button.vue`: Versatile button with multiple variants
 - `Card.vue`: Container component with header, default, and footer slots
 - `Dialog.vue`: Modal dialog with header, content, and footer
@@ -164,26 +178,28 @@ Located in `src/components/ui/`:
 - `Label.vue`: Form label component
 
 ### Page Components
+
 Located in `src/pages/`:
 Each page is a standalone component that uses the router and UI components.
 
 ### Layout Components
+
 - `CustomNode.vue`: Custom Vue Flow node with connection handles
-- `LeftSidebar.vue`: Component palette for the designer
-- `RightSidebar.vue`: Properties editor
-- `DataVisualization.vue`: Data display component
 
 ## Data Storage
 
 Templates are stored as **JSON files** in `data/templates/`.
 
 ### Storage Structure
+
 - Each template is stored as one JSON file: `data/templates/{id}.json`
 - Files contain template metadata plus `nodes` and `edges`
 - `GET /api/templates` returns all files sorted by `createdAt` (newest first)
 
 ### Template Schema
+
 Each template document contains:
+
 - `id`: Unique identifier (timestamp)
 - `name`: Template name
 - `description`: Template description
@@ -192,7 +208,9 @@ Each template document contains:
 - `createdAt`: ISO timestamp
 
 ### API Endpoints
+
 The backend provides REST API endpoints:
+
 - `GET /api/templates` - Get all templates
 - `GET /api/templates/:id` - Get a single template
 - `POST /api/templates` - Save a new template

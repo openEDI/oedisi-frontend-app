@@ -1,11 +1,13 @@
 # Vue Application Migration Summary
 
 ## Overview
+
 Successfully created a Vue 3 + Vite TypeScript application based on the Figma export from the "Website with Flowchart Designer" React application.
 
 ## What Was Created
 
 ### Project Configuration Files
+
 - **package.json** - Dependencies and npm scripts (dev, build)
 - **vite.config.ts** - Vite configuration with Vue plugin, Tailwind CSS, and path aliases
 - **tsconfig.json** & **tsconfig.node.json** - TypeScript configuration
@@ -15,6 +17,7 @@ Successfully created a Vue 3 + Vite TypeScript application based on the Figma ex
 - **.gitignore** - Git ignore patterns
 
 ### Application Structure
+
 ```
 src/
 ├── main.ts                    # Application entry point
@@ -39,9 +42,8 @@ src/
 │   │   ├── Input.vue         # Text input
 │   │   ├── Textarea.vue      # Multi-line input
 │   │   └── Label.vue         # Form label
-│   ├── LeftSidebar.vue       # Component palette
-│   ├── RightSidebar.vue      # Properties editor
-│   └── DataVisualization.vue # Data display
+│   ├── CustomNode.vue        # CustomNode for Vue Flow
+│   ├── CustomEdge.vue        # CustomEdge for Vue Edge
 ├── lib/
 │   └── utils.ts              # Utility functions (cn for class merging)
 └── styles/
@@ -51,11 +53,13 @@ src/
 ## Key Features
 
 ### Component System
+
 - **UI Components** - Reusable, unstyled components built with Tailwind CSS and class-variance-authority
 - **Page Components** - Full-page views for different features
 - **Layout Components** - Sidebars and main content area organization
 
 ### Routing
+
 - Home page
 - Flowchart Designer with full drag-and-drop interface
 - Saved Templates management
@@ -63,27 +67,29 @@ src/
 - Simulation Status (placeholder)
 
 ### Styling
+
 - Tailwind CSS with custom CSS variables
 - Responsive design
 - Dark mode support via CSS custom properties
 
 ### Data Management
+
 - LocalStorage-based template persistence
 - Component state management with Vue's ref()
 - Template CRUD operations
 
 ## Technology Stack
 
-| Technology | Purpose |
-|-----------|---------|
-| Vue 3 | Progressive framework |
-| Vite | Build tool and dev server |
-| TypeScript | Type safety |
-| Tailwind CSS | Utility CSS |
-| Radix UI Vue | Component primitives |
-| Vue Router | Client-side routing |
-| Lucide Vue | SVG icons |
-| class-variance-authority | Component variants |
+| Technology               | Purpose                   |
+| ------------------------ | ------------------------- |
+| Vue 3                    | Progressive framework     |
+| Vite                     | Build tool and dev server |
+| TypeScript               | Type safety               |
+| Tailwind CSS             | Utility CSS               |
+| Radix UI Vue             | Component primitives      |
+| Vue Router               | Client-side routing       |
+| Lucide Vue               | SVG icons                 |
+| class-variance-authority | Component variants        |
 
 ## Running the Application
 
@@ -103,30 +109,36 @@ The app will be available at `http://localhost:5173`
 ## Changes from React to Vue
 
 ### Template Syntax
+
 - React JSX → Vue SFC template syntax
 - Props passed via attributes
 - Event handlers with @click, @input, etc.
 
 ### State Management
+
 - React useState → Vue ref()
 - React props → Vue props with defineProps
 - React events → Vue emits with defineEmits
 
 ### Lifecycle
+
 - React useEffect → Vue onMounted
 - React custom hooks → Vue composables
 
 ### Router
+
 - React Router → Vue Router 4
 - Same route structure maintained
 - RouterLink for navigation
 
 ### Component Structure
+
 - All components are now Single File Components (.vue)
 - Composition API for component logic
 - Template, script setup, and scoped styles in one file
 
 ## File Locations
+
 - **Project Root**: `/Users/alatif/Documents/GitHub/oedisi-frontend-app`
 - **Original React App**: `/Users/alatif/Downloads/Website with Flowchart Designer`
 
