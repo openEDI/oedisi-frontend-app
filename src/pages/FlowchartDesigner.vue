@@ -21,7 +21,8 @@
       <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
         <div class="space-y-4">
-          <div v-for="component in components" :key="component.id"
+          <div 
+            v-for="component in components" :key="component.id"
             class="p-4 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors" draggable="true"
             @dragstart="(e) => onDragStart(component.id, e)">
             <h3 class="font-medium text-sm">{{ component.name }}</h3>
@@ -100,14 +101,16 @@
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Wiring Selection</label>
-            <p v-if="compatibleWireOptions.length === 0" class="text-sm text-gray-500">
+            <p v-if="compatibleWireOptions.length === 0" class="text-sm text-muted-foreground">
               No compatible dynamic output/input intersections for this connection.
             </p>
             <div v-else class="space-y-2">
-              <select v-model="selectedWireOption"
-                class="flex h-10 w-full rounded-md border border-border px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
+              <select
+                v-model="selectedWireOption"
+                class="h-10 w-full rounded-md border border-border px-3 py-2 bg-card text-sm">
                 <option value="" disabled>Select compatible signal</option>
-                <option v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
+                <option 
+                  v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
                   :value="wireOptionKey(option)">
                   {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
                 </option>
@@ -120,7 +123,8 @@
           <div v-if="selectedEdgeWires.length > 0" class="space-y-2">
             <label class="text-sm font-semibold">Wiring Diagram Entries</label>
             <div class="space-y-1">
-              <div v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
+              <div
+                v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
                 class="flex items-center justify-between gap-2 text-xs text-muted-foreground font-mono bg-muted/50 rounded px-2 py-1">
                 <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
                 <Button variant="ghost" size="sm" @click="removeWireFromSelectedEdge(wire)">
@@ -137,34 +141,26 @@
     </div>
 
     <!-- Save Dialog -->
-    <div v-if="saveDialogOpen" class="fixed inset-0 z-50 bg-black/50" @click="saveDialogOpen = false">
-      <div
-        class="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-lg border border-border bg-card p-4 shadow-lg duration-200"
-        @click.stop>
-        <div class="flex flex-col space-y-1.5 p-6">
-          <h2 class="text-lg font-semibold leading-none tracking-tight">Save Simulation Template</h2>
-          <p class="text-sm text-muted-foreground mt-2">Enter a name and description for your simulation template</p>
+    <Dialog v-model:open="saveDialogOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Save Simulation Template</DialogTitle>
+          <DialogDescription>Enter a name and description for your simulation template</DialogDescription>
+        </DialogHeader>
+        <div class="space-y-2">
+          <label class="text-sm font-semibold">Template Name</label>
+          <Input v-model="templateName" placeholder="e.g., Distribution System Test" />
         </div>
-        <div class="space-y-4 p-6">
-          <div class="space-y-2">
-            <label class="text-sm font-semibold">Template Name</label>
-            <Input v-model="templateName" placeholder="e.g., Distribution System Test" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-sm font-semibold">Description</label>
-            <Textarea v-model="templateDescription" placeholder="Describe your simulation template..."></Textarea>
-          </div>
+        <div class="space-y-2">
+          <label class="text-sm font-semibold">Description</label>
+          <Textarea v-model="templateDescription" placeholder="Describe your simulation template..."></Textarea>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6 pt-0">
-          <Button variant="outline" @click="saveDialogOpen = false">
-            Cancel
-          </Button>
-          <Button @click="saveTemplate">
-            Save Template
-          </Button>
-        </div>
-      </div>
-    </div>
+        <DialogFooter>
+          <Button variant="outline" @click="saveDialogOpen = false">Cancel</Button>
+          <Button @click="saveTemplate">Save Template</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
@@ -184,6 +180,7 @@ import CustomEdge from '@/components/CustomEdge.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogFooter } from '@/components/ui/dialog'
 
 // Register custom node types
 const nodeTypes = {
