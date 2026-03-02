@@ -34,7 +34,7 @@
       <div class="flex-1 relative bg-muted">
         <VueFlow
           ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
-          :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }" :default-edge-options="{ type: 'wiring' }"
+          :connection-line-style="{ stroke: 'var(--foreground)', strokeWidth: 1 }" :default-edge-options="{ type: 'wiring' }"
           :fit-view-on-init="true" :node-types="nodeTypes" :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver"
           @node-click="onNodeClick" @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
           <Background pattern-color="var(--muted-foreground)" :gap="16" />
