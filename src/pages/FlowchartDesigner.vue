@@ -31,13 +31,15 @@
       </div>
 
       <div class="flex-1 relative bg-muted">
-        <VueFlow ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
+        <VueFlow
+          ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
           :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }" :default-edge-options="{ type: 'wiring' }"
           :fit-view-on-init="true" :node-types="nodeTypes" :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver"
           @node-click="onNodeClick" @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
           <Background pattern-color="var(--muted-foreground)" :gap="16" />
           <Controls />
-          <MiniMap node-color="var(--muted-foreground)" mask-color="var(--background)"
+          <MiniMap 
+            node-color="var(--muted-foreground)" mask-color="var(--background)"
             :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
@@ -55,9 +57,10 @@
             <div v-if="selectedNodeStaticInputs.length > 0" class="space-y-2">
               <div v-for="input in selectedNodeStaticInputs" :key="input.port_id" class="space-y-1">
                 <label class="text-xs font-medium text-muted-foreground">{{ input.port_id }}</label>
-                <input :value="getSelectedNodeConfigValue(input.port_id)"
-                  class="flex h-9 w-full rounded-md border border-border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  :placeholder="`Enter ${input.port_id}`" @input="onStaticInputChange(input.port_id, $event)" />
+                <Input
+                  :model_value="getSelectedNodeConfigValue(input.port_id)"
+                  :placeholder="`Enter ${input.port_id}`"
+                  @update:model_value="onStaticInputChange(input.port_id, $event)" />
               </div>
             </div>
             <p v-else class="text-sm text-muted-foreground">No static inputs for this component.</p>
@@ -145,15 +148,11 @@
         <div class="space-y-4 p-6">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Template Name</label>
-            <input v-model="templateName"
-              class="flex h-10 w-full rounded-md border border-border bg-card px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="e.g., Distribution System Test" />
+            <Input v-model="templateName" placeholder="e.g., Distribution System Test" />
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Description</label>
-            <textarea v-model="templateDescription"
-              class="flex min-h-[80px] w-full rounded-md border border-border bg-card px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              placeholder="Describe your simulation template..."></textarea>
+            <Textarea v-model="templateDescription" placeholder="Describe your simulation template..."></Textarea>
           </div>
         </div>
         <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6 pt-0">
@@ -183,6 +182,8 @@ import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 // Register custom node types
 const nodeTypes = {
@@ -432,13 +433,12 @@ const updateNodeConfig = (nodeId: string, portId: string, value: string) => {
   }
 }
 
-const onStaticInputChange = (portId: string, event: Event) => {
+const onStaticInputChange = (portId: string, value: string) => {
   if (!selectedNode.value) {
     return
   }
 
-  const target = event.target as HTMLInputElement
-  updateNodeConfig(selectedNode.value.id, portId, target.value)
+  updateNodeConfig(selectedNode.value.id, portId, value)
 }
 
 const wireDisplayLabel = (wire: EdgeWire): string => wire.type
