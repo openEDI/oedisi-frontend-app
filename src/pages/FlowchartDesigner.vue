@@ -1,6 +1,6 @@
 <template>
   <div class="h-screen flex flex-col">
-    <div class="bg-white border-b px-4 py-3 flex items-center justify-between">
+    <div class="bg-card border-b px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <Button variant="outline" @click="navigate('/')">
           🏠
@@ -18,80 +18,57 @@
     </div>
 
     <div class="flex-1 flex">
-      <div class="w-64 bg-white border-r p-6 overflow-y-auto">
+      <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
         <div class="space-y-4">
-          <div 
-            v-for="component in components" 
-            :key="component.id" 
-            class="p-4 bg-gray-50 rounded-lg cursor-move hover:bg-gray-100 transition-colors" 
-            draggable="true" 
-            @dragstart="(e) => onDragStart(component.id, e)"
-          >
+          <div v-for="component in components" :key="component.id"
+            class="p-4 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors" draggable="true"
+            @dragstart="(e) => onDragStart(component.id, e)">
             <h3 class="font-medium text-sm">{{ component.name }}</h3>
-            <p class="text-xs text-gray-500">{{ component.description }}</p>
+            <p class="text-xs text-muted-foreground">{{ component.description }}</p>
           </div>
         </div>
       </div>
 
-      <div class="flex-1 relative bg-gray-50">
-        <VueFlow
-          ref="vueFlowRef"
-          v-model:nodes="nodes"
-          v-model:edges="edges"
-          class="vue-flow-container"
-          :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }"
-          :default-edge-options="{ type: 'wiring' }"
-          :fit-view-on-init="true"
-          :node-types="nodeTypes"
-          :edge-types="edgeTypes"
-          @drop="onDrop"
-          @dragover="onDragOver"
-          @node-click="onNodeClick"
-          @edge-click="onEdgeClick"
-          @pane-click="onPaneClick"
-          @connect="onConnect"
-        >
-          <Background pattern-color="#e5e7eb" :gap="16" />
+      <div class="flex-1 relative bg-muted">
+        <VueFlow ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
+          :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }" :default-edge-options="{ type: 'wiring' }"
+          :fit-view-on-init="true" :node-types="nodeTypes" :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver"
+          @node-click="onNodeClick" @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
+          <Background pattern-color="var(--muted-foreground)" :gap="16" />
           <Controls />
-          <MiniMap />
+          <MiniMap node-color="var(--muted-foreground)" mask-color="var(--background)"
+            :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
 
-      <div class="w-72 bg-white border-l p-6 overflow-y-auto">
+      <div class="w-72 bg-card border-l p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Properties</h2>
-        <div v-if="!selectedNode && !selectedEdge" class="text-gray-500 text-center py-8">
+        <div v-if="!selectedNode && !selectedEdge" class="text-muted-foreground text-center py-8">
           <p>Select a component or connection to view properties</p>
         </div>
-        
+
         <!-- Node Properties -->
         <div v-else-if="selectedNode" class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Static Inputs</label>
             <div v-if="selectedNodeStaticInputs.length > 0" class="space-y-2">
-              <div
-                v-for="input in selectedNodeStaticInputs"
-                :key="input.port_id"
-                class="space-y-1"
-              >
-                <label class="text-xs font-medium text-gray-600">{{ input.port_id }}</label>
-                <input
-                  :value="getSelectedNodeConfigValue(input.port_id)"
-                  class="flex h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                  :placeholder="`Enter ${input.port_id}`"
-                  @input="onStaticInputChange(input.port_id, $event)"
-                />
+              <div v-for="input in selectedNodeStaticInputs" :key="input.port_id" class="space-y-1">
+                <label class="text-xs font-medium text-muted-foreground">{{ input.port_id }}</label>
+                <input :value="getSelectedNodeConfigValue(input.port_id)"
+                  class="flex h-9 w-full rounded-md border border-border px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                  :placeholder="`Enter ${input.port_id}`" @input="onStaticInputChange(input.port_id, $event)" />
               </div>
             </div>
-            <p v-else class="text-sm text-gray-500">No static inputs for this component.</p>
+            <p v-else class="text-sm text-muted-foreground">No static inputs for this component.</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Component Type</label>
-            <p class="text-sm text-gray-600">{{ selectedNode.data.label }}</p>
+            <p class="text-sm text-muted-foreground">{{ selectedNode.data.label }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Node ID</label>
-            <p class="text-sm text-gray-600 font-mono">{{ selectedNode.id }}</p>
+            <p class="text-sm text-muted-foreground font-mono">{{ selectedNode.id }}</p>
           </div>
           <Button variant="destructive" @click="deleteNode(selectedNode.id)">
             Delete Component
@@ -102,21 +79,21 @@
         <div v-else-if="selectedEdge" class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Connection ID</label>
-            <p class="text-sm text-gray-600 font-mono">{{ selectedEdge.id }}</p>
+            <p class="text-sm text-muted-foreground font-mono">{{ selectedEdge.id }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Source Node</label>
-            <p class="text-sm text-gray-600">{{ getNodeLabel(selectedEdge.source) }}</p>
-            <p class="text-xs text-gray-500 font-mono">{{ selectedEdge.source }}</p>
+            <p class="text-sm text-muted-foreground">{{ getNodeLabel(selectedEdge.source) }}</p>
+            <p class="text-xs text-muted-foreground font-mono">{{ selectedEdge.source }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Target Node</label>
-            <p class="text-sm text-gray-600">{{ getNodeLabel(selectedEdge.target) }}</p>
-            <p class="text-xs text-gray-500 font-mono">{{ selectedEdge.target }}</p>
+            <p class="text-sm text-muted-foreground">{{ getNodeLabel(selectedEdge.target) }}</p>
+            <p class="text-xs text-muted-foreground font-mono">{{ selectedEdge.target }}</p>
           </div>
           <div v-if="selectedEdge.type" class="space-y-2">
             <label class="text-sm font-semibold">Connection Type</label>
-            <p class="text-sm text-gray-600">{{ selectedEdge.type }}</p>
+            <p class="text-sm text-muted-foreground">{{ selectedEdge.type }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Wiring Selection</label>
@@ -124,23 +101,15 @@
               No compatible dynamic output/input intersections for this connection.
             </p>
             <div v-else class="space-y-2">
-              <select
-                v-model="selectedWireOption"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
+              <select v-model="selectedWireOption"
+                class="flex h-10 w-full rounded-md border border-border px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2">
                 <option value="" disabled>Select compatible signal</option>
-                <option
-                  v-for="option in compatibleWireOptions"
-                  :key="wireOptionKey(option)"
-                  :value="wireOptionKey(option)"
-                >
+                <option v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
+                  :value="wireOptionKey(option)">
                   {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
                 </option>
               </select>
-              <Button
-                :disabled="!selectedWireOption"
-                @click="addWireToSelectedEdge"
-              >
+              <Button :disabled="!selectedWireOption" @click="addWireToSelectedEdge">
                 Add Wiring
               </Button>
             </div>
@@ -148,21 +117,16 @@
           <div v-if="selectedEdgeWires.length > 0" class="space-y-2">
             <label class="text-sm font-semibold">Wiring Diagram Entries</label>
             <div class="space-y-1">
-              <div
-                v-for="wire in selectedEdgeWires"
-                :key="wireOptionKey(wire)"
-                class="flex items-center justify-between gap-2 text-xs text-gray-600 font-mono bg-gray-50 rounded px-2 py-1"
-              >
+              <div v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
+                class="flex items-center justify-between gap-2 text-xs text-muted-foreground font-mono bg-muted/50 rounded px-2 py-1">
                 <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
-                <Button
-                  @click="removeWireFromSelectedEdge(wire)"
-                >
+                <Button variant="ghost" size="sm" @click="removeWireFromSelectedEdge(wire)">
                   Remove
                 </Button>
               </div>
             </div>
           </div>
-          <Button @click="deleteEdge(selectedEdge.id)">
+          <Button variant="destructive" @click="deleteEdge(selectedEdge.id)">
             Delete Connection
           </Button>
         </div>
@@ -171,19 +135,25 @@
 
     <!-- Save Dialog -->
     <div v-if="saveDialogOpen" class="fixed inset-0 z-50 bg-black/50" @click="saveDialogOpen = false">
-      <div class="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-lg border border-gray-200 bg-white p-4 shadow-lg duration-200 text-slate-900" @click.stop>
+      <div
+        class="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-lg border border-border bg-card p-4 shadow-lg duration-200"
+        @click.stop>
         <div class="flex flex-col space-y-1.5 p-6">
           <h2 class="text-lg font-semibold leading-none tracking-tight">Save Simulation Template</h2>
-          <p class="text-sm text-gray-500 mt-2">Enter a name and description for your simulation template</p>
+          <p class="text-sm text-muted-foreground mt-2">Enter a name and description for your simulation template</p>
         </div>
         <div class="space-y-4 p-6">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Template Name</label>
-            <input v-model="templateName" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" placeholder="e.g., Distribution System Test" />
+            <input v-model="templateName"
+              class="flex h-10 w-full rounded-md border border-border bg-card px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="e.g., Distribution System Test" />
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Description</label>
-            <textarea v-model="templateDescription" class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" placeholder="Describe your simulation template..."></textarea>
+            <textarea v-model="templateDescription"
+              class="flex min-h-[80px] w-full rounded-md border border-border bg-card px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="Describe your simulation template..."></textarea>
           </div>
         </div>
         <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6 pt-0">
@@ -207,7 +177,7 @@ import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import { api } from '@/lib/api'
-import type {PortDefinition, EdgeWire, EdgeData, NodeData} from '@/lib/flowTypes'
+import type { PortDefinition, EdgeWire, EdgeData, NodeData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
@@ -258,11 +228,11 @@ const onDrop = async (event: DragEvent) => {
   const type = event.dataTransfer?.getData('application/node')
   if (type) {
     await nextTick()
-    
+
     const position = screenToFlowCoordinate({
-        x: event.clientX,
-        y: event.clientY,
-      })
+      x: event.clientX,
+      y: event.clientY,
+    })
     addNode(type, position)
   }
 }
@@ -587,7 +557,7 @@ const saveTemplate = async () => {
   try {
     // Save to backend API (stores in data folder)
     await api.saveTemplate(config)
-    
+
     // Also download JSON file for backup
     const jsonString = JSON.stringify(config, null, 2)
     const blob = new Blob([jsonString], { type: 'application/json' })
@@ -603,7 +573,7 @@ const saveTemplate = async () => {
     saveDialogOpen.value = false
     templateName.value = ''
     templateDescription.value = ''
-    
+
     // Optionally navigate to saved configs page
     // router.push('/configs')
   } catch (error) {
@@ -641,5 +611,24 @@ onMounted(() => {
 .vue-flow-container {
   width: 100%;
   height: 100%;
+}
+
+.vue-flow__controls {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.vue-flow .vue-flow__controls-button {
+  background: var(--card);
+  border-bottom-color: var(--border);
+}
+
+.vue-flow .vue-flow__controls-button svg {
+  stroke: var(--foreground);
+  fill: var(--foreground);
+}
+
+.vue-flow .vue-flow__controls-button:hover {
+  background: var(--muted);
 }
 </style>

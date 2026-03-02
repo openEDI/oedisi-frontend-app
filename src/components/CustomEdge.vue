@@ -4,7 +4,8 @@
   <EdgeLabelRenderer>
     <div
       v-if="labelText"
-      class="nodrag nopan absolute pointer-events-none -translate-x-1/2 -translate-y-1/2 whitespace-pre-line bg-transparent px-1.5 py-0.5 text-center text-[10px] leading-4 text-gray-700"
+      class="nodrag nopan absolute pointer-events-none -translate-x-1/2 -translate-y-1/2 whitespace-pre-line bg-transparent
+        px-1.5 py-0.5 text-center text-[10px] leading-4 text-muted-foreground"
       :style="{
         transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
       }"
@@ -13,6 +14,7 @@
     </div>
   </EdgeLabelRenderer>
 </template>
+                                                                                                                                           
 
 <script setup lang="ts">
 import { computed } from 'vue'
@@ -36,3 +38,13 @@ const labelX = computed(() => pathValues.value[1])
 const labelY = computed(() => pathValues.value[2])
 const labelText = computed(() => (typeof props.label === 'string' ? props.label : ''))
 </script>
+
+<style>                                                                                                                                                 
+.vue-flow .vue-flow__edge-path {                                                                                                                                
+  stroke: var(--muted-foreground);                                                                                                                                       
+}                                                                                                                                                     
+                                                                                                                                                      
+.vue-flow .vue-flow__edge.selected .vue-flow__edge-path {                                                                                                       
+  stroke: var(--foreground);  /* or a bright accent color */                                                                                                       
+}                                                                                                                                                     
+</style>     
