@@ -181,6 +181,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogFooter } from '@/components/ui/dialog'
+import { isCompatible } from '@/lib/portCompatibility'
 
 // Register custom node types
 const nodeTypes = {
@@ -342,7 +343,7 @@ const getCompatibleWireOptions = (edge: Edge | null): EdgeWire[] => {
 
   outputs.forEach((output) => {
     inputs.forEach((input) => {
-      if (output.type === input.type) {
+      if (isCompatible(output.type, input.type)) {
         const wire: EdgeWire = {
           type: output.type,
           sourcePortId: output.port_id,
