@@ -1,8 +1,8 @@
-import wslDefinition from '@/lib/definations/wls_federate.json'
-import feederDefinition from '@/lib/definations/feeder.json'
-import linDistFlowDefinition from '@/lib/definations/lin_dist_flow_algorithm.json'
-import recorderDefinition from '@/lib/definations/recorder.json'
-import sensorDefinition from '@/lib/definations/sensor.json'
+import wslDefinition from '@/lib/definitions/wls_federate.json'
+import feederDefinition from '@/lib/definitions/feeder.json'
+import linDistFlowDefinition from '@/lib/definitions/lin_dist_flow_algorithm.json'
+import recorderDefinition from '@/lib/definitions/recorder.json'
+import sensorDefinition from '@/lib/definitions/sensor.json'
 
 export interface FederateDefinition {
   directory: string

@@ -1,218 +1,195 @@
 <template>
   <div class="h-screen flex flex-col">
-    <div class="bg-white border-b px-4 py-3 flex items-center justify-between">
+    <div class="bg-card border-b px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-4">
-        <button @click="navigate('/')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-slate-100 hover:text-slate-900 h-10 w-10">
+        <Button variant="outline" @click="navigate('/')">
           🏠
-        </button>
+        </Button>
         <h1 class="text-xl font-semibold">OEDISI Simulation Designer</h1>
       </div>
       <div class="flex items-center gap-2">
-        <button @click="navigate('/configs')" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2">
+        <Button variant="outline" @click="navigate('/configs')">
           📁 Saved Templates
-        </button>
-        <button @click="saveDialogOpen = true" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2">
+        </Button>
+        <Button variant="outline" @click="saveDialogOpen = true">
           💾 Save Template
-        </button>
+        </Button>
       </div>
     </div>
 
     <div class="flex-1 flex">
-      <div class="w-64 bg-white border-r p-6 overflow-y-auto">
+      <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
         <div class="space-y-4">
           <div 
-            v-for="component in components" 
-            :key="component.id" 
-            class="p-4 bg-gray-50 rounded-lg cursor-move hover:bg-gray-100 transition-colors" 
-            draggable="true" 
-            @dragstart="(e) => onDragStart(component.id, e)"
-          >
+            v-for="component in components" :key="component.id"
+            class="p-4 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors" draggable="true"
+            @dragstart="(e) => onDragStart(component.id, e)">
             <h3 class="font-medium text-sm">{{ component.name }}</h3>
-            <p class="text-xs text-gray-500">{{ component.description }}</p>
+            <p class="text-xs text-muted-foreground">{{ component.description }}</p>
           </div>
         </div>
       </div>
 
-      <div class="flex-1 relative bg-gray-50">
+      <div class="flex-1 relative bg-muted">
         <VueFlow
-          ref="vueFlowRef"
-          v-model:nodes="nodes"
-          v-model:edges="edges"
-          class="vue-flow-container"
-          @drop="onDrop"
-          @dragover="onDragOver"
-          @node-click="onNodeClick"
-          @edge-click="onEdgeClick"
-          @pane-click="onPaneClick"
-          @connect="onConnect"
-          :connection-line-style="{ stroke: '#b1b1b7', strokeWidth: 1 }"
-          :default-edge-options="{ type: 'wiring' }"
-          :fit-view-on-init="true"
-          :node-types="nodeTypes"
-          :edge-types="edgeTypes"
-        >
-          <Background pattern-color="#e5e7eb" :gap="16" />
+          ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
+          :connection-line-style="{ stroke: 'var(--foreground)', strokeWidth: 1 }" :default-edge-options="{ type: 'wiring' }"
+          :fit-view-on-init="true" :node-types="nodeTypes" :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver"
+          @node-click="onNodeClick" @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
+          <Background pattern-color="var(--muted-foreground)" :gap="16" />
           <Controls />
-          <MiniMap />
+          <MiniMap 
+            node-color="var(--muted-foreground)" mask-color="var(--background)"
+            :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
 
-      <div class="w-72 bg-white border-l p-6 overflow-y-auto">
+      <div class="w-72 bg-card border-l p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Properties</h2>
-        <div v-if="!selectedNode && !selectedEdge" class="text-gray-500 text-center py-8">
+        <div v-if="!selectedNode && !selectedEdge" class="text-muted-foreground text-center py-8">
           <p>Select a component or connection to view properties</p>
         </div>
-        
+
         <!-- Node Properties -->
         <div v-else-if="selectedNode" class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Static Inputs</label>
             <div v-if="selectedNodeStaticInputs.length > 0" class="space-y-2">
-              <div
-                v-for="input in selectedNodeStaticInputs"
-                :key="input.port_id"
-                class="space-y-1"
-              >
-                <label class="text-xs font-medium text-gray-600">{{ input.port_id }}</label>
-                <input
-                  :value="getSelectedNodeConfigValue(input.port_id)"
-                  @input="onStaticInputChange(input.port_id, $event)"
-                  class="flex h-9 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+              <div v-for="input in selectedNodeStaticInputs" :key="input.port_id" class="space-y-1">
+                <label class="text-xs font-medium text-muted-foreground">{{ input.port_id }}</label>
+                <Input
+                  :model_value="getSelectedNodeConfigValue(input.port_id)"
                   :placeholder="`Enter ${input.port_id}`"
-                />
+                  @update:model_value="onStaticInputChange(input.port_id, $event)" />
               </div>
             </div>
-            <p v-else class="text-sm text-gray-500">No static inputs for this component.</p>
+            <p v-else class="text-sm text-muted-foreground">No static inputs for this component.</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Component Type</label>
-            <p class="text-sm text-gray-600">{{ selectedNode.data.label }}</p>
+            <p class="text-sm text-muted-foreground">{{ selectedNode.data.label }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Node ID</label>
-            <p class="text-sm text-gray-600 font-mono">{{ selectedNode.id }}</p>
+            <p class="text-sm text-muted-foreground font-mono">{{ selectedNode.id }}</p>
           </div>
-          <button @click="deleteNode(selectedNode.id)" class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4">
+          <Button variant="destructive" @click="deleteNode(selectedNode.id)">
             Delete Component
-          </button>
+          </Button>
         </div>
 
         <!-- Edge Properties -->
         <div v-else-if="selectedEdge" class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Connection ID</label>
-            <p class="text-sm text-gray-600 font-mono">{{ selectedEdge.id }}</p>
+            <p class="text-sm text-muted-foreground font-mono">{{ selectedEdge.id }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Source Node</label>
-            <p class="text-sm text-gray-600">{{ getNodeLabel(selectedEdge.source) }}</p>
-            <p class="text-xs text-gray-500 font-mono">{{ selectedEdge.source }}</p>
+            <p class="text-sm text-muted-foreground">{{ getNodeLabel(selectedEdge.source) }}</p>
+            <p class="text-xs text-muted-foreground font-mono">{{ selectedEdge.source }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Target Node</label>
-            <p class="text-sm text-gray-600">{{ getNodeLabel(selectedEdge.target) }}</p>
-            <p class="text-xs text-gray-500 font-mono">{{ selectedEdge.target }}</p>
+            <p class="text-sm text-muted-foreground">{{ getNodeLabel(selectedEdge.target) }}</p>
+            <p class="text-xs text-muted-foreground font-mono">{{ selectedEdge.target }}</p>
           </div>
-          <div class="space-y-2" v-if="selectedEdge.type">
+          <div v-if="selectedEdge.type" class="space-y-2">
             <label class="text-sm font-semibold">Connection Type</label>
-            <p class="text-sm text-gray-600">{{ selectedEdge.type }}</p>
+            <p class="text-sm text-muted-foreground">{{ selectedEdge.type }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Wiring Selection</label>
-            <p v-if="compatibleWireOptions.length === 0" class="text-sm text-gray-500">
+            <p v-if="compatibleWireOptions.length === 0" class="text-sm text-muted-foreground">
               No compatible dynamic output/input intersections for this connection.
             </p>
             <div v-else class="space-y-2">
               <select
                 v-model="selectedWireOption"
-                class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
+                class="h-10 w-full rounded-md border border-border px-3 py-2 bg-card text-sm">
                 <option value="" disabled>Select compatible signal</option>
-                <option
-                  v-for="option in compatibleWireOptions"
-                  :key="wireOptionKey(option)"
-                  :value="wireOptionKey(option)"
-                >
+                <option 
+                  v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
+                  :value="wireOptionKey(option)">
                   {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
                 </option>
               </select>
-              <button
-                @click="addWireToSelectedEdge"
-                :disabled="!selectedWireOption"
-                class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2"
-              >
+              <Button :disabled="!selectedWireOption" @click="addWireToSelectedEdge">
                 Add Wiring
-              </button>
+              </Button>
             </div>
           </div>
-          <div class="space-y-2" v-if="selectedEdgeWires.length > 0">
+          <div v-if="selectedEdgeWires.length > 0" class="space-y-2">
             <label class="text-sm font-semibold">Wiring Diagram Entries</label>
             <div class="space-y-1">
               <div
-                v-for="wire in selectedEdgeWires"
-                :key="wireOptionKey(wire)"
-                class="flex items-center justify-between gap-2 text-xs text-gray-600 font-mono bg-gray-50 rounded px-2 py-1"
-              >
+                v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
+                class="flex items-center justify-between gap-2 text-xs text-muted-foreground font-mono bg-muted/50 rounded px-2 py-1">
                 <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
-                <button
-                  @click="removeWireFromSelectedEdge(wire)"
-                  class="inline-flex items-center justify-center rounded border border-gray-300 bg-white px-2 py-0.5 text-[11px] font-medium text-gray-700 hover:bg-gray-100"
-                >
+                <Button variant="ghost" size="sm" @click="removeWireFromSelectedEdge(wire)">
                   Remove
-                </button>
+                </Button>
               </div>
             </div>
           </div>
-          <button @click="deleteEdge(selectedEdge.id)" class="w-full inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 h-10 px-4 py-2 mt-4">
+          <Button variant="destructive" @click="deleteEdge(selectedEdge.id)">
             Delete Connection
-          </button>
+          </Button>
         </div>
       </div>
     </div>
 
     <!-- Save Dialog -->
-    <div v-if="saveDialogOpen" class="fixed inset-0 z-50 bg-black/50" @click="saveDialogOpen = false">
-      <div class="fixed left-[50%] top-[50%] z-50 w-full max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-lg border border-gray-200 bg-white p-4 shadow-lg duration-200 text-slate-900" @click.stop>
-        <div class="flex flex-col space-y-1.5 p-6">
-          <h2 class="text-lg font-semibold leading-none tracking-tight">Save Simulation Template</h2>
-          <p class="text-sm text-gray-500 mt-2">Enter a name and description for your simulation template</p>
+    <Dialog v-model:open="saveDialogOpen">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Save Simulation Template</DialogTitle>
+          <DialogDescription>Enter a name and description for your simulation template</DialogDescription>
+        </DialogHeader>
+        <div class="space-y-2">
+          <label class="text-sm font-semibold">Template Name</label>
+          <Input v-model="templateName" placeholder="e.g., Distribution System Test" />
         </div>
-        <div class="space-y-4 p-6">
-          <div class="space-y-2">
-            <label class="text-sm font-semibold">Template Name</label>
-            <input v-model="templateName" class="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" placeholder="e.g., Distribution System Test" />
-          </div>
-          <div class="space-y-2">
-            <label class="text-sm font-semibold">Description</label>
-            <textarea v-model="templateDescription" class="flex min-h-[80px] w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-base ring-offset-white placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" placeholder="Describe your simulation template..."></textarea>
-          </div>
+        <div class="space-y-2">
+          <label class="text-sm font-semibold">Description</label>
+          <Textarea v-model="templateDescription" placeholder="Describe your simulation template..."></Textarea>
         </div>
-        <div class="flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 p-6 pt-0">
-          <button @click="saveDialogOpen = false" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-300 bg-white hover:bg-gray-50 hover:text-slate-900 h-10 px-4 py-2">
-            Cancel
-          </button>
-          <button @click="saveTemplate" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-slate-900 text-white hover:bg-slate-800 h-10 px-4 py-2">
-            Save Template
-          </button>
-        </div>
-      </div>
-    </div>
+        <DialogFooter>
+          <Button variant="outline" @click="saveDialogOpen = false">Cancel</Button>
+          <Button @click="saveTemplate">Save Template</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, watch } from 'vue'
+import { ref, nextTick, onMounted, computed, watch, markRaw } from 'vue'
 import { useRouter } from 'vue-router'
-import { VueFlow } from '@vue-flow/core'
+import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import CustomNode from '@/components/CustomNode.vue'
-import CustomEdge from '@/components/CustomEdge.vue'
 import { api } from '@/lib/api'
+import type { PortDefinition, EdgeWire, EdgeData, NodeData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
+import CustomNode from '@/components/CustomNode.vue'
+import CustomEdge from '@/components/CustomEdge.vue'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogFooter } from '@/components/ui/dialog'
+
+// Register custom node types
+const nodeTypes = {
+  custom: markRaw(CustomNode),
+}
+
+const edgeTypes = {
+  wiring: markRaw(CustomEdge),
+}
 
 const router = useRouter()
 const navigate = (path: string) => router.push(path)
@@ -226,38 +203,8 @@ const selectedEdge = ref<Edge | null>(null)
 const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
-const vueFlowRef = ref<any>(null)
 const selectedWireOption = ref('')
-
-interface PortDefinition {
-  type: string
-  port_id: string
-}
-
-interface NodeData {
-  label: string
-  config?: Record<string, string>
-  componentType?: string
-}
-
-interface EdgeWire {
-  type: string
-  sourcePortId: string
-  targetPortId: string
-}
-
-interface EdgeData {
-  wires?: EdgeWire[]
-}
-
-// Register custom node types
-const nodeTypes = {
-  custom: CustomNode,
-}
-
-const edgeTypes = {
-  wiring: CustomEdge,
-}
+const { screenToFlowCoordinate } = useVueFlow()
 
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
@@ -279,28 +226,11 @@ const onDrop = async (event: DragEvent) => {
   const type = event.dataTransfer?.getData('application/node')
   if (type) {
     await nextTick()
-    let position = { x: 0, y: 0 }
-    
-    // Try to get the Vue Flow instance and use screenToFlowCoordinate if available
-    const instance = vueFlowRef.value
-    if (instance?.screenToFlowCoordinate) {
-      position = instance.screenToFlowCoordinate({
-        x: event.clientX,
-        y: event.clientY,
-      })
-    } else {
-      // Fallback: calculate position relative to the pane
-      const pane = (event.target as HTMLElement).closest('.vue-flow__viewport') || 
-                   (event.target as HTMLElement).closest('.vue-flow')
-      if (pane) {
-        const rect = pane.getBoundingClientRect()
-        // Simple position calculation (will be improved when instance is available)
-        position = {
-          x: event.clientX - rect.left - 100,
-          y: event.clientY - rect.top - 100,
-        }
-      }
-    }
+
+    const position = screenToFlowCoordinate({
+      x: event.clientX,
+      y: event.clientY,
+    })
     addNode(type, position)
   }
 }
@@ -500,13 +430,12 @@ const updateNodeConfig = (nodeId: string, portId: string, value: string) => {
   }
 }
 
-const onStaticInputChange = (portId: string, event: Event) => {
+const onStaticInputChange = (portId: string, value: string) => {
   if (!selectedNode.value) {
     return
   }
 
-  const target = event.target as HTMLInputElement
-  updateNodeConfig(selectedNode.value.id, portId, target.value)
+  updateNodeConfig(selectedNode.value.id, portId, value)
 }
 
 const wireDisplayLabel = (wire: EdgeWire): string => wire.type
@@ -625,7 +554,7 @@ const saveTemplate = async () => {
   try {
     // Save to backend API (stores in data folder)
     await api.saveTemplate(config)
-    
+
     // Also download JSON file for backup
     const jsonString = JSON.stringify(config, null, 2)
     const blob = new Blob([jsonString], { type: 'application/json' })
@@ -641,7 +570,7 @@ const saveTemplate = async () => {
     saveDialogOpen.value = false
     templateName.value = ''
     templateDescription.value = ''
-    
+
     // Optionally navigate to saved configs page
     // router.push('/configs')
   } catch (error) {
@@ -679,5 +608,24 @@ onMounted(() => {
 .vue-flow-container {
   width: 100%;
   height: 100%;
+}
+
+.vue-flow__controls {
+  background: var(--card);
+  border-color: var(--border);
+}
+
+.vue-flow .vue-flow__controls-button {
+  background: var(--card);
+  border-bottom-color: var(--border);
+}
+
+.vue-flow .vue-flow__controls-button svg {
+  stroke: var(--foreground);
+  fill: var(--foreground);
+}
+
+.vue-flow .vue-flow__controls-button:hover {
+  background: var(--muted);
 }
 </style>

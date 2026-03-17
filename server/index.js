@@ -86,7 +86,7 @@ app.put('/api/templates/:id', (req, res) => {
 // Delete a template
 app.delete('/api/templates/:id', (req, res) => {
   try {
-    const result = deleteTemplate(req.params.id)
+    deleteTemplate(req.params.id)
     res.json({ success: true, message: 'Template deleted successfully' })
   } catch (error) {
     console.error('Error deleting template:', error)
@@ -116,4 +116,3 @@ process.on('SIGTERM', () => {
   closeDatabase()
   process.exit(0)
 })
-

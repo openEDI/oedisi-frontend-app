@@ -1,11 +1,13 @@
+import type { Node, Edge } from '@vue-flow/core'
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
 export interface SavedConfig {
   id: string
   name: string
   description: string
-  nodes: any[]
-  edges: any[]
+  nodes: Node[], 
+  edges: Edge[],
   createdAt: string
 }
 
@@ -62,4 +64,3 @@ export const api = {
     }
   },
 }
-
