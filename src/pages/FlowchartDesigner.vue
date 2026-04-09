@@ -172,7 +172,7 @@ import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import { api } from '@/lib/api'
-import type { PortDefinition, EdgeWire, EdgeData, NodeData } from '@/lib/flowTypes'
+import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
@@ -209,7 +209,7 @@ const { screenToFlowCoordinate } = useVueFlow()
 
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
-  const newNode: Node = {
+  const newNode: Node<NodeData> = {
     id: `${type}-${Date.now()}`,
     type: 'custom',
     position,
@@ -543,7 +543,7 @@ const getNodeLabel = (nodeId: string): string => {
 }
 
 const saveTemplate = async () => {
-  const config = {
+  const config: TemplateData = {
     id: Date.now().toString(),
     name: templateName.value || `Flow ${new Date().toLocaleString()}`,
     description: templateDescription.value,

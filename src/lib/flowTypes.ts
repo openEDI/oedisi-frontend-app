@@ -1,3 +1,4 @@
+import type { Node, Edge } from '@vue-flow/core'
 
 export interface PortDefinition {
   type: string
@@ -18,4 +19,13 @@ export interface EdgeWire {
 
 export interface EdgeData {
   wires?: EdgeWire[]
+}
+
+export interface TemplateData {
+  id: string
+  name: string
+  description: string
+  nodes: Node<NodeData>[]
+  edges: Edge<EdgeData>[]
+  createdAt: string
 }
