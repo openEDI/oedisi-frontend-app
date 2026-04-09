@@ -5,6 +5,8 @@ import recorderDefinition from '@/lib/definitions/recorder.json'
 import sensorDefinition from '@/lib/definitions/sensor.json'
 import wlsSchema from '@/lib/schemas/wls_federate.json'
 import feederSchema from '@/lib/schemas/feeder.json'
+import sensorSchema from '@/lib/schemas/measuring_federate.json'
+import recorderSchema from '@/lib/schemas/recorder.json'
 
 export interface FederateDefinition {
   directory: string
@@ -53,6 +55,7 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     description: 'Sensor model',
     definitionFile: 'sensor.json',
     definition: sensorDefinition,
+    inputSchema: sensorSchema,
   },
   {
     id: 'recorder',
@@ -60,5 +63,6 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     description: 'Records simulation results',
     definitionFile: 'recorder.json',
     definition: recorderDefinition,
+    inputSchema: recorderSchema,
   },
 ]

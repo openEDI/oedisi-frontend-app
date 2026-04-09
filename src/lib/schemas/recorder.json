@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "csv_path": {
+      "title": "Csv Path",
+      "type": "string"
+    },
+    "feather_path": {
+      "title": "Feather Path",
+      "type": "string"
+    }
+  },
+  "required": ["csv_path", "feather_path"],
+  "title": "RecorderConfig",
+  "type": "object"
+}
