@@ -21,8 +21,7 @@
       <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
         <div class="space-y-4">
-          <div 
-            v-for="component in components" :key="component.id"
+          <div v-for="component in components" :key="component.id"
             class="p-4 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors" draggable="true"
             @dragstart="(e) => onDragStart(component.id, e)">
             <h3 class="font-medium text-sm">{{ component.name }}</h3>
@@ -32,15 +31,14 @@
       </div>
 
       <div class="flex-1 relative bg-muted">
-        <VueFlow
-          ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
-          :connection-line-style="{ stroke: 'var(--foreground)', strokeWidth: 1 }" :default-edge-options="{ type: 'wiring' }"
-          :fit-view-on-init="true" :node-types="nodeTypes" :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver"
-          @node-click="onNodeClick" @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
+        <VueFlow ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
+          :connection-line-style="{ stroke: 'var(--foreground)', strokeWidth: 1 }"
+          :default-edge-options="{ type: 'wiring' }" :fit-view-on-init="true" :node-types="nodeTypes"
+          :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver" @node-click="onNodeClick"
+          @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
           <Background pattern-color="var(--muted-foreground)" :gap="16" />
           <Controls />
-          <MiniMap 
-            node-color="var(--muted-foreground)" mask-color="var(--background)"
+          <MiniMap node-color="var(--muted-foreground)" mask-color="var(--background)"
             :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
@@ -56,13 +54,8 @@
           <div class="space-y-2">
             <label class="text-sm font-semibold">Static Inputs</label>
             <div v-if="selectedNodeSchema" class="space-y-2">
-              <JsonForms
-                :data="nodeConfig"
-                :schema="selectedNodeSchema"
-                :renderers="renderers"
-                :ajv="ajv"
-                :validation-mode="'ValidateAndHide'"
-                @change="updateNodeConfig" />
+              <JsonForms :data="nodeConfig" :schema="selectedNodeSchema" :renderers="renderers" :ajv="ajv"
+                :validation-mode="'ValidateAndHide'" @change="updateNodeConfig" />
             </div>
             <p v-else class="text-sm text-muted-foreground">No static inputs for this component.</p>
           </div>
@@ -105,12 +98,10 @@
               No compatible dynamic output/input intersections for this connection.
             </p>
             <div v-else class="space-y-2">
-              <select
-                v-model="selectedWireOption"
+              <select v-model="selectedWireOption"
                 class="h-10 w-full rounded-md border border-border px-3 py-2 bg-card text-sm">
                 <option value="" disabled>Select compatible signal</option>
-                <option 
-                  v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
+                <option v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
                   :value="wireOptionKey(option)">
                   {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
                 </option>
@@ -123,8 +114,7 @@
           <div v-if="selectedEdgeWires.length > 0" class="space-y-2">
             <label class="text-sm font-semibold">Wiring Diagram Entries</label>
             <div class="space-y-1">
-              <div
-                v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
+              <div v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
                 class="flex items-center justify-between gap-2 text-xs text-muted-foreground font-mono bg-muted/50 rounded px-2 py-1">
                 <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
                 <Button variant="ghost" size="sm" @click="removeWireFromSelectedEdge(wire)">
@@ -165,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, watch, markRaw } from 'vue'
+import { ref, nextTick, onMounted, computed, watch, markRaw, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -183,11 +173,30 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { isCompatible } from '@/lib/portCompatibility'
 import { JsonForms } from '@jsonforms/vue'
-import { vanillaRenderers } from '@jsonforms/vue-vanilla'
+import { vanillaRenderers, defaultStyles, mergeStyles } from '@jsonforms/vue-vanilla'
 import { createAjv, JsonSchema } from '@jsonforms/core'
 
 const renderers = markRaw(vanillaRenderers)
 const ajv = createAjv({ useDefaults: true })
+
+const nodePropertyStyles = mergeStyles(defaultStyles, {
+  control: {
+    root: 'mb-3',
+    label: 'text-xs font-medium text-muted-foreground mb-1',
+    input: 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm',
+    asterisk: 'text-red-500 ml-0.5',
+  },
+  arrayList: {
+    root: 'mb-3',
+    label: 'text-xs font-medium text-muted-foreground mb-1',
+    addButton: 'text-xs px-2 py-1 border border-input rounded-md mt-1 hover:bg-muted cursor-pointer',
+    itemWrapper: 'flex items-center gap-2 mb-1',
+    itemDelete: 'text-xs text-red-500 cursor-pointer hover:text-red-700',
+    noData: 'text-xs text-muted-foreground',
+  },
+})
+
+provide('styles', nodePropertyStyles)
 
 // Register custom node types
 const nodeTypes = {
@@ -401,12 +410,12 @@ const selectedNodeSchema = computed<JsonSchema | null>(() => {
 /*const nodeConfig = computed(() => {
   return selectedNode.value?.data?.config
 })*/
-const nodeConfig = computed(() => {                                                                                                                                 
-    const nodeData = selectedNode.value?.data as NodeData | undefined
-    return nodeData?.config ?? {}
-  })
+const nodeConfig = computed(() => {
+  const nodeData = selectedNode.value?.data as NodeData | undefined
+  return nodeData?.config ?? {}
+})
 
-const updateNodeConfig = (event: {data: unknown}) => {
+const updateNodeConfig = (event: { data: unknown }) => {
   nodes.value = nodes.value.map((node) => {
     if (node.id !== selectedNode.value?.id) {
       return node
@@ -615,9 +624,25 @@ onMounted(() => {
   background: var(--muted);
 }
 
-.required .asterisk {
-  color: red;
-  font-weight: bold;
+.array-list-item-delete {
+  font-size: 0;
 }
 
+.array-list-item-delete::after {
+  content: "×";
+  font-size: 0.875rem;
+}
+
+.control input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .control input[type="checkbox"] {
+    color-scheme: dark;
+  }
+}
 </style>
