@@ -7,7 +7,7 @@ export interface PortDefinition {
 
 export interface NodeData {
   label: string
-  config?: Record<string, string>
+  config?: Record<string, unknown>
   componentType?: string
 }
 

@@ -26,7 +26,7 @@ interface Component {
   host?: string
   container_port?: number
   image?: string
-  parameters: Record<string, string>
+  parameters: Record<string, unknown>
   helics_config_override?: SharedFederateConfig
 }
 
@@ -50,10 +50,11 @@ function toComponent(node: Node<NodeData>): Component {
   } else if (node.data.componentType === undefined) {
     throw new Error(`Node "${node.data.label}" does not have type`)
   }
+  const { name, ...parameters } = node.data.config ?? {}
   return {
-    name: node.data.label,
+    name: typeof name === 'string' ? name : node.id,
     type: node.data.componentType,
-    parameters: node.data.config ?? {},
+    parameters: parameters,
   }
 }
 
@@ -85,9 +86,8 @@ function toLinks(
 export function toWiringDiagram(config: TemplateData): WiringDiagram {
   const nodeIdsToLabels = new Map<string, string>(
     config.nodes.map((n) => {
-      if (n.data === undefined)
-        throw new Error(`Node "${n.id}" is missing data`)
-      return [n.id, n.data.label] as const
+      const configName = n.data?.config?.name
+      return [n.id, typeof configName === 'string' ? configName : n.id] as const
     }),
   )
   return {

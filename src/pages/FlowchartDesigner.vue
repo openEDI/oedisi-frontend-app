@@ -55,14 +55,14 @@
         <div v-else-if="selectedNode" class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Static Inputs</label>
-            <div v-if="selectedNodeStaticInputs.length > 0" class="space-y-2">
-              <div v-for="input in selectedNodeStaticInputs" :key="input.port_id" class="space-y-1">
-                <label class="text-xs font-medium text-muted-foreground">{{ input.port_id }}</label>
-                <Input
-                  :model_value="getSelectedNodeConfigValue(input.port_id)"
-                  :placeholder="`Enter ${input.port_id}`"
-                  @update:model_value="onStaticInputChange(input.port_id, $event)" />
-              </div>
+            <div v-if="selectedNodeSchema" class="space-y-2">
+              <JsonForms
+                :data="nodeConfig"
+                :schema="selectedNodeSchema"
+                :renderers="renderers"
+                :ajv="ajv"
+                :validation-mode="'ValidateAndHide'"
+                @change="updateNodeConfig" />
             </div>
             <p v-else class="text-sm text-muted-foreground">No static inputs for this component.</p>
           </div>
@@ -182,6 +182,12 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { isCompatible } from '@/lib/portCompatibility'
+import { JsonForms } from '@jsonforms/vue'
+import { vanillaRenderers } from '@jsonforms/vue-vanilla'
+import { createAjv, JsonSchema } from '@jsonforms/core'
+
+const renderers = markRaw(vanillaRenderers)
+const ajv = createAjv({ useDefaults: true })
 
 // Register custom node types
 const nodeTypes = {
@@ -215,7 +221,6 @@ const addNode = (type: string, position: { x: number; y: number }) => {
     position,
     data: {
       label: component?.name || type.charAt(0).toUpperCase() + type.slice(1),
-      config: {},
       componentType: type,
     },
   }
@@ -372,71 +377,51 @@ const selectedEdgeWires = computed<EdgeWire[]>(() => {
   return edgeData?.wires ?? []
 })
 
-const selectedNodeStaticInputs = computed<PortDefinition[]>(() => {
+const selectedNodeSchema = computed<JsonSchema | null>(() => {
   if (!selectedNode.value) {
-    return []
+    return null
   }
 
   const nodeData = selectedNode.value.data as NodeData | undefined
   const componentType = nodeData?.componentType
   if (!componentType) {
-    return []
+    return null
   }
 
   const component = components.find((item) => item.id === componentType)
   if (!component) {
-    return []
+    return null
   }
-
-  return component.definition.static_inputs
-    .map((port) => ({
-      type: typeof port.type === 'string' ? port.type : '',
-      port_id: typeof port.port_id === 'string' ? port.port_id : '',
-    }))
-    .filter((port) => port.port_id)
+  if (!component.inputSchema) {
+    return null
+  }
+  return component.inputSchema ?? {}
 })
 
-const getSelectedNodeConfigValue = (portId: string): string => {
-  if (!selectedNode.value) {
-    return ''
-  }
+/*const nodeConfig = computed(() => {
+  return selectedNode.value?.data?.config
+})*/
+const nodeConfig = computed(() => {                                                                                                                                 
+    const nodeData = selectedNode.value?.data as NodeData | undefined
+    return nodeData?.config ?? {}
+  })
 
-  const nodeData = selectedNode.value.data as NodeData | undefined
-  return nodeData?.config?.[portId] ?? ''
-}
-
-const updateNodeConfig = (nodeId: string, portId: string, value: string) => {
+const updateNodeConfig = (event: {data: unknown}) => {
   nodes.value = nodes.value.map((node) => {
-    if (node.id !== nodeId) {
+    if (node.id !== selectedNode.value?.id) {
       return node
     }
 
     const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
-    const currentConfig = currentData.config ?? {}
 
     return {
       ...node,
       data: {
         ...currentData,
-        config: {
-          ...currentConfig,
-          [portId]: value,
-        },
+        config: event.data,
       },
     }
   })
-
-  if (selectedNode.value?.id === nodeId) {
-    selectedNode.value = nodes.value.find((node) => node.id === nodeId) || null
-  }
-}
-
-const onStaticInputChange = (portId: string, value: string) => {
-  if (!selectedNode.value) {
-    return
-  }
-
-  updateNodeConfig(selectedNode.value.id, portId, value)
 }
 
 const wireDisplayLabel = (wire: EdgeWire): string => wire.type
@@ -629,4 +614,10 @@ onMounted(() => {
 .vue-flow .vue-flow__controls-button:hover {
   background: var(--muted);
 }
+
+.required .asterisk {
+  color: red;
+  font-weight: bold;
+}
+
 </style>

@@ -15,12 +15,12 @@ function makeTemplate(overrides = {}): TemplateData {
   }
 }
 
-function makeNode(id: string = 'node1', overrides = {}): Node<NodeData> {
+function makeNode(id: string = 'feeder_1', overrides = {}): Node<NodeData> {
   return {
     id: id,
     position: { x: 0, y: 0 },
     data: {
-      label: 'feeder_1',
+      label: 'Feeder',
       componentType: 'feeder',
       ...overrides,
     },
@@ -55,14 +55,14 @@ describe('toWiringDiagram', () => {
       toWiringDiagram(
         makeTemplate({
           nodes: [
-            makeNode('node1', { label: 'feeder_1' }),
-            makeNode('node2', { label: 'feeder_2' }),
+            makeNode('feeder_1'),
+            makeNode('node_2', { config: { name: 'feeder_2' } }),
           ],
           edges: [
             {
               id: 'edge1',
-              source: 'node1',
-              target: 'node2',
+              source: 'feeder_1',
+              target: 'node_2',
               data: {
                 wires: [
                   {
