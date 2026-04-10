@@ -20,11 +20,7 @@
       </div>
 
       <div v-else class="grid gap-4">
-        <Card 
-          v-for="config in savedConfigs"
-          :key="config.id"
-          class="hover:shadow-md transition-shadow"
-        >
+        <Card v-for="config in savedConfigs" :key="config.id" class="hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle>{{ config.name }}</CardTitle>
             <CardDescription>{{ config.description }}</CardDescription>
@@ -35,16 +31,13 @@
               <div v-if="config.nodes && config.nodes.length > 0" class="mb-4">
                 <h4 class="text-sm font-semibold text-foreground mb-2">Components:</h4>
                 <div class="flex flex-wrap gap-2">
-                  <span
-                    v-for="node in config.nodes"
-                    :key="node.id"
-                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground"
-                  >
+                  <span v-for="node in config.nodes" :key="node.id"
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
                     {{ node.data?.label || node.data?.componentType || 'Component' }}
                   </span>
                 </div>
               </div>
-              
+
               <div class="flex gap-4 text-sm text-muted-foreground">
                 <span>Nodes: {{ config.nodes?.length || 0 }}</span>
                 <span>Connections: {{ config.edges?.length || 0 }}</span>
@@ -73,14 +66,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { api, type SavedConfig } from '@/lib/api'
+import { ref, onActivated, toRaw } from 'vue'
+import { type HistoryState, useRouter } from 'vue-router'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import { TemplateData } from '@/lib/flowTypes'
 
 const router = useRouter()
-const savedConfigs = ref<SavedConfig[]>([])
+const savedConfigs = ref<TemplateData[]>([])
 const loading = ref(false)
 
 const loadConfigs = async () => {
@@ -99,19 +93,18 @@ const formatDate = (dateString: string): string => {
   return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-const runTemplate = (config: SavedConfig) => {
+const runTemplate = (config: TemplateData) => {
   // Store the config to run in the simulation
   sessionStorage.setItem('runTemplate', JSON.stringify(config))
   router.push('/status')
 }
 
-const loadTemplate = (config: SavedConfig) => {
-  // Store the config to load in the designer
-  sessionStorage.setItem('loadTemplate', JSON.stringify(config))
-  router.push('/designer')
+const loadTemplate = (config: TemplateData) => {
+  // Use history API to push config to designer.
+  router.push({ path: '/designer', state: { template: toRaw(config) } as unknown as HistoryState })
 }
 
-const downloadTemplate = (config: SavedConfig) => {
+const downloadTemplate = (config: TemplateData) => {
   const jsonString = JSON.stringify(config, null, 2)
   const blob = new Blob([jsonString], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -136,7 +129,7 @@ const deleteTemplate = async (id: string) => {
   }
 }
 
-onMounted(() => {
+onActivated(() => {
   loadConfigs()
 })
 </script>

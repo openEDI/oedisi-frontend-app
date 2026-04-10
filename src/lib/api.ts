@@ -1,19 +1,10 @@
-import type { Node, Edge } from '@vue-flow/core'
+import { TemplateData } from './flowTypes'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
-export interface SavedConfig {
-  id: string
-  name: string
-  description: string
-  nodes: Node[], 
-  edges: Edge[],
-  createdAt: string
-}
-
 export const api = {
   // Get all templates
-  async getTemplates(): Promise<SavedConfig[]> {
+  async getTemplates(): Promise<TemplateData[]> {
     const response = await fetch(`${API_BASE_URL}/templates`)
     if (!response.ok) {
       throw new Error('Failed to fetch templates')
@@ -22,7 +13,7 @@ export const api = {
   },
 
   // Get a single template by ID
-  async getTemplate(id: string): Promise<SavedConfig> {
+  async getTemplate(id: string): Promise<TemplateData> {
     try {
       const response = await fetch(`${API_BASE_URL}/templates/${id}`)
       if (!response.ok) {
@@ -36,7 +27,9 @@ export const api = {
   },
 
   // Save a template
-  async saveTemplate(template: SavedConfig): Promise<{ success: boolean; id: string }> {
+  async saveTemplate(
+    template: TemplateData,
+  ): Promise<{ success: boolean; id: string }> {
     const response = await fetch(`${API_BASE_URL}/templates`, {
       method: 'POST',
       headers: {
@@ -59,7 +52,8 @@ export const api = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`
+      const errorMessage =
+        errorData.error || `HTTP ${response.status}: ${response.statusText}`
       throw new Error(errorMessage)
     }
   },
