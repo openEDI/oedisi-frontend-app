@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "node server/index.js",
+    "dev:server": "uv --directory server run uvicorn main:app --reload --port 3001",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
@@ -26,8 +26,6 @@
     "autoprefixer": "^10.4.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cors": "^2.8.5",
-    "express": "^4.22.1",
     "lucide-vue-next": "^0.428.0",
     "reka-ui": "^2.8.2",
     "tailwind-merge": "^2.6.1",
