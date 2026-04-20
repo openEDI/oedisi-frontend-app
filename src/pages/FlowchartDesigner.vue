@@ -422,21 +422,12 @@ const nodeConfig = computed(() => {
 })
 
 const updateNodeConfig = (event: { data: unknown }) => {
-  nodes.value = nodes.value.map((node) => {
-    if (node.id !== selectedNode.value?.id) {
-      return node
-    }
-
-    const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
-
-    return {
-      ...node,
-      data: {
-        ...currentData,
-        config: event.data,
-      },
-    }
-  })
+  const node = nodes.value.find((node) => node.id === selectedNodeId.value)
+  if (!node) {
+    return
+  }
+  const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
+  node.data = { ...currentData, config: event.data }
 }
 
 const wireDisplayLabel = (wire: EdgeWire): string => wire.type
@@ -451,21 +442,16 @@ const buildEdgeLabel = (wires: EdgeWire[]): string | undefined => {
 
 const updateEdgeData = (edgeId: string, wires: EdgeWire[]) => {
   const nextLabel = buildEdgeLabel(wires)
-  edges.value = edges.value.map((edge) => {
-    if (edge.id !== edgeId) {
-      return edge
-    }
-
-    return {
-      ...edge,
-      data: {
-        ...(edge.data as Record<string, unknown> | undefined),
-        wires,
-      },
-      label: nextLabel,
-      type: 'wiring',
-    }
-  })
+  const edge = edges.value.find((edge) => edge.id === edgeId)
+  if (!edge) {
+    return
+  }
+  edge.data = {
+    ...(edge.data as Record<string, unknown> | undefined),
+    wires
+  }
+  edge.label = nextLabel
+  edge.type = 'wiring'
 }
 
 const addWireToSelectedEdge = () => {
