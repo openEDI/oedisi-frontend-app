@@ -214,8 +214,14 @@ const components = COMPONENT_CATALOG
 
 const nodes = ref<Node[]>([])
 const edges = ref<Edge[]>([])
-const selectedNode = ref<Node | null>(null)
-const selectedEdge = ref<Edge | null>(null)
+const selectedNodeId = ref<string | null>(null)
+const selectedEdgeId = ref<string | null>(null)
+const selectedNode = computed<Node | null>(() => {
+  return nodes.value.find((node) => node.id === selectedNodeId.value) ?? null
+})
+const selectedEdge = computed<Edge | null>(() => {
+  return edges.value.find((edge) => edge.id === selectedEdgeId.value) ?? null
+})
 const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
@@ -265,18 +271,18 @@ const onDragStart = (componentId: string, dragEvent: DragEvent) => {
 }
 
 const onNodeClick = (event: { node: Node }) => {
-  selectedNode.value = event.node
-  selectedEdge.value = null
+  selectedNodeId.value = event.node.id
+  selectedEdgeId.value = null
 }
 
 const onEdgeClick = (event: { edge: Edge }) => {
-  selectedEdge.value = event.edge
-  selectedNode.value = null
+  selectedEdgeId.value = event.edge.id
+  selectedNodeId.value = null
 }
 
 const onPaneClick = () => {
-  selectedNode.value = null
-  selectedEdge.value = null
+  selectedNodeId.value = null
+  selectedEdgeId.value = null
 }
 
 const onConnect = (connection: Connection) => {
@@ -460,11 +466,6 @@ const updateEdgeData = (edgeId: string, wires: EdgeWire[]) => {
       type: 'wiring',
     }
   })
-
-  if (selectedEdge.value?.id === edgeId) {
-    const updatedEdge = edges.value.find((edge) => edge.id === edgeId) || null
-    selectedEdge.value = updatedEdge
-  }
 }
 
 const addWireToSelectedEdge = () => {
@@ -522,13 +523,13 @@ watch(
 const deleteNode = (nodeId: string) => {
   nodes.value = nodes.value.filter((n) => n.id !== nodeId)
   edges.value = edges.value.filter((e) => e.source !== nodeId && e.target !== nodeId)
-  selectedNode.value = null
-  selectedEdge.value = null
+  selectedNodeId.value = null
+  selectedEdgeId.value = null
 }
 
 const deleteEdge = (edgeId: string) => {
   edges.value = edges.value.filter((e) => e.id !== edgeId)
-  selectedEdge.value = null
+  selectedEdgeId.value = null
 }
 
 const getNodeLabel = (nodeId: string): string => {

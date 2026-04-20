@@ -35,7 +35,7 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     inputSchema: feederSchema,
   },
   {
-    id: 'wls_se_algorihtm',
+    id: 'wls_se_algorithm',
     name: 'State Estimator',
     description: 'WLS state estimator',
     definitionFile: 'wls_federate.json',

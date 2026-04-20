@@ -71,10 +71,7 @@ function toLinks(
   nodeIdsToLabels: Map<string, string>,
   edge: Edge<EdgeData>,
 ): Link[] {
-  if (edge.data === undefined) {
-    throw new Error(`Edge "${edge.id}" is missing all data`)
-  }
-  const wires = edge.data.wires ?? []
+  const wires = edge.data?.wires ?? []
   const source = nodeIdsToLabels.get(edge.source)
   const target = nodeIdsToLabels.get(edge.target)
   if (source === undefined || target === undefined) {
