@@ -9,8 +9,8 @@
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "smoke:templates": "node scripts/smoke-templates.mjs",
-    "lint": "eslint src/ server/ scripts/",
-    "lint:fix": "eslint src/ server/ scripts/ --fix",
+    "lint": "eslint src/ scripts/",
+    "lint:fix": "eslint src/ scripts/ --fix",
     "test": "vitest run",
     "test:watch": "vitest"
   },
