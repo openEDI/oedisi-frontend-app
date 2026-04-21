@@ -45,7 +45,7 @@
               </div>
             </div>
             <div class="flex flex-col gap-2">
-              <Button @click="runTemplate(config)">
+              <Button :disabled="runPending" @click="runTemplate(config)">
                 ▶ Run
               </Button>
               <Button variant="secondary" @click="loadTemplate(config)">
@@ -94,15 +94,20 @@ const formatDate = (dateString: string): string => {
   return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
+const runPending = ref(false)
+
 const runTemplate = async (config: TemplateData) => {
   // Convert to wiringDiagram and start a run.
   try {
+    runPending.value = true
     const wiringDiagram = toWiringDiagram(config)
     const { run_id: runId } = await api.startRun(wiringDiagram)
     router.push(`/status/${runId}`)
   } catch (error) {
     console.error('runTemplate error:', error)
-    alert('Failed to run template. Please try again.')
+    alert(`Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
+  } finally {
+    runPending.value = false
   }
 }
 
