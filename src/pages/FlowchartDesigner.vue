@@ -148,7 +148,9 @@
         <DialogFooter>
           <Button variant="outline" @click="saveDialogOpen = false">Cancel</Button>
           <Button variant="secondary" @click="exportTemplate">Export as Wiring Diagram</Button>
-          <Button @click="saveTemplate">Save Template</Button>
+          <Button :disabled="runPending" variant="secondary" @click="saveAndRunTemplate">{{ runPending ? 'Starting...' :
+            'Save and Run' }}</Button>
+          <Button :disabled="savePending" @click="saveTemplate">{{ savePending ? 'Saving...' : 'Save' }}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -533,16 +535,20 @@ function getTemplate(name: string, description: string, nodes: Node[], edges: Ed
   }
 }
 
+const savePending = ref(false)
+
 const saveTemplate = async () => {
+  savePending.value = true
   const config: TemplateData = getTemplate(templateName.value, templateDescription.value, nodes.value, edges.value)
 
   try {
     await api.saveTemplate(config)
-
     saveDialogOpen.value = false
   } catch (error) {
     console.error('Error saving template:', error)
     alert('Failed to save template. Please try again.')
+  } finally {
+    savePending.value = false
   }
 }
 
@@ -569,6 +575,41 @@ const exportTemplate = () => {
   URL.revokeObjectURL(url)
 
   saveDialogOpen.value = false
+}
+
+const runPending = ref(false)
+
+const saveAndRunTemplate = async () => {
+  runPending.value = true
+  const config: TemplateData = getTemplate(templateName.value, templateDescription.value, nodes.value, edges.value)
+
+  try {
+    try {
+      await api.saveTemplate(config)
+    } catch (error) {
+      console.error('Error saving template:', error)
+      alert('Failed to save template. Please try again.')
+      return
+    }
+    let wiringDiagram: WiringDiagram
+    try {
+      wiringDiagram = toWiringDiagram(config)
+    } catch (error) {
+      console.error('Error exporting wiring diagram:', error)
+      alert('Failed to export wiring diagram. Check that all components and connections are configured.')
+      return
+    }
+    try {
+      const { run_id: runId } = await api.startRun(wiringDiagram)
+      saveDialogOpen.value = false
+      router.push(`/status/${runId}`)
+    } catch (error) {
+      console.error('saveAndRunTemplate error:', error)
+      alert(`Saved template. Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
+    }
+  } finally {
+    runPending.value = false
+  }
 }
 
 function isValidTemplate(value: unknown): value is TemplateData {

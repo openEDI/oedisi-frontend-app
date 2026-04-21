@@ -1,4 +1,5 @@
-import { TemplateData } from './flowTypes'
+import { type TemplateData } from './flowTypes'
+import { type WiringDiagram } from './wiringDiagram'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
@@ -53,8 +54,38 @@ export const api = {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       const errorMessage =
-        errorData.error || `HTTP ${response.status}: ${response.statusText}`
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
       throw new Error(errorMessage)
     }
+  },
+
+  async startRun(wiringDiagram: WiringDiagram): Promise<{ run_id: string }> {
+    const response = await fetch(`${API_BASE_URL}/runs`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(wiringDiagram),
+    })
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+
+    return await response.json()
+  },
+  async runStatus(
+    run_id: string,
+  ): Promise<{ status: 'done' | 'running' | 'failed'; exit_code?: number }> {
+    const response = await fetch(`${API_BASE_URL}/runs/${run_id}`, {
+      method: 'GET',
+    })
+    if (!response.ok) {
+      throw new Error('Failed to get run')
+    }
+
+    return await response.json()
   },
 }

@@ -23,7 +23,7 @@ const routes = [
     component: SimulationResults,
   },
   {
-    path: '/status',
+    path: '/status/:runId',
     component: SimulationStatus,
   },
   {

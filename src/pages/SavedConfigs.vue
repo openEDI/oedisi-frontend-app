@@ -72,6 +72,7 @@ import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { TemplateData } from '@/lib/flowTypes'
+import { toWiringDiagram } from '@/lib/wiringDiagram'
 
 const router = useRouter()
 const savedConfigs = ref<TemplateData[]>([])
@@ -93,10 +94,16 @@ const formatDate = (dateString: string): string => {
   return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
-const runTemplate = (config: TemplateData) => {
-  // Store the config to run in the simulation
-  sessionStorage.setItem('runTemplate', JSON.stringify(config))
-  router.push('/status')
+const runTemplate = async (config: TemplateData) => {
+  // Convert to wiringDiagram and start a run.
+  try {
+    const wiringDiagram = toWiringDiagram(config)
+    const { run_id: runId } = await api.startRun(wiringDiagram)
+    router.push(`/status/${runId}`)
+  } catch (error) {
+    console.error('runTemplate error:', error)
+    alert('Failed to run template. Please try again.')
+  }
 }
 
 const loadTemplate = (config: TemplateData) => {
