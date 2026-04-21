@@ -27,7 +27,7 @@ export interface ComponentDefinition {
 
 export const COMPONENT_CATALOG: ComponentDefinition[] = [
   {
-    id: 'feeder',
+    id: 'Feeder',
     name: 'Feeder',
     description: 'OpenDSS simulation engine',
     definitionFile: 'feeder.json',
@@ -35,7 +35,7 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     inputSchema: feederSchema,
   },
   {
-    id: 'wls_se_algorithm',
+    id: 'StateEstimatorComponent',
     name: 'State Estimator',
     description: 'WLS state estimator',
     definitionFile: 'wls_federate.json',
@@ -43,14 +43,14 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     inputSchema: wlsSchema,
   },
   {
-    id: 'lin_dist_flow_algorithm',
+    id: 'LinDistFlowComponent',
     name: 'LinDistFlow Algorithm',
     description: 'LinDistFlow optimization algorithm',
     definitionFile: 'lin_dist_flow_algorithm.json',
     definition: linDistFlowDefinition,
   },
   {
-    id: 'sensor',
+    id: 'MeasurementComponent',
     name: 'Sensor',
     description: 'Sensor model',
     definitionFile: 'sensor.json',
@@ -58,7 +58,7 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     inputSchema: sensorSchema,
   },
   {
-    id: 'recorder',
+    id: 'Recorder',
     name: 'Recorder',
     description: 'Records simulation results',
     definitionFile: 'recorder.json',
