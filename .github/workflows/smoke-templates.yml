@@ -23,7 +23,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          prune-cache: false
+
+      - name: Install server deps
+        run: uv sync
+        working-directory: server
+
       - name: Start backend server
+        env:
+          OEDISI_COMPONENTS: /tmp/fake-components
         run: |
           npm run dev:server > server.log 2>&1 &
           echo $! > server.pid

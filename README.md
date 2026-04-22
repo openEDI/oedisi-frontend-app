@@ -9,16 +9,17 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 - **Component Library**: Pre-built components (Simulator, Data Source, Connector, Configuration)
 - **Node Connections**: Connect components with visual edges in the flowchart
 - **Responsive UI**: Built with Tailwind CSS and Radix UI Vue components
-- **Backend API**: Express.js server with file-based JSON storage
+- **Backend API**: Python FastAPI server with file-based JSON storage and oedisi simulation runner
 - **Persistent Storage**: Templates stored as JSON files in `data/templates/`
 
 ## Project Structure
 
 ```
-├── server/              # Backend API server
-│   ├── index.js         # Express.js server and API routes
-│   ├── database.js      # File-based template storage operations
-│   └── README.md        # Server documentation
+├── server/              # Backend API server (Python FastAPI)
+│   ├── main.py          # FastAPI app: template CRUD + simulation run endpoints
+│   ├── components.json  # Component name → oedisi component-definition path map
+│   ├── pyproject.toml   # uv-managed Python dependencies
+│   └── CLAUDE.md        # Server design notes
 ├── data/                # Template storage directory
 │   └── templates/       # JSON template files ({id}.json)
 ├── src/
@@ -48,6 +49,8 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 ### Prerequisites
 
 - Node.js 18+ and npm/pnpm
+- Python 3.12+ and [`uv`](https://docs.astral.sh/uv/) for the backend
+- `helics` binary on `PATH` (only needed to actually run simulations)
 
 ### Installation
 
@@ -63,6 +66,9 @@ cd /Users/alatif/Documents/GitHub/oedisi-frontend-app
 npm install
 # or
 pnpm install
+
+# Backend (Python)
+uv --directory server sync
 ```
 
 3. Start the development servers:
@@ -156,9 +162,10 @@ Monitor active simulations and their progress (placeholder for future implementa
 
 ### Backend
 
-- **Express.js**: Web application framework
-- **Node.js fs/path**: File system template persistence
-- **CORS**: Cross-origin resource sharing
+- **FastAPI** + **uvicorn**: Python web framework and ASGI server
+- **uv**: Python package and project manager
+- **oedisi**: Used as a library to build runner configs in-process
+- **HELICS**: External binary invoked as a subprocess to actually run simulations
 
 ## Styling
 
@@ -211,13 +218,20 @@ Each template document contains:
 
 The backend provides REST API endpoints:
 
+Templates:
 - `GET /api/templates` - Get all templates
-- `GET /api/templates/:id` - Get a single template
+- `GET /api/templates/{id}` - Get a single template
 - `POST /api/templates` - Save a new template
-- `PUT /api/templates/:id` - Update a template
-- `DELETE /api/templates/:id` - Delete a template
+- `PUT /api/templates/{id}` - Update a template
+- `DELETE /api/templates/{id}` - Delete a template
 
-See `server/README.md` for more details about the backend API.
+Simulation runs:
+- `POST /api/runs` - Build a runner config from a `WiringDiagram` and start a HELICS subprocess
+- `GET /api/runs/{run_id}` - Poll run status (`running` / `done` / `failed`)
+- `GET /api/runs/{run_id}/logs/{component}` - Stream a component log file
+- `DELETE /api/runs/{run_id}` - Kill a running simulation
+
+Interactive docs are at `http://localhost:3001/docs` when the server is running. See `server/CLAUDE.md` for design details.
 
 ## Future Enhancements
 

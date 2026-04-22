@@ -1,0 +1,9 @@
+{
+    "Recorder": "${OEDISI_COMPONENTS}/recorder/component_definition.json",
+    "LocalFeeder": "${OEDISI_COMPONENTS}/LocalFeeder/component_definition.json",
+    "MeasurementComponent": "${OEDISI_COMPONENTS}/measuring_federate/component_definition.json",
+    "StateEstimatorComponent": "${OEDISI_COMPONENTS}/wls_federate/component_definition.json",
+    "OMOOComponent": "${OEDISI_COMPONENTS}/omoo_federate/component_definition.json",
+    "Feeder": "${OEDISI_COMPONENTS}/LocalFeeder/component_definition.json",
+    "LinDistFlowComponent": "${OEDISI_COMPONENTS}/lindistflow_federate/component_definition.json"
+}

@@ -1,0 +1,7 @@
+# Per-run build dirs and HELICS logs
+runs/
+
+# Python
+__pycache__/
+*.pyc
+.venv/

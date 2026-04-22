@@ -21,7 +21,7 @@ function makeNode(id: string = 'feeder_1', overrides = {}): Node<NodeData> {
     position: { x: 0, y: 0 },
     data: {
       label: 'Feeder',
-      componentType: 'feeder',
+      componentType: 'Feeder',
       ...overrides,
     },
   }
@@ -33,6 +33,8 @@ describe('toWiringDiagram', () => {
       name: 'name',
       components: [],
       links: [],
+      description: '',
+      createdAt: 'test-time',
     })
   })
 
@@ -42,11 +44,13 @@ describe('toWiringDiagram', () => {
       components: [
         {
           name: 'feeder_1',
-          type: 'feeder',
+          type: 'Feeder',
           parameters: {},
         },
       ],
       links: [],
+      description: '',
+      createdAt: 'test-time',
     })
   })
 
@@ -81,12 +85,12 @@ describe('toWiringDiagram', () => {
       components: [
         {
           name: 'feeder_1',
-          type: 'feeder',
+          type: 'Feeder',
           parameters: {},
         },
         {
           name: 'feeder_2',
-          type: 'feeder',
+          type: 'Feeder',
           parameters: {},
         },
       ],
@@ -98,6 +102,8 @@ describe('toWiringDiagram', () => {
           target_port: 'voltage_magnitude',
         },
       ],
+      description: '',
+      createdAt: 'test-time',
     })
   })
 
