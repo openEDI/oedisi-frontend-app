@@ -36,6 +36,20 @@ from oedisi.componentframework.system_configuration import (
     WiringDiagram,
     generate_runner_config,
 )
+from pydantic import ConfigDict
+
+
+class AppWiringDiagram(WiringDiagram):
+    """WiringDiagram + whatever frontend extras.
+
+    The frontend also sends `description`, `createdAt`, and potentially more.
+    `model_config` allows extras.
+
+    Component-level extras (e.g. helics_config_override) will only
+    be saved if the version of oedisi has it (see main vs released).
+    """
+
+    model_config = ConfigDict(extra="allow")
 
 
 # ---------------------------------------------------------------------------
@@ -274,6 +288,7 @@ class RunRecord:
     started_at: datetime
     template_id: str | None
     run_dir: Path
+    name: str
 
 
 # In-memory only; lost on restart. See CLAUDE.md.
@@ -282,7 +297,7 @@ runs: dict[str, RunRecord] = {}
 
 @app.post("/api/runs")
 def start_run(
-    wiring_diagram: WiringDiagram,
+    wiring_diagram: AppWiringDiagram,
     template_id: str | None = None,
 ) -> dict[str, str]:
     run_id = uuid.uuid4().hex
@@ -309,8 +324,38 @@ def start_run(
         started_at=datetime.now(timezone.utc),
         template_id=template_id,
         run_dir=run_dir,
+        name=wiring_diagram.name,
     )
     return {"run_id": run_id}
+
+
+def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
+    code = record.proc.poll()
+    out: dict[str, Any] = {
+        "run_id": run_id,
+        "name": record.name,
+        "started_at": record.started_at.isoformat(timespec="milliseconds").replace(
+            "+00:00", "Z"
+        ),
+        "template_id": record.template_id,
+        "run_dir": str(record.run_dir),
+    }
+    if code is None:
+        out["status"] = "running"
+    else:
+        out["status"] = "done" if code == 0 else "failed"
+        out["exit_code"] = code
+    return out
+
+
+@app.get("/api/runs")
+def list_runs() -> list[dict[str, Any]]:
+    # Newest first, by start time. In-memory only — restart wipes this list.
+    return sorted(
+        (_serialize_run(rid, rec) for rid, rec in runs.items()),
+        key=lambda r: r["started_at"],
+        reverse=True,
+    )
 
 
 @app.get("/api/runs/{run_id}")
@@ -318,20 +363,7 @@ def run_status(run_id: str) -> dict[str, Any]:
     record = runs.get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
-
-    code = record.proc.poll()
-    response: dict[str, Any] = {
-        "started_at": record.started_at.isoformat(timespec="milliseconds").replace(
-            "+00:00", "Z"
-        ),
-        "template_id": record.template_id,
-    }
-    if code is None:
-        response["status"] = "running"
-    else:
-        response["status"] = "done" if code == 0 else "failed"
-        response["exit_code"] = code
-    return response
+    return _serialize_run(run_id, record)
 
 
 @app.get("/api/runs/{run_id}/logs/{component}")

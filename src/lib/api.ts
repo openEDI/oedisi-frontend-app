@@ -3,6 +3,16 @@ import { type WiringDiagram } from './wiringDiagram'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 
+export interface RunSummary {
+  run_id: string
+  name: string
+  status: 'running' | 'done' | 'failed'
+  started_at: string
+  template_id: string | null
+  exit_code?: number
+  run_dir: string
+}
+
 export const api = {
   // Get all templates
   async getTemplates(): Promise<TemplateData[]> {
@@ -82,17 +92,22 @@ export const api = {
 
     return await response.json()
   },
-  async runStatus(run_id: string): Promise<{
-    status: 'done' | 'running' | 'failed'
-    exit_code?: number
-    template_id: string | null
-    started_at: string
-  }> {
+  async runStatus(run_id: string): Promise<RunSummary> {
     const response = await fetch(`${API_BASE_URL}/runs/${run_id}`, {
       method: 'GET',
     })
     if (!response.ok) {
       throw new Error('Failed to get run')
+    }
+
+    return await response.json()
+  },
+  async listRuns(): Promise<RunSummary[]> {
+    const response = await fetch(`${API_BASE_URL}/runs`, {
+      method: 'GET',
+    })
+    if (!response.ok) {
+      throw new Error('Failed to list runs')
     }
 
     return await response.json()
