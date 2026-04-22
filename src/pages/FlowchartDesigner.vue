@@ -156,7 +156,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, watch, markRaw, provide } from 'vue'
+import { ref, nextTick, computed, watch, markRaw, provide, onActivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
@@ -415,9 +415,6 @@ const selectedNodeSchema = computed<JsonSchema | null>(() => {
   return component.inputSchema ?? {}
 })
 
-/*const nodeConfig = computed(() => {
-  return selectedNode.value?.data?.config
-})*/
 const nodeConfig = computed(() => {
   const nodeData = selectedNode.value?.data as NodeData | undefined
   return nodeData?.config ?? {}
@@ -574,27 +571,33 @@ const exportTemplate = () => {
   saveDialogOpen.value = false
 }
 
-// Load template from sessionStorage if available (when coming from SavedConfigs)
-onMounted(() => {
-  const loadTemplateData = sessionStorage.getItem('loadTemplate')
-  if (loadTemplateData) {
-    try {
-      const config = JSON.parse(loadTemplateData)
-      nodes.value = config.nodes || []
-      edges.value = (config.edges || []).map((edge: Edge) => {
-        const edgeData = edge.data as EdgeData | undefined
-        const wires = edgeData?.wires ?? []
-        return {
-          ...edge,
-          type: 'wiring',
-          label: buildEdgeLabel(wires),
-        }
-      })
-      // Clear the sessionStorage after loading
-      sessionStorage.removeItem('loadTemplate')
-    } catch (error) {
-      console.error('Error loading template:', error)
-    }
+function isValidTemplate(value: unknown): value is TemplateData {
+  if (value === null || typeof value !== 'object') return false
+  const v = value as Record<string, unknown>
+  if (typeof v.name !== 'string') return false
+  if (typeof v.description !== 'string') return false
+  return Array.isArray(v.nodes) && Array.isArray(v.edges)
+}
+
+// Load template from history state (coming from SavedConfig or others)
+onActivated(() => {
+  const config = window.history.state?.template
+  if (config === undefined || config === null) return
+  if (isValidTemplate(config)) {
+    nodes.value = config.nodes || []
+    edges.value = (config.edges || []).map((edge: Edge) => {
+      const edgeData = edge.data as EdgeData | undefined
+      const wires = edgeData?.wires ?? []
+      return {
+        ...edge,
+        type: 'wiring',
+        label: buildEdgeLabel(wires),
+      }
+    })
+    templateName.value = config.name
+    templateDescription.value = config.description
+  } else {
+    console.error('Error loading template:', config)
   }
 })
 </script>
