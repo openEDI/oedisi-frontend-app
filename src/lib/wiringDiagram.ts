@@ -39,9 +39,11 @@ interface Link {
 
 export interface WiringDiagram {
   name: string
+  description?: string
   components: Component[]
   links: Link[]
   shared_helics_config?: SharedFederateConfig
+  createdAt?: string
 }
 
 function toComponent(node: Node<NodeData>): Component {
@@ -89,6 +91,8 @@ export function toWiringDiagram(config: TemplateData): WiringDiagram {
   )
   return {
     name: config.name,
+    description: config.description,
+    createdAt: config.createdAt,
     components: config.nodes.map(toComponent),
     links: config.edges.flatMap((e) => toLinks(nodeIdsToLabels, e)),
   }

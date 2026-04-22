@@ -147,6 +147,7 @@
         </div>
         <DialogFooter>
           <Button variant="outline" @click="saveDialogOpen = false">Cancel</Button>
+          <Button variant="secondary" @click="exportTemplate">Export as Wiring Diagram</Button>
           <Button @click="saveTemplate">Save Template</Button>
         </DialogFooter>
       </DialogContent>
@@ -175,6 +176,7 @@ import { isCompatible } from '@/lib/portCompatibility'
 import { JsonForms } from '@jsonforms/vue'
 import { vanillaRenderers, defaultStyles, mergeStyles } from '@jsonforms/vue-vanilla'
 import { createAjv, JsonSchema } from '@jsonforms/core'
+import { toWiringDiagram, WiringDiagram } from '@/lib/wiringDiagram'
 
 const renderers = markRaw(vanillaRenderers)
 const ajv = createAjv({ useDefaults: true })
@@ -523,42 +525,53 @@ const getNodeLabel = (nodeId: string): string => {
   return node?.data?.label || nodeId
 }
 
-const saveTemplate = async () => {
-  const config: TemplateData = {
+function getTemplate(name: string, description: string, nodes: Node[], edges: Edge[]): TemplateData {
+  return {
     id: Date.now().toString(),
-    name: templateName.value || `Flow ${new Date().toLocaleString()}`,
-    description: templateDescription.value,
-    nodes: nodes.value,
-    edges: edges.value,
+    name: name || `Flow ${new Date().toLocaleString()}`,
+    description: description,
+    nodes: nodes,
+    edges: edges,
     createdAt: new Date().toISOString(),
   }
+}
+
+const saveTemplate = async () => {
+  const config: TemplateData = getTemplate(templateName.value, templateDescription.value, nodes.value, edges.value)
 
   try {
-    // Save to backend API (stores in data folder)
     await api.saveTemplate(config)
 
-    // Also download JSON file for backup
-    const jsonString = JSON.stringify(config, null, 2)
-    const blob = new Blob([jsonString], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${config.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${Date.now()}.json`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-
     saveDialogOpen.value = false
-    templateName.value = ''
-    templateDescription.value = ''
-
-    // Optionally navigate to saved configs page
-    // router.push('/configs')
   } catch (error) {
     console.error('Error saving template:', error)
     alert('Failed to save template. Please try again.')
   }
+}
+
+const exportTemplate = () => {
+  const config: TemplateData = getTemplate(templateName.value, templateDescription.value, nodes.value, edges.value)
+  let wiringDiagram: WiringDiagram
+  try {
+    wiringDiagram = toWiringDiagram(config)
+  } catch (error) {
+    console.error('Error exporting wiring diagram:', error)
+    alert('Failed to export wiring diagram. Check that all components and connections are configured.')
+    return
+  }
+
+  const jsonString = JSON.stringify(wiringDiagram, null, 2)
+  const blob = new Blob([jsonString], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `${config.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_wiring_${Date.now()}.json`
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+  URL.revokeObjectURL(url)
+
+  saveDialogOpen.value = false
 }
 
 // Load template from sessionStorage if available (when coming from SavedConfigs)
