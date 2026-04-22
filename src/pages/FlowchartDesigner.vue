@@ -602,7 +602,7 @@ const saveAndRunTemplate = async () => {
     try {
       const { run_id: runId } = await api.startRun(wiringDiagram)
       saveDialogOpen.value = false
-      router.push(`/status/${runId}`)
+      router.push(`/runs/${runId}`)
     } catch (error) {
       console.error('saveAndRunTemplate error:', error)
       alert(`Saved template. Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)

@@ -102,7 +102,7 @@ const runTemplate = async (config: TemplateData) => {
     runPending.value = true
     const wiringDiagram = toWiringDiagram(config)
     const { run_id: runId } = await api.startRun(wiringDiagram)
-    router.push(`/status/${runId}`)
+    router.push(`/runs/${runId}`)
   } catch (error) {
     console.error('runTemplate error:', error)
     alert(`Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
