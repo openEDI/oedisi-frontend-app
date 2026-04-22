@@ -1,8 +1,12 @@
-import wslDefinition from '@/lib/definitions/wls_federate.json'
+import wlsDefinition from '@/lib/definitions/wls_federate.json'
 import feederDefinition from '@/lib/definitions/feeder.json'
 import linDistFlowDefinition from '@/lib/definitions/lin_dist_flow_algorithm.json'
 import recorderDefinition from '@/lib/definitions/recorder.json'
 import sensorDefinition from '@/lib/definitions/sensor.json'
+import wlsSchema from '@/lib/schemas/wls_federate.json'
+import feederSchema from '@/lib/schemas/feeder.json'
+import sensorSchema from '@/lib/schemas/measuring_federate.json'
+import recorderSchema from '@/lib/schemas/recorder.json'
 
 export interface FederateDefinition {
   directory: string
@@ -18,6 +22,7 @@ export interface ComponentDefinition {
   description: string
   definitionFile: string
   definition: FederateDefinition
+  inputSchema?: Record<string, unknown>
 }
 
 export const COMPONENT_CATALOG: ComponentDefinition[] = [
@@ -27,13 +32,15 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     description: 'OpenDSS simulation engine',
     definitionFile: 'feeder.json',
     definition: feederDefinition,
+    inputSchema: feederSchema,
   },
   {
-    id: 'wls_se_algorihtm',
+    id: 'wls_se_algorithm',
     name: 'State Estimator',
-    description: 'WSL state estimator',
+    description: 'WLS state estimator',
     definitionFile: 'wls_federate.json',
-    definition: wslDefinition,
+    definition: wlsDefinition,
+    inputSchema: wlsSchema,
   },
   {
     id: 'lin_dist_flow_algorithm',
@@ -48,6 +55,7 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     description: 'Sensor model',
     definitionFile: 'sensor.json',
     definition: sensorDefinition,
+    inputSchema: sensorSchema,
   },
   {
     id: 'recorder',
@@ -55,5 +63,6 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     description: 'Records simulation results',
     definitionFile: 'recorder.json',
     definition: recorderDefinition,
+    inputSchema: recorderSchema,
   },
 ]

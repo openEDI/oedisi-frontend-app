@@ -21,8 +21,7 @@
       <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
         <div class="space-y-4">
-          <div 
-            v-for="component in components" :key="component.id"
+          <div v-for="component in components" :key="component.id"
             class="p-4 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors" draggable="true"
             @dragstart="(e) => onDragStart(component.id, e)">
             <h3 class="font-medium text-sm">{{ component.name }}</h3>
@@ -32,15 +31,14 @@
       </div>
 
       <div class="flex-1 relative bg-muted">
-        <VueFlow
-          ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
-          :connection-line-style="{ stroke: 'var(--foreground)', strokeWidth: 1 }" :default-edge-options="{ type: 'wiring' }"
-          :fit-view-on-init="true" :node-types="nodeTypes" :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver"
-          @node-click="onNodeClick" @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
+        <VueFlow ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
+          :connection-line-style="{ stroke: 'var(--foreground)', strokeWidth: 1 }"
+          :default-edge-options="{ type: 'wiring' }" :fit-view-on-init="true" :node-types="nodeTypes"
+          :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver" @node-click="onNodeClick"
+          @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
           <Background pattern-color="var(--muted-foreground)" :gap="16" />
           <Controls />
-          <MiniMap 
-            node-color="var(--muted-foreground)" mask-color="var(--background)"
+          <MiniMap node-color="var(--muted-foreground)" mask-color="var(--background)"
             :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
@@ -55,14 +53,9 @@
         <div v-else-if="selectedNode" class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Static Inputs</label>
-            <div v-if="selectedNodeStaticInputs.length > 0" class="space-y-2">
-              <div v-for="input in selectedNodeStaticInputs" :key="input.port_id" class="space-y-1">
-                <label class="text-xs font-medium text-muted-foreground">{{ input.port_id }}</label>
-                <Input
-                  :model_value="getSelectedNodeConfigValue(input.port_id)"
-                  :placeholder="`Enter ${input.port_id}`"
-                  @update:model_value="onStaticInputChange(input.port_id, $event)" />
-              </div>
+            <div v-if="selectedNodeSchema" class="space-y-2">
+              <JsonForms :data="nodeConfig" :schema="selectedNodeSchema" :renderers="renderers" :ajv="ajv"
+                :validation-mode="'ValidateAndHide'" @change="updateNodeConfig" />
             </div>
             <p v-else class="text-sm text-muted-foreground">No static inputs for this component.</p>
           </div>
@@ -105,12 +98,10 @@
               No compatible dynamic output/input intersections for this connection.
             </p>
             <div v-else class="space-y-2">
-              <select
-                v-model="selectedWireOption"
+              <select v-model="selectedWireOption"
                 class="h-10 w-full rounded-md border border-border px-3 py-2 bg-card text-sm">
                 <option value="" disabled>Select compatible signal</option>
-                <option 
-                  v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
+                <option v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
                   :value="wireOptionKey(option)">
                   {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
                 </option>
@@ -123,8 +114,7 @@
           <div v-if="selectedEdgeWires.length > 0" class="space-y-2">
             <label class="text-sm font-semibold">Wiring Diagram Entries</label>
             <div class="space-y-1">
-              <div
-                v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
+              <div v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
                 class="flex items-center justify-between gap-2 text-xs text-muted-foreground font-mono bg-muted/50 rounded px-2 py-1">
                 <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
                 <Button variant="ghost" size="sm" @click="removeWireFromSelectedEdge(wire)">
@@ -165,14 +155,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted, computed, watch, markRaw } from 'vue'
+import { ref, nextTick, onMounted, computed, watch, markRaw, provide } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import { api } from '@/lib/api'
-import type { PortDefinition, EdgeWire, EdgeData, NodeData } from '@/lib/flowTypes'
+import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
@@ -182,6 +172,31 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { isCompatible } from '@/lib/portCompatibility'
+import { JsonForms } from '@jsonforms/vue'
+import { vanillaRenderers, defaultStyles, mergeStyles } from '@jsonforms/vue-vanilla'
+import { createAjv, JsonSchema } from '@jsonforms/core'
+
+const renderers = markRaw(vanillaRenderers)
+const ajv = createAjv({ useDefaults: true })
+
+const nodePropertyStyles = mergeStyles(defaultStyles, {
+  control: {
+    root: 'mb-3',
+    label: 'text-xs font-medium text-muted-foreground mb-1',
+    input: 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm',
+    asterisk: 'text-red-500 ml-0.5',
+  },
+  arrayList: {
+    root: 'mb-3',
+    label: 'text-xs font-medium text-muted-foreground mb-1',
+    addButton: 'text-xs px-2 py-1 border border-input rounded-md mt-1 hover:bg-muted cursor-pointer',
+    itemWrapper: 'flex items-center gap-2 mb-1',
+    itemDelete: 'text-xs text-red-500 cursor-pointer hover:text-red-700',
+    noData: 'text-xs text-muted-foreground',
+  },
+})
+
+provide('styles', nodePropertyStyles)
 
 // Register custom node types
 const nodeTypes = {
@@ -199,8 +214,14 @@ const components = COMPONENT_CATALOG
 
 const nodes = ref<Node[]>([])
 const edges = ref<Edge[]>([])
-const selectedNode = ref<Node | null>(null)
-const selectedEdge = ref<Edge | null>(null)
+const selectedNodeId = ref<string | null>(null)
+const selectedEdgeId = ref<string | null>(null)
+const selectedNode = computed<Node | null>(() => {
+  return nodes.value.find((node) => node.id === selectedNodeId.value) ?? null
+})
+const selectedEdge = computed<Edge | null>(() => {
+  return edges.value.find((edge) => edge.id === selectedEdgeId.value) ?? null
+})
 const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
@@ -209,13 +230,12 @@ const { screenToFlowCoordinate } = useVueFlow()
 
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
-  const newNode: Node = {
+  const newNode: Node<NodeData> = {
     id: `${type}-${Date.now()}`,
     type: 'custom',
     position,
     data: {
       label: component?.name || type.charAt(0).toUpperCase() + type.slice(1),
-      config: {},
       componentType: type,
     },
   }
@@ -251,18 +271,18 @@ const onDragStart = (componentId: string, dragEvent: DragEvent) => {
 }
 
 const onNodeClick = (event: { node: Node }) => {
-  selectedNode.value = event.node
-  selectedEdge.value = null
+  selectedNodeId.value = event.node.id
+  selectedEdgeId.value = null
 }
 
 const onEdgeClick = (event: { edge: Edge }) => {
-  selectedEdge.value = event.edge
-  selectedNode.value = null
+  selectedEdgeId.value = event.edge.id
+  selectedNodeId.value = null
 }
 
 const onPaneClick = () => {
-  selectedNode.value = null
-  selectedEdge.value = null
+  selectedNodeId.value = null
+  selectedEdgeId.value = null
 }
 
 const onConnect = (connection: Connection) => {
@@ -372,71 +392,42 @@ const selectedEdgeWires = computed<EdgeWire[]>(() => {
   return edgeData?.wires ?? []
 })
 
-const selectedNodeStaticInputs = computed<PortDefinition[]>(() => {
+const selectedNodeSchema = computed<JsonSchema | null>(() => {
   if (!selectedNode.value) {
-    return []
+    return null
   }
 
   const nodeData = selectedNode.value.data as NodeData | undefined
   const componentType = nodeData?.componentType
   if (!componentType) {
-    return []
+    return null
   }
 
   const component = components.find((item) => item.id === componentType)
   if (!component) {
-    return []
+    return null
   }
-
-  return component.definition.static_inputs
-    .map((port) => ({
-      type: typeof port.type === 'string' ? port.type : '',
-      port_id: typeof port.port_id === 'string' ? port.port_id : '',
-    }))
-    .filter((port) => port.port_id)
+  if (!component.inputSchema) {
+    return null
+  }
+  return component.inputSchema ?? {}
 })
 
-const getSelectedNodeConfigValue = (portId: string): string => {
-  if (!selectedNode.value) {
-    return ''
-  }
+/*const nodeConfig = computed(() => {
+  return selectedNode.value?.data?.config
+})*/
+const nodeConfig = computed(() => {
+  const nodeData = selectedNode.value?.data as NodeData | undefined
+  return nodeData?.config ?? {}
+})
 
-  const nodeData = selectedNode.value.data as NodeData | undefined
-  return nodeData?.config?.[portId] ?? ''
-}
-
-const updateNodeConfig = (nodeId: string, portId: string, value: string) => {
-  nodes.value = nodes.value.map((node) => {
-    if (node.id !== nodeId) {
-      return node
-    }
-
-    const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
-    const currentConfig = currentData.config ?? {}
-
-    return {
-      ...node,
-      data: {
-        ...currentData,
-        config: {
-          ...currentConfig,
-          [portId]: value,
-        },
-      },
-    }
-  })
-
-  if (selectedNode.value?.id === nodeId) {
-    selectedNode.value = nodes.value.find((node) => node.id === nodeId) || null
-  }
-}
-
-const onStaticInputChange = (portId: string, value: string) => {
-  if (!selectedNode.value) {
+const updateNodeConfig = (event: { data: unknown }) => {
+  const node = nodes.value.find((node) => node.id === selectedNodeId.value)
+  if (!node) {
     return
   }
-
-  updateNodeConfig(selectedNode.value.id, portId, value)
+  const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
+  node.data = { ...currentData, config: event.data }
 }
 
 const wireDisplayLabel = (wire: EdgeWire): string => wire.type
@@ -451,26 +442,16 @@ const buildEdgeLabel = (wires: EdgeWire[]): string | undefined => {
 
 const updateEdgeData = (edgeId: string, wires: EdgeWire[]) => {
   const nextLabel = buildEdgeLabel(wires)
-  edges.value = edges.value.map((edge) => {
-    if (edge.id !== edgeId) {
-      return edge
-    }
-
-    return {
-      ...edge,
-      data: {
-        ...(edge.data as Record<string, unknown> | undefined),
-        wires,
-      },
-      label: nextLabel,
-      type: 'wiring',
-    }
-  })
-
-  if (selectedEdge.value?.id === edgeId) {
-    const updatedEdge = edges.value.find((edge) => edge.id === edgeId) || null
-    selectedEdge.value = updatedEdge
+  const edge = edges.value.find((edge) => edge.id === edgeId)
+  if (!edge) {
+    return
   }
+  edge.data = {
+    ...(edge.data as Record<string, unknown> | undefined),
+    wires
+  }
+  edge.label = nextLabel
+  edge.type = 'wiring'
 }
 
 const addWireToSelectedEdge = () => {
@@ -528,13 +509,13 @@ watch(
 const deleteNode = (nodeId: string) => {
   nodes.value = nodes.value.filter((n) => n.id !== nodeId)
   edges.value = edges.value.filter((e) => e.source !== nodeId && e.target !== nodeId)
-  selectedNode.value = null
-  selectedEdge.value = null
+  selectedNodeId.value = null
+  selectedEdgeId.value = null
 }
 
 const deleteEdge = (edgeId: string) => {
   edges.value = edges.value.filter((e) => e.id !== edgeId)
-  selectedEdge.value = null
+  selectedEdgeId.value = null
 }
 
 const getNodeLabel = (nodeId: string): string => {
@@ -543,7 +524,7 @@ const getNodeLabel = (nodeId: string): string => {
 }
 
 const saveTemplate = async () => {
-  const config = {
+  const config: TemplateData = {
     id: Date.now().toString(),
     name: templateName.value || `Flow ${new Date().toLocaleString()}`,
     description: templateDescription.value,
@@ -628,5 +609,27 @@ onMounted(() => {
 
 .vue-flow .vue-flow__controls-button:hover {
   background: var(--muted);
+}
+
+.array-list-item-delete {
+  font-size: 0;
+}
+
+.array-list-item-delete::after {
+  content: "×";
+  font-size: 0.875rem;
+}
+
+.control input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .control input[type="checkbox"] {
+    color-scheme: dark;
+  }
 }
 </style>
