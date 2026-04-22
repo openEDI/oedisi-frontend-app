@@ -19,6 +19,8 @@ import subprocess
 import sys
 import uuid
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -265,41 +267,71 @@ def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
 # Run tracking
 # ---------------------------------------------------------------------------
 
+
+@dataclass
+class RunRecord:
+    proc: subprocess.Popen
+    started_at: datetime
+    template_id: str | None
+    run_dir: Path
+
+
 # In-memory only; lost on restart. See CLAUDE.md.
-runs: dict[str, subprocess.Popen] = {}
+runs: dict[str, RunRecord] = {}
 
 
 @app.post("/api/runs")
-def start_run(wiring_diagram: WiringDiagram) -> dict[str, str]:
+def start_run(
+    wiring_diagram: WiringDiagram,
+    template_id: str | None = None,
+) -> dict[str, str]:
     run_id = uuid.uuid4().hex
-    build_dir = RUNS_DIR / run_id / "build"
+    run_dir = RUNS_DIR / run_id
+    build_dir = run_dir / "build"
 
     try:
         build_runner(wiring_diagram, build_dir)
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=400, detail=f"Build failed: {exc}") from exc
 
+    # Snapshot what was submitted — authoritative record of what actually ran,
+    # independent of whether the originating template is later edited or deleted.
+    (run_dir / "wiring.json").write_text(
+        wiring_diagram.model_dump_json(indent=2), encoding="utf-8"
+    )
+
     proc = subprocess.Popen(
         ["helics", "run", f"--path={build_dir / 'system_runner.json'}"],
         cwd=build_dir,
     )
-    runs[run_id] = proc
+    runs[run_id] = RunRecord(
+        proc=proc,
+        started_at=datetime.now(timezone.utc),
+        template_id=template_id,
+        run_dir=run_dir,
+    )
     return {"run_id": run_id}
 
 
 @app.get("/api/runs/{run_id}")
 def run_status(run_id: str) -> dict[str, Any]:
-    proc = runs.get(run_id)
-    if proc is None:
+    record = runs.get(run_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
 
-    code = proc.poll()
-    if code is None:
-        return {"status": "running"}
-    return {
-        "status": "done" if code == 0 else "failed",
-        "exit_code": code,
+    code = record.proc.poll()
+    response: dict[str, Any] = {
+        "started_at": record.started_at.isoformat(timespec="milliseconds").replace(
+            "+00:00", "Z"
+        ),
+        "template_id": record.template_id,
     }
+    if code is None:
+        response["status"] = "running"
+    else:
+        response["status"] = "done" if code == 0 else "failed"
+        response["exit_code"] = code
+    return response
 
 
 @app.get("/api/runs/{run_id}/logs/{component}")
@@ -316,11 +348,11 @@ def run_log(run_id: str, component: str) -> PlainTextResponse:
 
 @app.delete("/api/runs/{run_id}")
 def kill_run(run_id: str) -> dict[str, bool]:
-    proc = runs.pop(run_id, None)
-    if proc is None:
+    record = runs.pop(run_id, None)
+    if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
-    if proc.poll() is None:
-        proc.kill()
+    if record.proc.poll() is None:
+        record.proc.kill()
     return {"success": True}
 
 

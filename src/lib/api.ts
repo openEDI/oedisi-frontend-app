@@ -29,7 +29,7 @@ export const api = {
 
   // Save a template
   async saveTemplate(
-    template: TemplateData,
+    template: TemplateData
   ): Promise<{ success: boolean; id: string }> {
     const response = await fetch(`${API_BASE_URL}/templates`, {
       method: 'POST',
@@ -59,14 +59,20 @@ export const api = {
     }
   },
 
-  async startRun(wiringDiagram: WiringDiagram): Promise<{ run_id: string }> {
-    const response = await fetch(`${API_BASE_URL}/runs`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(wiringDiagram),
-    })
+  async startRun(
+    wiringDiagram: WiringDiagram,
+    templateId?: string
+  ): Promise<{ run_id: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs${templateId ? '?template_id=' + encodeURIComponent(templateId) : ''}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(wiringDiagram),
+      }
+    )
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       const errorMessage =
@@ -76,9 +82,12 @@ export const api = {
 
     return await response.json()
   },
-  async runStatus(
-    run_id: string,
-  ): Promise<{ status: 'done' | 'running' | 'failed'; exit_code?: number }> {
+  async runStatus(run_id: string): Promise<{
+    status: 'done' | 'running' | 'failed'
+    exit_code?: number
+    template_id: string | null
+    started_at: string
+  }> {
     const response = await fetch(`${API_BASE_URL}/runs/${run_id}`, {
       method: 'GET',
     })

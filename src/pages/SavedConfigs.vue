@@ -2,15 +2,19 @@
   <div class="min-h-screen p-8">
     <div class="max-w-6xl mx-auto">
       <div class="mb-8">
-        <router-link to="/" class="text-primary hover:text-primary/80 mb-4 inline-block">← Back to Home</router-link>
+        <router-link to="/"
+          class="text-primary hover:text-primary/80 mb-4 inline-block">← Back to
+          Home</router-link>
         <h1 class="text-3xl font-bold mb-2">Saved Simulation Templates</h1>
-        <p class="text-muted-foreground">Manage and run your saved simulation configurations</p>
+        <p class="text-muted-foreground">Manage and run your saved simulation
+          configurations</p>
       </div>
 
       <div v-if="loading" class="bg-card rounded-lg p-8 text-center">
         <p class="text-muted-foreground">Loading templates...</p>
       </div>
-      <div v-else-if="savedConfigs.length === 0" class="bg-card rounded-lg p-8 text-center">
+      <div v-else-if="savedConfigs.length === 0"
+        class="bg-card rounded-lg p-8 text-center">
         <p class="text-muted-foreground mb-4">No saved templates yet</p>
         <router-link to="/designer">
           <Button>
@@ -20,7 +24,8 @@
       </div>
 
       <div v-else class="grid gap-4">
-        <Card v-for="config in savedConfigs" :key="config.id" class="hover:shadow-md transition-shadow">
+        <Card v-for="config in savedConfigs" :key="config.id"
+          class="hover:shadow-md transition-shadow">
           <CardHeader>
             <CardTitle>{{ config.name }}</CardTitle>
             <CardDescription>{{ config.description }}</CardDescription>
@@ -29,11 +34,13 @@
             <div class="flex-1">
               <!-- Components List -->
               <div v-if="config.nodes && config.nodes.length > 0" class="mb-4">
-                <h4 class="text-sm font-semibold text-foreground mb-2">Components:</h4>
+                <h4 class="text-sm font-semibold text-foreground mb-2">
+                  Components:</h4>
                 <div class="flex flex-wrap gap-2">
                   <span v-for="node in config.nodes" :key="node.id"
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
-                    {{ node.data?.label || node.data?.componentType || 'Component' }}
+                    {{ node.data?.label || node.data?.componentType ||
+                    'Component' }}
                   </span>
                 </div>
               </div>
@@ -101,7 +108,7 @@ const runTemplate = async (config: TemplateData) => {
   try {
     runPending.value = true
     const wiringDiagram = toWiringDiagram(config)
-    const { run_id: runId } = await api.startRun(wiringDiagram)
+    const { run_id: runId } = await api.startRun(wiringDiagram, config.id)
     router.push(`/runs/${runId}`)
   } catch (error) {
     console.error('runTemplate error:', error)
