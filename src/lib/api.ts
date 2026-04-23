@@ -6,8 +6,9 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
 export interface RunSummary {
   run_id: string
   name: string
-  status: 'running' | 'done' | 'failed'
+  status: 'running' | 'done' | 'failed' | 'unknown'
   started_at: string
+  ended_at?: string
   template_id: string | null
   exit_code?: number
   run_dir: string

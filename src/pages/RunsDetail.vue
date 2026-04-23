@@ -46,7 +46,7 @@ import { Copy, Square } from 'lucide-vue-next'
 
 const route = useRoute()
 const runId = computed<string>(() => String(route.params.runId))
-const status = ref<'running' | 'done' | 'failed' | 'loading'>('loading')
+const status = ref<'running' | 'done' | 'failed' | 'loading' | 'unknown'>('loading')
 const exitCode = ref<number | null>(null)
 const runDir = ref<string | null>(null)
 const runName = ref<string | null>(null)

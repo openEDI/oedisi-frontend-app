@@ -12,10 +12,10 @@ See `CLAUDE.md` in this folder for the design rationale.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import re
-import subprocess
 import sys
 import uuid
 from contextlib import asynccontextmanager
@@ -24,6 +24,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import psutil
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -98,6 +99,7 @@ async def lifespan(app: FastAPI):
         # error is the first thing the user sees in `npm run dev:server`.
         print(f"\n[startup error] {exc}\n", file=sys.stderr)
         raise
+    _restore_runs()
     yield
 
 
@@ -144,10 +146,14 @@ def _validate_template_payload(template: dict[str, Any]) -> None:
 
 
 def _atomic_write_json(path: Path, payload: dict[str, Any]) -> None:
-    TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
+    path.parent.mkdir(parents=True, exist_ok=True)
     tmp_path = path.with_suffix(f".tmp-{os.getpid()}-{uuid.uuid4().hex}")
     tmp_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     os.replace(tmp_path, path)
+
+
+def _iso(dt: datetime) -> str:
+    return dt.isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
 def _read_template(path: Path) -> dict[str, Any]:
@@ -182,13 +188,7 @@ def create_template(template: dict[str, Any]) -> dict[str, Any]:
         # Match the JS server: millisecond timestamp string.
         template["id"] = str(int(__import__("time").time() * 1000))
     if not template.get("createdAt"):
-        from datetime import datetime, timezone
-
-        template["createdAt"] = (
-            datetime.now(timezone.utc)
-            .isoformat(timespec="milliseconds")
-            .replace("+00:00", "Z")
-        )
+        template["createdAt"] = _iso(datetime.now(timezone.utc))
 
     _validate_template_payload(template)
     _atomic_write_json(_template_path(template["id"]), template)
@@ -284,19 +284,150 @@ def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
 
 @dataclass
 class RunRecord:
-    proc: subprocess.Popen
+    pid: int
     started_at: datetime
     template_id: str | None
     run_dir: Path
     name: str
+    status: str  # "running" | "done" | "failed" | "unknown"
+    exit_code: int | None = None
+    ended_at: datetime | None = None
 
 
-# In-memory only; lost on restart. See CLAUDE.md.
 runs: dict[str, RunRecord] = {}
+
+# Hold strong refs to watcher tasks — asyncio's create_task docs warn the
+# task can be GC'd mid-run otherwise. Tasks drop themselves via done_callback.
+_watcher_tasks: set[asyncio.Task[None]] = set()
+
+
+def _run_json_path(run_dir: Path) -> Path:
+    return run_dir / "run.json"
+
+
+def _write_run_start(run_dir: Path, record: RunRecord) -> None:
+    _atomic_write_json(
+        _run_json_path(run_dir),
+        {
+            "pid": record.pid,
+            "started_at": _iso(record.started_at),
+            "template_id": record.template_id,
+            "name": record.name,
+        },
+    )
+
+
+def _write_run_finish(record: RunRecord) -> None:
+    try:
+        data = json.loads(
+            _run_json_path(record.run_dir).read_text(encoding="utf-8")
+        )
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = {}
+    data["exit_code"] = record.exit_code
+    data["ended_at"] = _iso(record.ended_at) if record.ended_at else None
+    _atomic_write_json(_run_json_path(record.run_dir), data)
+
+
+async def _watch_proc(
+    run_id: str, proc: asyncio.subprocess.Process
+) -> None:
+    """Await process exit, update the RunRecord, and persist completion.
+
+    Sole writer of `exit_code`/`ended_at`/terminal `status` on the record —
+    `_serialize_run` only reads, so no synchronization is needed. If the
+    server exits before this resumes, the subprocess keeps going on its own;
+    we just don't record the outcome, and the boot scan marks it "unknown".
+    """
+    code = await proc.wait()
+    record = runs.get(run_id)
+    if record is None:
+        return  # run was deleted while we waited
+    record.exit_code = code
+    record.ended_at = datetime.now(timezone.utc)
+    record.status = "done" if code == 0 else "failed"
+    try:
+        _write_run_finish(record)
+    except OSError as exc:
+        print(f"[run {run_id}] failed to write run.json: {exc}", file=sys.stderr)
+
+
+def _tree_kill(pid: int) -> None:
+    """Kill the process and all its descendants.
+
+    `helics run` spawns a broker plus one federate per component; signalling
+    only the parent orphans the broker, which then lingers holding its port.
+    """
+    try:
+        parent = psutil.Process(pid)
+    except psutil.NoSuchProcess:
+        return
+    for child in parent.children(recursive=True):
+        try:
+            child.kill()
+        except psutil.NoSuchProcess:
+            pass
+    try:
+        parent.kill()
+    except psutil.NoSuchProcess:
+        pass
+
+
+def _restore_runs() -> None:
+    """Rebuild `runs` from `runs/*/run.json` on startup.
+
+    We deliberately do not try to reattach to live PIDs: Windows aggressively
+    reuses PIDs, and validating identity via create_time is more complexity
+    than this tool needs. Runs without a recorded `exit_code` become
+    "unknown" — the subprocess may or may not have finished; check the logs.
+    """
+    if not RUNS_DIR.exists():
+        return
+    for run_dir in RUNS_DIR.iterdir():
+        if not run_dir.is_dir():
+            continue
+        path = _run_json_path(run_dir)
+        if not path.is_file():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        pid = data.get("pid")
+        started_at_raw = data.get("started_at")
+        if not isinstance(pid, int) or not isinstance(started_at_raw, str):
+            continue
+        exit_code = data.get("exit_code")
+        ended_at_raw = data.get("ended_at")
+        try:
+            started_at = datetime.fromisoformat(started_at_raw)
+            ended_at = (
+                datetime.fromisoformat(ended_at_raw)
+                if isinstance(ended_at_raw, str)
+                else None
+            )
+        except ValueError:
+            # Malformed timestamp (hand-edited or truncated file). Skip — a
+            # single bad run.json must not take down boot for everyone else.
+            continue
+        if exit_code is not None:
+            status = "done" if exit_code == 0 else "failed"
+        else:
+            status = "unknown"
+        runs[run_dir.name] = RunRecord(
+            pid=pid,
+            started_at=started_at,
+            template_id=data.get("template_id"),
+            run_dir=run_dir,
+            name=data.get("name", ""),
+            status=status,
+            exit_code=exit_code,
+            ended_at=ended_at,
+        )
 
 
 @app.post("/api/runs")
-def start_run(
+async def start_run(
     wiring_diagram: AppWiringDiagram,
     template_id: str | None = None,
 ) -> dict[str, str]:
@@ -315,42 +446,46 @@ def start_run(
         wiring_diagram.model_dump_json(indent=2), encoding="utf-8"
     )
 
-    proc = subprocess.Popen(
-        ["helics", "run", f"--path={build_dir / 'system_runner.json'}"],
+    proc = await asyncio.create_subprocess_exec(
+        "helics",
+        "run",
+        f"--path={build_dir / 'system_runner.json'}",
         cwd=build_dir,
     )
-    runs[run_id] = RunRecord(
-        proc=proc,
+    record = RunRecord(
+        pid=proc.pid,
         started_at=datetime.now(timezone.utc),
         template_id=template_id,
         run_dir=run_dir,
         name=wiring_diagram.name,
+        status="running",
     )
+    runs[run_id] = record
+    _write_run_start(run_dir, record)
+    task = asyncio.create_task(_watch_proc(run_id, proc))
+    _watcher_tasks.add(task)
+    task.add_done_callback(_watcher_tasks.discard)
     return {"run_id": run_id}
 
 
 def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
-    code = record.proc.poll()
     out: dict[str, Any] = {
         "run_id": run_id,
         "name": record.name,
-        "started_at": record.started_at.isoformat(timespec="milliseconds").replace(
-            "+00:00", "Z"
-        ),
+        "started_at": _iso(record.started_at),
         "template_id": record.template_id,
         "run_dir": str(record.run_dir),
+        "status": record.status,
     }
-    if code is None:
-        out["status"] = "running"
-    else:
-        out["status"] = "done" if code == 0 else "failed"
-        out["exit_code"] = code
+    if record.exit_code is not None:
+        out["exit_code"] = record.exit_code
+    if record.ended_at is not None:
+        out["ended_at"] = _iso(record.ended_at)
     return out
 
 
 @app.get("/api/runs")
 def list_runs() -> list[dict[str, Any]]:
-    # Newest first, by start time. In-memory only — restart wipes this list.
     return sorted(
         (_serialize_run(rid, rec) for rid, rec in runs.items()),
         key=lambda r: r["started_at"],
@@ -383,8 +518,10 @@ def kill_run(run_id: str) -> dict[str, bool]:
     record = runs.get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
-    if record.proc.poll() is None:
-        record.proc.kill()
+    # Only kill runs we launched in this process. "unknown" runs have a pid
+    # from a previous boot; the OS may have reassigned it.
+    if record.status == "running":
+        _tree_kill(record.pid)
     return {"success": True}
 
 
