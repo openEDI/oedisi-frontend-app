@@ -7,6 +7,10 @@ import wlsSchema from '@/lib/schemas/wls_federate.json'
 import feederSchema from '@/lib/schemas/feeder.json'
 import sensorSchema from '@/lib/schemas/measuring_federate.json'
 import recorderSchema from '@/lib/schemas/recorder.json'
+import linDistFlowSchema from '@/lib/schemas/lin_dist_flow_algorithm.json'
+
+import omooDefinition from '@/lib/definitions/omoo_federate.json'
+import omooSchema from '@/lib/schemas/omoo_federate.json'
 
 export interface FederateDefinition {
   directory: string
@@ -48,6 +52,7 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     description: 'LinDistFlow optimization algorithm',
     definitionFile: 'lin_dist_flow_algorithm.json',
     definition: linDistFlowDefinition,
+    inputSchema: linDistFlowSchema,
   },
   {
     id: 'MeasurementComponent',
@@ -64,5 +69,13 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     definitionFile: 'recorder.json',
     definition: recorderDefinition,
     inputSchema: recorderSchema,
+  },
+  {
+    id: 'OMOOComponent',
+    name: 'OMOO',
+    description: 'Optimal Power Flow',
+    definitionFile: 'omoo_federate.json',
+    definition: omooDefinition,
+    inputSchema: omooSchema,
   },
 ]
