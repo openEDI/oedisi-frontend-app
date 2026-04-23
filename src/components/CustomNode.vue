@@ -2,7 +2,13 @@
   <div class="custom-node" :class="{ selected: selected }">
     <Handle type="target" :position="Position.Left" />
     <div class="node-content">
-      <div class="node-label">{{ data.label }}</div>
+      <div v-if="data.config?.name">
+        <div class="node-label">{{ data.config.name }}</div>
+        <div class="node-small-label">{{ data.label }}</div>
+      </div>
+      <div v-else>
+        <div class="node-label">{{ data.label }}</div>
+      </div>
     </div>
     <Handle type="source" :position="Position.Right" />
   </div>
@@ -11,14 +17,9 @@
 <script setup lang="ts">
 import { Handle, Position } from '@vue-flow/core'
 import type { NodeProps } from '@vue-flow/core'
+import type { NodeData } from '@/lib/flowTypes'
 
-interface CustomNodeData {
-  label: string
-  componentType?: string
-  config?: Record<string, string>
-}
-
-defineProps<NodeProps<CustomNodeData>>()
+defineProps<NodeProps<NodeData>>()
 </script>
 
 <style scoped>
@@ -54,6 +55,13 @@ defineProps<NodeProps<CustomNodeData>>()
 .node-label {
   font-weight: 500;
   font-size: 14px;
+  color: var(--foreground);
+  text-align: center;
+}
+
+.node-small-label {
+  font-weight: 300;
+  font-size: 10px;
   color: var(--foreground);
   text-align: center;
 }
