@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="flex-1 flex">
+    <div class="flex-1 flex min-h-0">
       <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
         <div class="space-y-4">
