@@ -8,9 +8,20 @@ import feederSchema from '@/lib/schemas/feeder.json'
 import sensorSchema from '@/lib/schemas/measuring_federate.json'
 import recorderSchema from '@/lib/schemas/recorder.json'
 import linDistFlowSchema from '@/lib/schemas/lin_dist_flow_algorithm.json'
-
 import omooDefinition from '@/lib/definitions/omoo_federate.json'
 import omooSchema from '@/lib/schemas/omoo_federate.json'
+import nlpdopfDefinition from '@/lib/definitions/nlpdopf.json'
+import nlpdopfSchema from '@/lib/schemas/nlpdopf.json'
+import nlpDsseDefinition from '@/lib/definitions/nlpdsse.json'
+import nlpDsseSchema from '@/lib/schemas/nlpdsse.json'
+import pnnlDopfAdmmDefinition from '@/lib/definitions/pnnl_dopf_admm.json'
+import pnnlDopfAdmmSchema from '@/lib/schemas/pnnl_dopf_admm.json'
+import pnnlHubControlDefinition from '@/lib/definitions/pnnl_hub_control.json'
+import pnnlHubControlSchema from '@/lib/schemas/pnnl_hub_control.json'
+import pnnlHubPowerDefinition from '@/lib/definitions/pnnl_hub_power.json'
+import pnnlHubPowerSchema from '@/lib/schemas/pnnl_hub_power.json'
+import pnnlHubVoltageDefinition from '@/lib/definitions/pnnl_hub_voltage.json'
+import pnnlHubVoltageSchema from '@/lib/schemas/pnnl_hub_voltage.json'
 
 export interface FederateDefinition {
   directory: string
@@ -77,5 +88,53 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     definitionFile: 'omoo_federate.json',
     definition: omooDefinition,
     inputSchema: omooSchema,
+  },
+  {
+    id: 'NlpDopfComponent',
+    name: 'NLP DOPF',
+    description: 'Optimal Power Flow',
+    definitionFile: 'nlpdopf.json',
+    definition: nlpdopfDefinition,
+    inputSchema: nlpdopfSchema,
+  },
+  {
+    id: 'NlpDsseComponent',
+    name: 'NLP DSSE',
+    description: 'NLP State Estimator',
+    definitionFile: 'nlpdsse.json',
+    definition: nlpDsseDefinition,
+    inputSchema: nlpDsseSchema,
+  },
+  {
+    id: 'PnnlDopfAdmmComponent',
+    name: 'ADMM DOPF',
+    description: 'Optimal Power Flow (requires Hub)',
+    definitionFile: 'pnnl_dopf_admm.json',
+    definition: pnnlDopfAdmmDefinition,
+    inputSchema: pnnlDopfAdmmSchema,
+  },
+  {
+    id: 'PnnlHubControlComponent',
+    name: 'DOPF Hub Control',
+    description: 'Hub for controlling multiple DOPF',
+    definitionFile: 'pnnl_hub_control.json',
+    definition: pnnlHubControlDefinition,
+    inputSchema: pnnlHubControlSchema,
+  },
+  {
+    id: 'PnnlHubVoltageComponent',
+    name: 'DOPF Hub Voltage',
+    description: 'Hub for splitting voltage',
+    definitionFile: 'pnnl_hub_voltage.json',
+    definition: pnnlHubVoltageDefinition,
+    inputSchema: pnnlHubVoltageSchema,
+  },
+  {
+    id: 'PnnlHubPowerComponent',
+    name: 'DOPF Hub Power',
+    description: 'Hub for splitting power',
+    definitionFile: 'pnnl_hub_power.json',
+    definition: pnnlHubPowerDefinition,
+    inputSchema: pnnlHubPowerSchema,
   },
 ]

@@ -1,0 +1,19 @@
+{
+    "directory": "./",
+    "execute_function": "python federate_distflowopf.py",
+    "static_inputs": [
+    ],
+    "dynamic_inputs": [
+        {"type": "PowersReal", "port_id": "powers_real"},
+        {"type": "PowersImaginary", "port_id": "powers_imaginary"},
+        {"type": "Topology", "port_id": "topology"},
+        {"type": "Injection", "port_id": "injections"},
+        {"type": "MeasurementArray", "port_id": "available_power"}
+    ],
+    "dynamic_outputs": [
+        {"type": "VoltagesMagnitude", "port_id": "voltage_mag"},
+        {"type": "VoltagesAngle", "port_id": "voltage_angle"},
+        {"type": "PowersReal", "port_id": "powers_real"},
+        {"type": "PowersImaginary", "port_id": "powers_imaginary"}
+    ]
+}
