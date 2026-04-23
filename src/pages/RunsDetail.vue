@@ -18,6 +18,12 @@
           aria-label="Copy run directory path" @click="copyPath">
           <Copy /> Copy path
         </Button>
+        <Button v-if="status === 'running'" variant="destructive" size="sm"
+          :disabled="cancelling" title="Cancel" aria-label="Cancel simulation"
+          @click="cancelSimulation">
+          <Square />
+          Cancel
+        </Button>
         <p class="text-muted-foreground">Run ID: {{ runId }}</p>
       </div>
       <section>
@@ -36,7 +42,7 @@ import { useRoute } from 'vue-router'
 import { api, type RunSummary } from '@/lib/api'
 import StatusBadge from '@/components/StatusBadge.vue'
 import { Button } from '@/components/ui/button'
-import { Copy } from 'lucide-vue-next'
+import { Copy, Square } from 'lucide-vue-next'
 
 const route = useRoute()
 const runId = computed<string>(() => String(route.params.runId))
@@ -44,6 +50,19 @@ const status = ref<'running' | 'done' | 'failed' | 'loading'>('loading')
 const exitCode = ref<number | null>(null)
 const runDir = ref<string | null>(null)
 const runName = ref<string | null>(null)
+const cancelling = ref<boolean>(false)
+
+async function cancelSimulation() {
+  try {
+    cancelling.value = true
+    await api.cancelRun(runId.value)
+  } catch (error) {
+    console.log("Could not cancel", error)
+    alert(`Could not cancel: ${error instanceof Error ? error.message : String(error)}`)
+  } finally {
+    cancelling.value = false
+  }
+}
 
 
 let timeOut: ReturnType<typeof setTimeout> | undefined = undefined
@@ -78,7 +97,7 @@ async function poll() {
       timeOut = setTimeout(poll, 1000)
     }
   } catch {
-    alert(`Could not load run ${runId.value}`)
+    alert(`Could not load run ${runId.value} `)
   }
 }
 
