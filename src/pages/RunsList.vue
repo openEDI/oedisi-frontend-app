@@ -28,8 +28,17 @@
               class="inline-flex rounded-full px-2.5 py-0.5 text-sm font-medium">
               Started at {{ new Date(run.started_at).toLocaleString() }}
             </p>
-            <p class="inline-flex rounded-full px-2.5 py-0.5 text-sm font-mono">
-              Run ID: {{ run.run_id }}</p>
+            <Button variant="ghost" size="sm"
+              :title="run.run_dir ?? 'Copy path'"
+              aria-label="Copy run directory path" @click="() => copyPath(run)">
+              <Copy /> Copy path
+            </Button>
+            <router-link v-if="run.status === 'done'"
+              :to="`/runs/${run.run_id}/results`">
+              <Button size="sm" title="Load Simulation Results">
+                Results
+              </Button>
+            </router-link>
           </div>
         </div>
       </div>
@@ -41,8 +50,14 @@
 import { api, type RunSummary } from '@/lib/api';
 import { onActivated, ref } from 'vue';
 import StatusBadge from '@/components/StatusBadge.vue'
+import { Button } from '@/components/ui/button'
+import { Copy } from 'lucide-vue-next'
 
 const runs = ref<RunSummary[]>([])
+
+function copyPath(run: RunSummary) {
+  navigator.clipboard.writeText(run.run_dir)
+}
 
 onActivated(async () => {
   try {
