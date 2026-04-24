@@ -29,8 +29,10 @@
       <section>
         <h2 class="text-xl font-semibold">Federates</h2>
       </section>
-      <section>
+      <section class="space-y-2">
         <h2 class="text-xl font-semibold">Logs</h2>
+        <LogPanel v-for="name in components" :key="name" :name="name"
+          :content="logs[name] ?? ''" />
       </section>
     </div>
   </div>
@@ -41,6 +43,7 @@ import { ref, computed, onActivated, onDeactivated } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, type RunSummary } from '@/lib/api'
 import StatusBadge from '@/components/StatusBadge.vue'
+import LogPanel from '@/components/LogPanel.vue'
 import { Button } from '@/components/ui/button'
 import { Copy, Square } from 'lucide-vue-next'
 
@@ -51,6 +54,9 @@ const exitCode = ref<number | null>(null)
 const runDir = ref<string | null>(null)
 const runName = ref<string | null>(null)
 const cancelling = ref<boolean>(false)
+
+const components = ref<string[]>(['broker'])
+const logs = ref<Record<string, string>>({})
 
 async function cancelSimulation() {
   try {
@@ -81,6 +87,8 @@ function resetStatus() {
   exitCode.value = null
   runDir.value = null
   runName.value = null
+  logs.value = {}
+  components.value = ['broker']
 }
 
 function copyPath() {
@@ -93,6 +101,11 @@ async function poll() {
   try {
     const currentStatus = await api.runStatus(runId.value)
     setStatus(currentStatus)
+    components.value.forEach(name => api.runLog(runId.value, name).then(text => logs.value[name] = text).catch(() => {
+      if (logs.value[name] === undefined) {
+        logs.value[name] = "No log found"
+      }
+    }))
     if (currentStatus.status === 'running') {
       timeOut = setTimeout(poll, 1000)
     }
@@ -102,7 +115,15 @@ async function poll() {
 }
 
 
-onActivated(poll)
+onActivated(async () => {
+  try {
+    const wiring = await api.getWiring(runId.value)
+    components.value = ['broker', ...wiring.components.map(c => c.name)]
+  } catch {
+    alert(`Could not load run wiring diagram ${runId.value} `)
+  }
+  poll()
+})
 
 onDeactivated(() => {
   clearTimeout(timeOut)
