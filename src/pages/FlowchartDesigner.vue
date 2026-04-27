@@ -22,30 +22,36 @@
         <h2 class="text-lg font-semibold mb-6">Components</h2>
         <div class="space-y-4">
           <div v-for="component in components" :key="component.id"
-            class="p-4 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors" draggable="true"
-            @dragstart="(e) => onDragStart(component.id, e)">
+            class="p-4 bg-muted rounded-lg cursor-move hover:bg-muted/80 transition-colors"
+            draggable="true" @dragstart="(e) => onDragStart(component.id, e)">
             <h3 class="font-medium text-sm">{{ component.name }}</h3>
-            <p class="text-xs text-muted-foreground">{{ component.description }}</p>
+            <p class="text-xs text-muted-foreground">{{ component.description }}
+            </p>
           </div>
         </div>
       </div>
 
       <div class="flex-1 relative bg-muted">
-        <VueFlow ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges" class="vue-flow-container"
+        <VueFlow ref="vueFlowRef" v-model:nodes="nodes" v-model:edges="edges"
+          class="vue-flow-container"
           :connection-line-style="{ stroke: 'var(--foreground)', strokeWidth: 1 }"
-          :default-edge-options="{ type: 'wiring' }" :fit-view-on-init="true" :node-types="nodeTypes"
-          :edge-types="edgeTypes" @drop="onDrop" @dragover="onDragOver" @node-click="onNodeClick"
-          @edge-click="onEdgeClick" @pane-click="onPaneClick" @connect="onConnect">
+          :default-edge-options="{ type: 'wiring' }" :fit-view-on-init="true"
+          :node-types="nodeTypes" :edge-types="edgeTypes" @drop="onDrop"
+          @dragover="onDragOver" @node-click="onNodeClick"
+          @edge-click="onEdgeClick" @pane-click="onPaneClick"
+          @connect="onConnect">
           <Background pattern-color="var(--muted-foreground)" :gap="16" />
           <Controls />
-          <MiniMap node-color="var(--muted-foreground)" mask-color="var(--background)"
+          <MiniMap node-color="var(--muted-foreground)"
+            mask-color="var(--background)"
             :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
 
       <div class="w-72 bg-card border-l p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Properties</h2>
-        <div v-if="!selectedNode && !selectedEdge" class="text-muted-foreground text-center py-8">
+        <div v-if="!selectedNode && !selectedEdge"
+          class="text-muted-foreground text-center py-8">
           <p>Select a component or connection to view properties</p>
         </div>
 
@@ -54,18 +60,23 @@
           <div class="space-y-2">
             <label class="text-sm font-semibold">Static Inputs</label>
             <div v-if="selectedNodeSchema" class="space-y-2">
-              <JsonForms :data="nodeConfig" :schema="selectedNodeSchema" :renderers="renderers" :ajv="ajv"
-                :validation-mode="'ValidateAndHide'" @change="updateNodeConfig" />
+              <JsonForms :data="nodeConfig" :schema="selectedNodeSchema"
+                :renderers="renderers" :ajv="ajv"
+                :validation-mode="'ValidateAndHide'"
+                @change="updateNodeConfig" />
             </div>
-            <p v-else class="text-sm text-muted-foreground">No static inputs for this component.</p>
+            <p v-else class="text-sm text-muted-foreground">No static inputs for
+              this component.</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Component Type</label>
-            <p class="text-sm text-muted-foreground">{{ selectedNode.data.label }}</p>
+            <p class="text-sm text-muted-foreground">
+              {{ selectedNode.data.label }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Node ID</label>
-            <p class="text-sm text-muted-foreground font-mono">{{ selectedNode.id }}</p>
+            <p class="text-sm text-muted-foreground font-mono">{{
+              selectedNode.id }}</p>
           </div>
           <Button variant="destructive" @click="deleteNode(selectedNode.id)">
             Delete Component
@@ -76,17 +87,22 @@
         <div v-else-if="selectedEdge" class="space-y-4">
           <div class="space-y-2">
             <label class="text-sm font-semibold">Connection ID</label>
-            <p class="text-sm text-muted-foreground font-mono">{{ selectedEdge.id }}</p>
+            <p class="text-sm text-muted-foreground font-mono">{{
+              selectedEdge.id }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Source Node</label>
-            <p class="text-sm text-muted-foreground">{{ getNodeLabel(selectedEdge.source) }}</p>
-            <p class="text-xs text-muted-foreground font-mono">{{ selectedEdge.source }}</p>
+            <p class="text-sm text-muted-foreground">{{
+              getNodeLabel(selectedEdge.source) }}</p>
+            <p class="text-xs text-muted-foreground font-mono">{{
+              selectedEdge.source }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Target Node</label>
-            <p class="text-sm text-muted-foreground">{{ getNodeLabel(selectedEdge.target) }}</p>
-            <p class="text-xs text-muted-foreground font-mono">{{ selectedEdge.target }}</p>
+            <p class="text-sm text-muted-foreground">{{
+              getNodeLabel(selectedEdge.target) }}</p>
+            <p class="text-xs text-muted-foreground font-mono">{{
+              selectedEdge.target }}</p>
           </div>
           <div v-if="selectedEdge.type" class="space-y-2">
             <label class="text-sm font-semibold">Connection Type</label>
@@ -94,19 +110,23 @@
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Wiring Selection</label>
-            <p v-if="compatibleWireOptions.length === 0" class="text-sm text-muted-foreground">
-              No compatible dynamic output/input intersections for this connection.
+            <p v-if="compatibleWireOptions.length === 0"
+              class="text-sm text-muted-foreground">
+              No compatible dynamic output/input intersections for this
+              connection.
             </p>
             <div v-else class="space-y-2">
               <select v-model="selectedWireOption"
                 class="h-10 w-full rounded-md border border-border px-3 py-2 bg-card text-sm">
                 <option value="" disabled>Select compatible signal</option>
-                <option v-for="option in compatibleWireOptions" :key="wireOptionKey(option)"
-                  :value="wireOptionKey(option)">
-                  {{ option.type }}: {{ option.sourcePortId }} → {{ option.targetPortId }}
+                <option v-for="option in compatibleWireOptions"
+                  :key="wireOptionKey(option)" :value="wireOptionKey(option)">
+                  {{ option.type }}: {{ option.sourcePortId }} → {{
+                    option.targetPortId }}
                 </option>
               </select>
-              <Button :disabled="!selectedWireOption" @click="addWireToSelectedEdge">
+              <Button :disabled="!selectedWireOption"
+                @click="addWireToSelectedEdge">
                 Add Wiring
               </Button>
             </div>
@@ -116,8 +136,10 @@
             <div class="space-y-1">
               <div v-for="wire in selectedEdgeWires" :key="wireOptionKey(wire)"
                 class="flex items-center justify-between gap-2 text-xs text-muted-foreground font-mono bg-muted/50 rounded px-2 py-1">
-                <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{ wire.targetPortId }}</span>
-                <Button variant="ghost" size="sm" @click="removeWireFromSelectedEdge(wire)">
+                <span>{{ wire.type }}: {{ wire.sourcePortId }} → {{
+                  wire.targetPortId }}</span>
+                <Button variant="ghost" size="sm"
+                  @click="removeWireFromSelectedEdge(wire)">
                   Remove
                 </Button>
               </div>
@@ -135,20 +157,29 @@
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Save Simulation Template</DialogTitle>
-          <DialogDescription>Enter a name and description for your simulation template</DialogDescription>
+          <DialogDescription>Enter a name and description for your simulation
+            template</DialogDescription>
         </DialogHeader>
         <div class="space-y-2">
           <label class="text-sm font-semibold">Template Name</label>
-          <Input v-model="templateName" placeholder="e.g., Distribution System Test" />
+          <Input v-model="templateName"
+            placeholder="e.g., Distribution System Test" />
         </div>
         <div class="space-y-2">
           <label class="text-sm font-semibold">Description</label>
-          <Textarea v-model="templateDescription" placeholder="Describe your simulation template..."></Textarea>
+          <Textarea v-model="templateDescription"
+            placeholder="Describe your simulation template..."></Textarea>
         </div>
         <DialogFooter>
-          <Button variant="outline" @click="saveDialogOpen = false">Cancel</Button>
-          <Button variant="secondary" @click="exportTemplate">Export as Wiring Diagram</Button>
-          <Button @click="saveTemplate">Save Template</Button>
+          <Button variant="outline"
+            @click="saveDialogOpen = false">Cancel</Button>
+          <Button variant="secondary" @click="exportTemplate">Export as Wiring
+            Diagram</Button>
+          <Button :disabled="runPending" variant="secondary"
+            @click="saveAndRunTemplate">{{ runPending ? 'Starting...' :
+              'Save and Run' }}</Button>
+          <Button :disabled="savePending" @click="saveTemplate">{{ savePending ?
+            'Saving...' : 'Save' }}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -533,16 +564,20 @@ function getTemplate(name: string, description: string, nodes: Node[], edges: Ed
   }
 }
 
+const savePending = ref(false)
+
 const saveTemplate = async () => {
+  savePending.value = true
   const config: TemplateData = getTemplate(templateName.value, templateDescription.value, nodes.value, edges.value)
 
   try {
     await api.saveTemplate(config)
-
     saveDialogOpen.value = false
   } catch (error) {
     console.error('Error saving template:', error)
     alert('Failed to save template. Please try again.')
+  } finally {
+    savePending.value = false
   }
 }
 
@@ -553,7 +588,7 @@ const exportTemplate = () => {
     wiringDiagram = toWiringDiagram(config)
   } catch (error) {
     console.error('Error exporting wiring diagram:', error)
-    alert('Failed to export wiring diagram. Check that all components and connections are configured.')
+    alert(`Failed to export wiring diagram. ${error instanceof Error ? error.message : String(error)}`)
     return
   }
 
@@ -569,6 +604,41 @@ const exportTemplate = () => {
   URL.revokeObjectURL(url)
 
   saveDialogOpen.value = false
+}
+
+const runPending = ref(false)
+
+const saveAndRunTemplate = async () => {
+  runPending.value = true
+  const config: TemplateData = getTemplate(templateName.value, templateDescription.value, nodes.value, edges.value)
+
+  try {
+    try {
+      await api.saveTemplate(config)
+    } catch (error) {
+      console.error('Error saving template:', error)
+      alert('Failed to save template. Please try again.')
+      return
+    }
+    let wiringDiagram: WiringDiagram
+    try {
+      wiringDiagram = toWiringDiagram(config)
+    } catch (error) {
+      console.error('Error exporting wiring diagram:', error)
+      alert('Failed to export wiring diagram. Check that all components and connections are configured.')
+      return
+    }
+    try {
+      const { run_id: runId } = await api.startRun(wiringDiagram, config.id)
+      saveDialogOpen.value = false
+      router.push(`/runs/${runId}`)
+    } catch (error) {
+      console.error('saveAndRunTemplate error:', error)
+      alert(`Saved template. Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
+    }
+  } finally {
+    runPending.value = false
+  }
 }
 
 function isValidTemplate(value: unknown): value is TemplateData {

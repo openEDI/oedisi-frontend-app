@@ -3,7 +3,8 @@ import Home from '@/pages/HomePage.vue'
 import FlowchartDesigner from '@/pages/FlowchartDesigner.vue'
 import SavedConfigs from '@/pages/SavedConfigs.vue'
 import SimulationResults from '@/pages/SimulationResults.vue'
-import SimulationStatus from '@/pages/SimulationStatus.vue'
+import RunsList from '@/pages/RunsList.vue'
+import RunsDetail from '@/pages/RunsDetail.vue'
 
 const routes = [
   {
@@ -19,12 +20,16 @@ const routes = [
     component: SavedConfigs,
   },
   {
-    path: '/simulation',
+    path: '/runs/:runId/results',
     component: SimulationResults,
   },
   {
-    path: '/status',
-    component: SimulationStatus,
+    path: '/runs',
+    component: RunsList,
+  },
+  {
+    path: '/runs/:runId',
+    component: RunsDetail,
   },
   {
     path: '/:pathMatch(.*)*',
