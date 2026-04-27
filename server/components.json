@@ -5,5 +5,11 @@
     "StateEstimatorComponent": "${OEDISI_COMPONENTS}/wls_federate/component_definition.json",
     "OMOOComponent": "${OEDISI_COMPONENTS}/omoo_federate/component_definition.json",
     "Feeder": "${OEDISI_COMPONENTS}/LocalFeeder/component_definition.json",
-    "LinDistFlowComponent": "${OEDISI_COMPONENTS}/lindistflow_federate/component_definition.json"
+    "LinDistFlowComponent": "${OEDISI_COMPONENTS}/lindistflow_federate/component_definition.json",
+    "PnnlDopfAdmmComponent": "${OEDISI_COMPONENTS}/pnnl-dopf-admm/component_definition.json",
+    "PnnlHubControlComponent": "${OEDISI_COMPONENTS}/pnnl-hub-control/component_definition.json",
+    "PnnlHubPowerComponent": "${OEDISI_COMPONENTS}/pnnl-hub-power/component_definition.json",
+    "PnnlHubVoltageComponent": "${OEDISI_COMPONENTS}/pnnl-hub-voltage/component_definition.json",
+    "NlpDopfComponent": "${OEDISI_COMPONENTS}/nlpdopf/nlpdopf/federate/component_definition.json",
+    "NlpDsseComponent": "${OEDISI_COMPONENTS}/nlpdsse/nlpdsse/federate/component_definition.json"
 }

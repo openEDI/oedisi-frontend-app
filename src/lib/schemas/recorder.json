@@ -4,16 +4,16 @@
       "title": "Name",
       "type": "string"
     },
-    "csv_path": {
+    "csv_filename": {
       "title": "Csv Path",
       "type": "string"
     },
-    "feather_path": {
+    "feather_filename": {
       "title": "Feather Path",
       "type": "string"
     }
   },
-  "required": ["csv_path", "feather_path"],
+  "required": ["csv_filename", "feather_filename"],
   "title": "RecorderConfig",
   "type": "object"
 }
