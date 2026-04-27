@@ -1,0 +1,2579 @@
+{
+  "id": "1776965713642",
+  "name": "v4",
+  "description": "",
+  "nodes": [
+    {
+      "id": "Feeder-1776801555228",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 350,
+        "y": 264.5,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Feeder-1776801555228",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Feeder-1776801555228",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 350,
+        "y": 264.5
+      },
+      "data": {
+        "label": "Feeder",
+        "componentType": "Feeder",
+        "config": {
+          "use_smartds": false,
+          "user_uploads_model": false,
+          "run_freq_sec": 900,
+          "topology_output": "topology.json",
+          "use_sparse_admittance": false,
+          "name": "feeder",
+          "profile_location": "gadal_ieee123/profiles",
+          "opendss_location": "gadal_ieee123/qsts",
+          "sensor_location": "gadal_ieee123/sensors.json",
+          "start_date": "2017-01-01 00:00:00",
+          "number_of_timesteps": 96,
+          "start_time_index": 0
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "StateEstimatorComponent-1776801601935",
+      "type": "custom",
+      "dimensions": {
+        "width": 138,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 974.8986106494488,
+        "y": 457.1675324320889,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "StateEstimatorComponent-1776801601935",
+            "position": "right",
+            "x": 130.9000244140625,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "StateEstimatorComponent-1776801601935",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 974.8986106494488,
+        "y": 457.1675324320889
+      },
+      "data": {
+        "label": "State Estimator",
+        "componentType": "StateEstimatorComponent",
+        "config": {
+          "algorithm_parameters": {
+            "tol": 5e-07,
+            "base_power": 100
+          },
+          "name": "state_estimator"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "MeasurementComponent-1776801604028",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 689.3769235798854,
+        "y": 139.38461789942718,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "MeasurementComponent-1776801604028",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "MeasurementComponent-1776801604028",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 689.3769235798854,
+        "y": 139.38461789942718
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "measurement_file": "sensors.json",
+          "name": "sensor_voltage_real"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801607029",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 1191.4524134561987,
+        "y": 327.7695305998093,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801607029",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801607029",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 1191.4524134561987,
+        "y": 327.7695305998093
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_mag",
+          "feather_path": "voltage_mag.feather",
+          "csv_path": "voltage_mag.csv",
+          "csv_filename": "voltage_mag.csv",
+          "feather_filename": "voltage_mag.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "MeasurementComponent-1776801610044",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 710.8641822592297,
+        "y": 220.19937998789254,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "MeasurementComponent-1776801610044",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "MeasurementComponent-1776801610044",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 710.8641822592297,
+        "y": 220.19937998789254
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "measurement_file": "sensors.json",
+          "name": "sensor_voltage_magnitude"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "MeasurementComponent-1776801613737",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 699.5,
+        "y": 320,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "MeasurementComponent-1776801613737",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "MeasurementComponent-1776801613737",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 699.5,
+        "y": 320
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "measurement_file": "sensors.json",
+          "name": "sensor_voltage_imaginary"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "MeasurementComponent-1776801620094",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 636.417949053257,
+        "y": 411.7461528402291,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "MeasurementComponent-1776801620094",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "MeasurementComponent-1776801620094",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 636.417949053257,
+        "y": 411.7461528402291
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "measurement_file": "sensors.json",
+          "name": "sensor_power_real"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "MeasurementComponent-1776801624907",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 488.21282168639937,
+        "y": 490.2051273668576,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "MeasurementComponent-1776801624907",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "MeasurementComponent-1776801624907",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 488.21282168639937,
+        "y": 490.2051273668576
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "measurement_file": "sensors.json",
+          "name": "sensor_power_imaginary"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801630390",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 538.2180337066769,
+        "y": 43.40614259420025,
+        "z": 1000
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801630390",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801630390",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": true,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 538.2180337066769,
+        "y": 43.40614259420025
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_imag",
+          "csv_path": "voltage_imag.csv",
+          "feather_path": "voltage_imag.feather",
+          "csv_filename": "voltage_imag.csv",
+          "feather_filename": "voltage_imag.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801632526",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 437.13969405979446,
+        "y": -28.547929696800793,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801632526",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801632526",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 437.13969405979446,
+        "y": -28.547929696800793
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_real",
+          "feather_path": "voltage_real.feather",
+          "csv_path": "voltage_real.csv",
+          "csv_filename": "voltage_real.csv",
+          "feather_filename": "voltage_real.imag"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801644340",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 1218.3065945464562,
+        "y": 410.82918080691684,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801644340",
+            "position": "right",
+            "x": 113,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801644340",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 1218.3065945464562,
+        "y": 410.82918080691684
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_angle",
+          "csv_path": "voltage_angle.csv",
+          "feather_path": "voltage_angle.feather",
+          "csv_filename": "voltage_angle.csv",
+          "feather_filename": "voltage_angle.feather"
+        }
+      },
+      "events": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1776801604028-1776801652242",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1776801604028",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesReal",
+            "sourcePortId": "voltages_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesReal",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "MeasurementComponent-1776801604028",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 689.3769235798854,
+          "y": 139.38461789942718,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801604028",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801604028",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 689.3769235798854,
+          "y": 139.38461789942718
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_voltage_real"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 686.3769235798854,
+      "targetY": 163.88461789942718,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1776801630390-1776801653602",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1776801630390",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesImaginary",
+            "sourcePortId": "voltages_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesImaginary",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801630390",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 538.2180337066769,
+          "y": 43.40614259420025,
+          "z": 1000
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801630390",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801630390",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": true,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 538.2180337066769,
+          "y": 43.40614259420025
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_imag",
+            "csv_path": "voltage_imag.csv",
+            "feather_path": "voltage_imag.feather",
+            "csv_filename": "voltage_imag.csv",
+            "feather_filename": "voltage_imag.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 535.2180337066769,
+      "targetY": 67.90614259420025,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1776801632526-1776801655577",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1776801632526",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesReal",
+            "sourcePortId": "voltages_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesReal",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801632526",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 437.13969405979446,
+          "y": -28.547929696800793,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801632526",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801632526",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 437.13969405979446,
+          "y": -28.547929696800793
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_real",
+            "feather_path": "voltage_real.feather",
+            "csv_path": "voltage_real.csv",
+            "csv_filename": "voltage_real.csv",
+            "feather_filename": "voltage_real.imag"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 434.13969405979446,
+      "targetY": -4.047929696800793,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1776801610044-1776801657201",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1776801610044",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesMagnitude",
+            "sourcePortId": "voltages_magnitude",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesMagnitude",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "MeasurementComponent-1776801610044",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 710.8641822592297,
+          "y": 220.19937998789254,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 710.8641822592297,
+          "y": 220.19937998789254
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_voltage_magnitude"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 707.8641822592297,
+      "targetY": 244.69937998789254,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1776801613737-1776801660226",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1776801613737",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesImaginary",
+            "sourcePortId": "voltages_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesImaginary",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "MeasurementComponent-1776801613737",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 699.5,
+          "y": 320,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801613737",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801613737",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 699.5,
+          "y": 320
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_voltage_imaginary"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 696.5,
+      "targetY": 344.5,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1776801620094-1776801661730",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1776801620094",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersReal",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "MeasurementComponent-1776801620094",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 636.417949053257,
+          "y": 411.7461528402291,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801620094",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801620094",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 636.417949053257,
+          "y": 411.7461528402291
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_power_real"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 633.417949053257,
+      "targetY": 436.2461528402291,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1776801624907-1776801663115",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1776801624907",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersImaginary",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "MeasurementComponent-1776801624907",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 488.21282168639937,
+          "y": 490.2051273668576,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801624907",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801624907",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 488.21282168639937,
+          "y": 490.2051273668576
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_power_imaginary"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 485.21282168639937,
+      "targetY": 514.7051273668576,
+      "selected": false
+    },
+    {
+      "id": "edge-StateEstimatorComponent-1776801601935-Recorder-1776801607029-1776801667907",
+      "type": "wiring",
+      "source": "StateEstimatorComponent-1776801601935",
+      "target": "Recorder-1776801607029",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesMagnitude",
+            "sourcePortId": "voltage_mag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesMagnitude",
+      "sourceNode": {
+        "id": "StateEstimatorComponent-1776801601935",
+        "type": "custom",
+        "dimensions": {
+          "width": 138,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "right",
+              "x": 130.9000244140625,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889
+        },
+        "data": {
+          "label": "State Estimator",
+          "componentType": "StateEstimatorComponent",
+          "config": {
+            "algorithm_parameters": {
+              "tol": 5e-07,
+              "base_power": 100
+            },
+            "name": "state_estimator"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801607029",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 1191.4524134561987,
+          "y": 327.7695305998093,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801607029",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801607029",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 1191.4524134561987,
+          "y": 327.7695305998093
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_mag",
+            "feather_path": "voltage_mag.feather",
+            "csv_path": "voltage_mag.csv",
+            "csv_filename": "voltage_mag.csv",
+            "feather_filename": "voltage_mag.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 1115.7986350635113,
+      "sourceY": 481.6675324320889,
+      "targetX": 1188.4524134561987,
+      "targetY": 352.2695305998093,
+      "selected": false
+    },
+    {
+      "id": "edge-StateEstimatorComponent-1776801601935-Recorder-1776801644340-1776801672394",
+      "type": "wiring",
+      "source": "StateEstimatorComponent-1776801601935",
+      "target": "Recorder-1776801644340",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesAngle",
+            "sourcePortId": "voltage_angle",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesAngle",
+      "sourceNode": {
+        "id": "StateEstimatorComponent-1776801601935",
+        "type": "custom",
+        "dimensions": {
+          "width": 138,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "right",
+              "x": 130.9000244140625,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889
+        },
+        "data": {
+          "label": "State Estimator",
+          "componentType": "StateEstimatorComponent",
+          "config": {
+            "algorithm_parameters": {
+              "tol": 5e-07,
+              "base_power": 100
+            },
+            "name": "state_estimator"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801644340",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 1218.3065945464562,
+          "y": 410.82918080691684,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801644340",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801644340",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 1218.3065945464562,
+          "y": 410.82918080691684
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_angle",
+            "csv_path": "voltage_angle.csv",
+            "feather_path": "voltage_angle.feather",
+            "csv_filename": "voltage_angle.csv",
+            "feather_filename": "voltage_angle.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 1115.7986350635113,
+      "sourceY": 481.6675324320889,
+      "targetX": 1215.3065945464562,
+      "targetY": 435.32918080691684,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-StateEstimatorComponent-1776801601935-1776801674770",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "StateEstimatorComponent-1776801601935",
+      "data": {
+        "wires": [
+          {
+            "type": "Topology",
+            "sourcePortId": "topology",
+            "targetPortId": "topology"
+          }
+        ]
+      },
+      "events": {},
+      "label": "Topology",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "StateEstimatorComponent-1776801601935",
+        "type": "custom",
+        "dimensions": {
+          "width": 138,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "right",
+              "x": 130.9000244140625,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889
+        },
+        "data": {
+          "label": "State Estimator",
+          "componentType": "StateEstimatorComponent",
+          "config": {
+            "algorithm_parameters": {
+              "tol": 5e-07,
+              "base_power": 100
+            },
+            "name": "state_estimator"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 473,
+      "sourceY": 289,
+      "targetX": 971.8986106494488,
+      "targetY": 481.6675324320889,
+      "selected": false
+    },
+    {
+      "id": "edge-MeasurementComponent-1776801610044-StateEstimatorComponent-1776801601935-1776803262008",
+      "type": "wiring",
+      "source": "MeasurementComponent-1776801610044",
+      "target": "StateEstimatorComponent-1776801601935",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "voltages_magnitude"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "MeasurementComponent-1776801610044",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 710.8641822592297,
+          "y": 220.19937998789254,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 710.8641822592297,
+          "y": 220.19937998789254
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_voltage_magnitude"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "StateEstimatorComponent-1776801601935",
+        "type": "custom",
+        "dimensions": {
+          "width": 138,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "right",
+              "x": 130.9000244140625,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889
+        },
+        "data": {
+          "label": "State Estimator",
+          "componentType": "StateEstimatorComponent",
+          "config": {
+            "algorithm_parameters": {
+              "tol": 5e-07,
+              "base_power": 100
+            },
+            "name": "state_estimator"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 833.8641822592297,
+      "sourceY": 244.69937998789254,
+      "targetX": 971.8986106494488,
+      "targetY": 481.6675324320889,
+      "selected": false
+    },
+    {
+      "id": "edge-MeasurementComponent-1776801620094-StateEstimatorComponent-1776801601935-1776803308062",
+      "type": "wiring",
+      "source": "MeasurementComponent-1776801620094",
+      "target": "StateEstimatorComponent-1776801601935",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "powers_real"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "MeasurementComponent-1776801620094",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 636.417949053257,
+          "y": 411.7461528402291,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801620094",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801620094",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 636.417949053257,
+          "y": 411.7461528402291
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_power_real"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "StateEstimatorComponent-1776801601935",
+        "type": "custom",
+        "dimensions": {
+          "width": 138,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "right",
+              "x": 130.9000244140625,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889
+        },
+        "data": {
+          "label": "State Estimator",
+          "componentType": "StateEstimatorComponent",
+          "config": {
+            "algorithm_parameters": {
+              "tol": 5e-07,
+              "base_power": 100
+            },
+            "name": "state_estimator"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 759.417949053257,
+      "sourceY": 436.2461528402291,
+      "targetX": 971.8986106494488,
+      "targetY": 481.6675324320889,
+      "selected": false
+    },
+    {
+      "id": "edge-MeasurementComponent-1776801624907-StateEstimatorComponent-1776801601935-1776803315542",
+      "type": "wiring",
+      "source": "MeasurementComponent-1776801624907",
+      "target": "StateEstimatorComponent-1776801601935",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "powers_imaginary"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "MeasurementComponent-1776801624907",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 488.21282168639937,
+          "y": 490.2051273668576,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801624907",
+              "position": "right",
+              "x": 113,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801624907",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 488.21282168639937,
+          "y": 490.2051273668576
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_power_imaginary"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "StateEstimatorComponent-1776801601935",
+        "type": "custom",
+        "dimensions": {
+          "width": 138,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "right",
+              "x": 130.9000244140625,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "StateEstimatorComponent-1776801601935",
+              "position": "left",
+              "x": -3,
+              "y": 19.5,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 974.8986106494488,
+          "y": 457.1675324320889
+        },
+        "data": {
+          "label": "State Estimator",
+          "componentType": "StateEstimatorComponent",
+          "config": {
+            "algorithm_parameters": {
+              "tol": 5e-07,
+              "base_power": 100
+            },
+            "name": "state_estimator"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 611.2128216863994,
+      "sourceY": 514.7051273668576,
+      "targetX": 971.8986106494488,
+      "targetY": 481.6675324320889,
+      "selected": false
+    }
+  ],
+  "createdAt": "2026-04-23T17:35:13.642Z"
+}

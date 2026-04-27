@@ -8,12 +8,14 @@
     "additive_noise_stddev": {
       "default": 0.0,
       "title": "Additive Noise Stddev",
-      "type": "number"
+      "type": "number",
+      "minimum": 0.0
     },
     "multiplicative_noise_stddev": {
       "default": 0.0,
       "title": "Multiplicative Noise Stddev",
-      "type": "number"
+      "type": "number",
+      "minimum": 0.0
     },
     "measurement_file": {
       "title": "Measurement File",
@@ -22,7 +24,8 @@
     "run_freq_time_step": {
       "default": 1.0,
       "title": "Run Freq Time Step",
-      "type": "number"
+      "type": "number",
+      "minimum": 0.0
     }
   },
   "required": ["measurement_file"],
