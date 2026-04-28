@@ -19,6 +19,8 @@ import subprocess
 import sys
 import uuid
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +36,20 @@ from oedisi.componentframework.system_configuration import (
     WiringDiagram,
     generate_runner_config,
 )
+from pydantic import ConfigDict
+
+
+class AppWiringDiagram(WiringDiagram):
+    """WiringDiagram + whatever frontend extras.
+
+    The frontend also sends `description`, `createdAt`, and potentially more.
+    `model_config` allows extras.
+
+    Component-level extras (e.g. helics_config_override) will only
+    be saved if the version of oedisi has it (see main vs released).
+    """
+
+    model_config = ConfigDict(extra="allow")
 
 
 # ---------------------------------------------------------------------------
@@ -265,41 +281,89 @@ def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
 # Run tracking
 # ---------------------------------------------------------------------------
 
+
+@dataclass
+class RunRecord:
+    proc: subprocess.Popen
+    started_at: datetime
+    template_id: str | None
+    run_dir: Path
+    name: str
+
+
 # In-memory only; lost on restart. See CLAUDE.md.
-runs: dict[str, subprocess.Popen] = {}
+runs: dict[str, RunRecord] = {}
 
 
 @app.post("/api/runs")
-def start_run(wiring_diagram: WiringDiagram) -> dict[str, str]:
+def start_run(
+    wiring_diagram: AppWiringDiagram,
+    template_id: str | None = None,
+) -> dict[str, str]:
     run_id = uuid.uuid4().hex
-    build_dir = RUNS_DIR / run_id / "build"
+    run_dir = RUNS_DIR / run_id
+    build_dir = run_dir / "build"
 
     try:
         build_runner(wiring_diagram, build_dir)
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=400, detail=f"Build failed: {exc}") from exc
 
+    # Snapshot what was submitted — authoritative record of what actually ran,
+    # independent of whether the originating template is later edited or deleted.
+    (run_dir / "wiring.json").write_text(
+        wiring_diagram.model_dump_json(indent=2), encoding="utf-8"
+    )
+
     proc = subprocess.Popen(
         ["helics", "run", f"--path={build_dir / 'system_runner.json'}"],
         cwd=build_dir,
     )
-    runs[run_id] = proc
+    runs[run_id] = RunRecord(
+        proc=proc,
+        started_at=datetime.now(timezone.utc),
+        template_id=template_id,
+        run_dir=run_dir,
+        name=wiring_diagram.name,
+    )
     return {"run_id": run_id}
+
+
+def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
+    code = record.proc.poll()
+    out: dict[str, Any] = {
+        "run_id": run_id,
+        "name": record.name,
+        "started_at": record.started_at.isoformat(timespec="milliseconds").replace(
+            "+00:00", "Z"
+        ),
+        "template_id": record.template_id,
+        "run_dir": str(record.run_dir),
+    }
+    if code is None:
+        out["status"] = "running"
+    else:
+        out["status"] = "done" if code == 0 else "failed"
+        out["exit_code"] = code
+    return out
+
+
+@app.get("/api/runs")
+def list_runs() -> list[dict[str, Any]]:
+    # Newest first, by start time. In-memory only — restart wipes this list.
+    return sorted(
+        (_serialize_run(rid, rec) for rid, rec in runs.items()),
+        key=lambda r: r["started_at"],
+        reverse=True,
+    )
 
 
 @app.get("/api/runs/{run_id}")
 def run_status(run_id: str) -> dict[str, Any]:
-    proc = runs.get(run_id)
-    if proc is None:
+    record = runs.get(run_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
-
-    code = proc.poll()
-    if code is None:
-        return {"status": "running"}
-    return {
-        "status": "done" if code == 0 else "failed",
-        "exit_code": code,
-    }
+    return _serialize_run(run_id, record)
 
 
 @app.get("/api/runs/{run_id}/logs/{component}")
@@ -316,11 +380,11 @@ def run_log(run_id: str, component: str) -> PlainTextResponse:
 
 @app.delete("/api/runs/{run_id}")
 def kill_run(run_id: str) -> dict[str, bool]:
-    proc = runs.pop(run_id, None)
-    if proc is None:
+    record = runs.get(run_id)
+    if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
-    if proc.poll() is None:
-        proc.kill()
+    if record.proc.poll() is None:
+        record.proc.kill()
     return {"success": True}
 
 
