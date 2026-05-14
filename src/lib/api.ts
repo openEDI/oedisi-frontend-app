@@ -112,4 +112,16 @@ export const api = {
 
     return await response.json()
   },
+  async cancelRun(run_id: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/runs/${run_id}`, {
+      method: 'DELETE',
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+  },
 }

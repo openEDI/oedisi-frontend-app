@@ -380,7 +380,7 @@ def run_log(run_id: str, component: str) -> PlainTextResponse:
 
 @app.delete("/api/runs/{run_id}")
 def kill_run(run_id: str) -> dict[str, bool]:
-    record = runs.pop(run_id, None)
+    record = runs.get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
     if record.proc.poll() is None:
