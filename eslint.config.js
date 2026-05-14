@@ -14,5 +14,10 @@ export default [
     rules: {
         'vue/multi-word-component-names': 'off',
     }
-  }
+  },
+  {
+    rules: {
+      'vue/first-attribute-linebreak': 'off',
+    },
+  },
 ]
