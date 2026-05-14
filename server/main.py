@@ -22,13 +22,13 @@ from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
 
 import psutil
 import uvicorn
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Path as PathParam
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import FileResponse
 from oedisi.componentframework.basic_component import (
     ComponentDescription,
     basic_component,
@@ -64,6 +64,10 @@ RUNS_DIR = SERVER_DIR / "runs"
 COMPONENTS_JSON_PATH = SERVER_DIR / "components.json"
 
 TEMPLATE_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
+
+# Accept any sane directory-name shape. Most runs are UUID hex,
+# but we accept potential new ones.
+RunId = Annotated[str, PathParam(pattern=r"^[a-zA-Z0-9_-]{1,64}$")]
 
 
 # ---------------------------------------------------------------------------
@@ -494,15 +498,28 @@ def list_runs() -> list[dict[str, Any]]:
 
 
 @app.get("/api/runs/{run_id}")
-def run_status(run_id: str) -> dict[str, Any]:
+def run_status(run_id: RunId) -> dict[str, Any]:
     record = runs.get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Run not found")
     return _serialize_run(run_id, record)
 
 
+@app.get("/api/runs/{run_id}/wiring")
+def run_wiring(run_id: RunId) -> FileResponse:
+    """Ship the snapshotted wiring.json straight from disk.
+
+    Read from disk rather than `runs[run_id]` so this works for restored runs
+    where we never held the diagram in memory.
+    """
+    wiring_path = RUNS_DIR / run_id / "wiring.json"
+    if not wiring_path.exists():
+        raise HTTPException(status_code=404, detail="Wiring not found")
+    return FileResponse(wiring_path, media_type="application/json")
+
+
 @app.get("/api/runs/{run_id}/logs/{component}")
-def run_log(run_id: str, component: str) -> PlainTextResponse:
+def run_log(run_id: RunId, component: str) -> FileResponse:
     # Guard against path traversal — component name is a filename segment only.
     if "/" in component or "\\" in component or ".." in component:
         raise HTTPException(status_code=400, detail="Invalid component name")
@@ -510,11 +527,11 @@ def run_log(run_id: str, component: str) -> PlainTextResponse:
     log_path = RUNS_DIR / run_id / "build" / f"{component}.log"
     if not log_path.exists():
         raise HTTPException(status_code=404, detail="Log not found")
-    return PlainTextResponse(log_path.read_text(encoding="utf-8", errors="replace"))
+    return FileResponse(log_path, media_type="text/plain; charset=utf-8")
 
 
 @app.delete("/api/runs/{run_id}")
-def kill_run(run_id: str) -> dict[str, bool]:
+def kill_run(run_id: RunId) -> dict[str, bool]:
     record = runs.get(run_id)
     if record is None:
         raise HTTPException(status_code=404, detail="Run not found")

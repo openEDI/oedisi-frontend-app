@@ -125,4 +125,33 @@ export const api = {
       throw new Error(errorMessage)
     }
   },
+  async runLog(run_id: string, component: string): Promise<string> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/logs/${encodeURIComponent(component)}`,
+      {
+        method: 'GET',
+      }
+    )
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.text()
+  },
+  async getWiring(run_id: string): Promise<WiringDiagram> {
+    const response = await fetch(`${API_BASE_URL}/runs/${run_id}/wiring`, {
+      method: 'GET',
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
 }
