@@ -70,8 +70,8 @@
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Component Type</label>
-            <p class="text-sm text-muted-foreground">{{ selectedNode.data.label
-            }}</p>
+            <p class="text-sm text-muted-foreground">
+              {{ selectedNode.data.label }}</p>
           </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Node ID</label>
@@ -588,7 +588,7 @@ const exportTemplate = () => {
     wiringDiagram = toWiringDiagram(config)
   } catch (error) {
     console.error('Error exporting wiring diagram:', error)
-    alert('Failed to export wiring diagram. Check that all components and connections are configured.')
+    alert(`Failed to export wiring diagram. ${error instanceof Error ? error.message : String(error)}`)
     return
   }
 

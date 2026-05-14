@@ -71,7 +71,7 @@ function toLink(source: string, target: string, edgeWire: EdgeWire): Link {
 
 function toLinks(
   nodeIdsToLabels: Map<string, string>,
-  edge: Edge<EdgeData>,
+  edge: Edge<EdgeData>
 ): Link[] {
   const wires = edge.data?.wires ?? []
   const source = nodeIdsToLabels.get(edge.source)
@@ -82,13 +82,25 @@ function toLinks(
   return wires.map((w) => toLink(source, target, w))
 }
 
+function findDuplicates(nodeIdsToLabels: Map<string, string>) {
+  const counts = new Map<string, number>()
+  for (const name of nodeIdsToLabels.values()) {
+    counts.set(name, (counts.get(name) ?? 0) + 1)
+  }
+  return [...counts].filter(([, n]) => n > 1).map(([name]) => name)
+}
+
 export function toWiringDiagram(config: TemplateData): WiringDiagram {
   const nodeIdsToLabels = new Map<string, string>(
     config.nodes.map((n) => {
       const configName = n.data?.config?.name
       return [n.id, typeof configName === 'string' ? configName : n.id] as const
-    }),
+    })
   )
+  const duplicates = findDuplicates(nodeIdsToLabels)
+  if (duplicates.length > 0) {
+    throw new Error(`Duplicate names: ${duplicates.join(', ')}`)
+  }
   return {
     name: config.name,
     description: config.description,
