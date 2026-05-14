@@ -20,7 +20,7 @@ const routes = [
     component: SavedConfigs,
   },
   {
-    path: '/simulation',
+    path: '/runs/:runId/results',
     component: SimulationResults,
   },
   {

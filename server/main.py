@@ -25,6 +25,8 @@ from pathlib import Path
 from typing import Annotated, Any
 
 import psutil
+import pyarrow.feather as pa_feather
+import pyarrow.types as pa_types
 import uvicorn
 from fastapi import FastAPI, HTTPException, Path as PathParam
 from fastapi.middleware.cors import CORSMiddleware
@@ -528,6 +530,82 @@ def run_log(run_id: RunId, component: str) -> FileResponse:
     if not log_path.exists():
         raise HTTPException(status_code=404, detail="Log not found")
     return FileResponse(log_path, media_type="text/plain; charset=utf-8")
+
+
+def _load_run_wiring(run_id: str) -> dict[str, Any]:
+    wiring_path = RUNS_DIR / run_id / "wiring.json"
+    if not wiring_path.exists():
+        raise HTTPException(status_code=404, detail="Run wiring not found")
+    return json.loads(wiring_path.read_text())
+
+
+def _recorder_feather_path(run_id: str, component: dict[str, Any]) -> Path | None:
+    """Path to the feather a Recorder writes, or None if it's not on disk yet."""
+    name = component.get("name")
+    params = component.get("parameters") or {}
+    feather_name = params.get("feather_filename")
+    if not name or not feather_name:
+        return None
+    path = RUNS_DIR / run_id / "build" / name / feather_name
+    return path if path.exists() else None
+
+
+def _infer_field(name: str, arrow_type: Any) -> dict[str, str]:
+    """Map an Arrow column to a graphic-walker IMutField."""
+    if name == "time" or pa_types.is_temporal(arrow_type):
+        semantic, analytic = "temporal", "dimension"
+    elif pa_types.is_integer(arrow_type) or pa_types.is_floating(arrow_type):
+        semantic, analytic = "quantitative", "measure"
+    else:
+        semantic, analytic = "nominal", "dimension"
+    return {
+        "fid": name,
+        "name": name,
+        "semanticType": semantic,
+        "analyticType": analytic,
+    }
+
+
+@app.get("/api/runs/{run_id}/results")
+def list_results(run_id: RunId) -> list[dict[str, Any]]:
+    """Manifest of datasets available for a run. v1: Recorder outputs only."""
+    wiring = _load_run_wiring(run_id)
+    entries: list[dict[str, Any]] = []
+    for component in wiring.get("components", []):
+        if component.get("type") != "Recorder":
+            continue
+        path = _recorder_feather_path(run_id, component)
+        if path is None:
+            continue
+        entries.append({
+            "id": component["name"],
+            "label": component["name"],
+            "type": "Recorder",
+            "size_bytes": path.stat().st_size,
+        })
+    return entries
+
+
+@app.get("/api/runs/{run_id}/results/{dataset_id}")
+def get_result(run_id: RunId, dataset_id: str) -> dict[str, Any]:
+    if "/" in dataset_id or "\\" in dataset_id or ".." in dataset_id:
+        raise HTTPException(status_code=400, detail="Invalid dataset id")
+    wiring = _load_run_wiring(run_id)
+    component = next(
+        (c for c in wiring.get("components", [])
+         if c.get("type") == "Recorder" and c.get("name") == dataset_id),
+        None,
+    )
+    if component is None:
+        raise HTTPException(status_code=404, detail="Dataset not found")
+    path = _recorder_feather_path(run_id, component)
+    if path is None:
+        raise HTTPException(status_code=404, detail="Dataset file missing")
+
+    table = pa_feather.read_table(path)
+    fields = [_infer_field(f.name, f.type) for f in table.schema]
+    data = table.to_pylist()
+    return {"fields": fields, "data": data}
 
 
 @app.delete("/api/runs/{run_id}")

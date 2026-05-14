@@ -24,7 +24,11 @@
           <Square />
           Cancel
         </Button>
-        <p class="text-muted-foreground">Run ID: {{ runId }}</p>
+        <router-link v-if="status === 'done'" :to="`/runs/${runId}/results`">
+          <Button size="sm" title="Load Simulation Results">
+            Results
+          </Button>
+        </router-link>
       </div>
       <section>
         <h2 class="text-xl font-semibold">Federates</h2>
