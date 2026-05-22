@@ -446,6 +446,8 @@ async def start_run(
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=400, detail=f"Build failed: {exc}") from exc
 
+    (run_dir / "outputs").mkdir(exist_ok=True)
+
     # Snapshot what was submitted — authoritative record of what actually ran,
     # independent of whether the originating template is later edited or deleted.
     (run_dir / "wiring.json").write_text(

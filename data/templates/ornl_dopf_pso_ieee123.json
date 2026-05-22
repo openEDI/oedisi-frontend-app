@@ -1,0 +1,1116 @@
+{
+  "id": "1779415501593",
+  "name": "ORNL DOPF (PSO) \u2014 IEEE 123",
+  "description": "ORNL Distribution OPF on IEEE 123-bus",
+  "createdAt": "2026-05-22T02:05:01.000Z",
+  "nodes": [
+    {
+      "id": "LocalFeeder-1779415501593",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 200.0,
+        "y": 400.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "LocalFeeder-1779415501593",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "LocalFeeder-1779415501593",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 200.0,
+        "y": 400.0
+      },
+      "data": {
+        "label": "Feeder",
+        "componentType": "LocalFeeder",
+        "config": {
+          "use_smartds": false,
+          "user_uploads_model": false,
+          "profile_location": "gadal_ieee123/profiles",
+          "opendss_location": "gadal_ieee123/qsts",
+          "sensor_location": "gadal_ieee123/sensors.json",
+          "start_date": "2017-01-01 00:00:00",
+          "number_of_timesteps": 96,
+          "run_freq_sec": 900,
+          "topology_output": "../../outputs/topology.json",
+          "name": "feeder"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "DOPFPSOComponent-1779415501594",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 850.0,
+        "y": 400.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "DOPFPSOComponent-1779415501594",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "DOPFPSOComponent-1779415501594",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 850.0,
+        "y": 400.0
+      },
+      "data": {
+        "label": "ORNL DOPF (PSO)",
+        "componentType": "DOPFPSOComponent",
+        "config": {
+          "name": "dopfpso",
+          "pv_buses": [
+            "7.1",
+            "29.1",
+            "49.1",
+            "55.1",
+            "63.1",
+            "68.1",
+            "80.1",
+            "87.1",
+            "113.1"
+          ],
+          "pv_capacity_kw": [
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150,
+            150
+          ],
+          "algorithm_parameters": {
+            "tol": 1e-05
+          }
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1779415501595",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 365.0,
+        "y": 80.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1779415501595",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1779415501595",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 365.0,
+        "y": 80.0
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "feather_filename": "../../outputs/voltage_mag.feather",
+          "csv_filename": "../../outputs/voltage_mag.csv",
+          "name": "recorder_voltage_magnitude"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1779415501596",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 585.0,
+        "y": 80.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1779415501596",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1779415501596",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 585.0,
+        "y": 80.0
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "feather_filename": "../../outputs/powers_real.feather",
+          "csv_filename": "../../outputs/powers_real.csv",
+          "name": "recorder_power_real"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1779415501597",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 805.0,
+        "y": 80.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1779415501597",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1779415501597",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 805.0,
+        "y": 80.0
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "feather_filename": "../../outputs/powers_imag.feather",
+          "csv_filename": "../../outputs/powers_imag.csv",
+          "name": "recorder_power_imag"
+        }
+      },
+      "events": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-LocalFeeder-1779415501593-DOPFPSOComponent-1779415501594-1779415502593",
+      "type": "wiring",
+      "source": "LocalFeeder-1779415501593",
+      "target": "DOPFPSOComponent-1779415501594",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "powers_real"
+          },
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imag",
+            "targetPortId": "powers_imag"
+          },
+          {
+            "type": "Topology",
+            "sourcePortId": "topology",
+            "targetPortId": "topology"
+          },
+          {
+            "type": "VoltagesMagnitude",
+            "sourcePortId": "voltages_magnitude",
+            "targetPortId": "voltages_magnitude"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersReal\nPowersImaginary\nTopology\nVoltagesMagnitude",
+      "sourceNode": {
+        "id": "LocalFeeder-1779415501593",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 200.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 200.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "LocalFeeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "run_freq_sec": 900,
+            "topology_output": "../../outputs/topology.json",
+            "name": "feeder"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "DOPFPSOComponent-1779415501594",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 850.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "DOPFPSOComponent-1779415501594",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "DOPFPSOComponent-1779415501594",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 850.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "ORNL DOPF (PSO)",
+          "componentType": "DOPFPSOComponent",
+          "config": {
+            "name": "dopfpso",
+            "pv_buses": [
+              "7.1",
+              "29.1",
+              "49.1",
+              "55.1",
+              "63.1",
+              "68.1",
+              "80.1",
+              "87.1",
+              "113.1"
+            ],
+            "pv_capacity_kw": [
+              150,
+              150,
+              150,
+              150,
+              150,
+              150,
+              150,
+              150,
+              150
+            ],
+            "algorithm_parameters": {
+              "tol": 1e-05
+            }
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 320.0,
+      "sourceY": 424.0,
+      "targetX": 850.0,
+      "targetY": 424.0,
+      "selected": false
+    },
+    {
+      "id": "edge-DOPFPSOComponent-1779415501594-LocalFeeder-1779415501593-1779415502594",
+      "type": "wiring",
+      "source": "DOPFPSOComponent-1779415501594",
+      "target": "LocalFeeder-1779415501593",
+      "data": {
+        "wires": [
+          {
+            "type": "CommandList",
+            "sourcePortId": "change_commands",
+            "targetPortId": "change_commands"
+          }
+        ]
+      },
+      "events": {},
+      "label": "CommandList",
+      "sourceNode": {
+        "id": "DOPFPSOComponent-1779415501594",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 850.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "DOPFPSOComponent-1779415501594",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "DOPFPSOComponent-1779415501594",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 850.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "ORNL DOPF (PSO)",
+          "componentType": "DOPFPSOComponent",
+          "config": {
+            "name": "dopfpso",
+            "pv_buses": [
+              "7.1",
+              "29.1",
+              "49.1",
+              "55.1",
+              "63.1",
+              "68.1",
+              "80.1",
+              "87.1",
+              "113.1"
+            ],
+            "pv_capacity_kw": [
+              150,
+              150,
+              150,
+              150,
+              150,
+              150,
+              150,
+              150,
+              150
+            ],
+            "algorithm_parameters": {
+              "tol": 1e-05
+            }
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "LocalFeeder-1779415501593",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 200.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 200.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "LocalFeeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "run_freq_sec": 900,
+            "topology_output": "../../outputs/topology.json",
+            "name": "feeder"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 970.0,
+      "sourceY": 424.0,
+      "targetX": 200.0,
+      "targetY": 424.0,
+      "selected": false
+    },
+    {
+      "id": "edge-LocalFeeder-1779415501593-Recorder-1779415501595-1779415502595",
+      "type": "wiring",
+      "source": "LocalFeeder-1779415501593",
+      "target": "Recorder-1779415501595",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesMagnitude",
+            "sourcePortId": "voltages_magnitude",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesMagnitude",
+      "sourceNode": {
+        "id": "LocalFeeder-1779415501593",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 200.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 200.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "LocalFeeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "run_freq_sec": 900,
+            "topology_output": "../../outputs/topology.json",
+            "name": "feeder"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1779415501595",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 365.0,
+          "y": 80.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1779415501595",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1779415501595",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 365.0,
+          "y": 80.0
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "feather_filename": "../../outputs/voltage_mag.feather",
+            "csv_filename": "../../outputs/voltage_mag.csv",
+            "name": "recorder_voltage_magnitude"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 320.0,
+      "sourceY": 424.0,
+      "targetX": 365.0,
+      "targetY": 104.0,
+      "selected": false
+    },
+    {
+      "id": "edge-LocalFeeder-1779415501593-Recorder-1779415501596-1779415502596",
+      "type": "wiring",
+      "source": "LocalFeeder-1779415501593",
+      "target": "Recorder-1779415501596",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersReal",
+      "sourceNode": {
+        "id": "LocalFeeder-1779415501593",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 200.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 200.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "LocalFeeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "run_freq_sec": 900,
+            "topology_output": "../../outputs/topology.json",
+            "name": "feeder"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1779415501596",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 585.0,
+          "y": 80.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1779415501596",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1779415501596",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 585.0,
+          "y": 80.0
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "feather_filename": "../../outputs/powers_real.feather",
+            "csv_filename": "../../outputs/powers_real.csv",
+            "name": "recorder_power_real"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 320.0,
+      "sourceY": 424.0,
+      "targetX": 585.0,
+      "targetY": 104.0,
+      "selected": false
+    },
+    {
+      "id": "edge-LocalFeeder-1779415501593-Recorder-1779415501597-1779415502597",
+      "type": "wiring",
+      "source": "LocalFeeder-1779415501593",
+      "target": "Recorder-1779415501597",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersImaginary",
+      "sourceNode": {
+        "id": "LocalFeeder-1779415501593",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 200.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "LocalFeeder-1779415501593",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 200.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "LocalFeeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "run_freq_sec": 900,
+            "topology_output": "../../outputs/topology.json",
+            "name": "feeder"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1779415501597",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 805.0,
+          "y": 80.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1779415501597",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1779415501597",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 805.0,
+          "y": 80.0
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "feather_filename": "../../outputs/powers_imag.feather",
+            "csv_filename": "../../outputs/powers_imag.csv",
+            "name": "recorder_power_imag"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 320.0,
+      "sourceY": 424.0,
+      "targetX": 805.0,
+      "targetY": 104.0,
+      "selected": false
+    }
+  ]
+}
