@@ -17,41 +17,20 @@
         </Select>
       </div>
     </div>
-    <GraphicWalkerEmbed v-if="fields.length"
-      :key="`${runId}/${selectedResultID ?? ''}`" :data="data"
-      :fields="fields" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onActivated, watch, shallowRef } from 'vue'
+import { ref, computed, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, type ResultEntry, } from '@/lib/api'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select/'
-import GraphicWalkerEmbed from '@/components/GraphicWalkerEmbed.vue'
-import { type IMutField, type IRow } from '@kanaries/graphic-walker'
 
 const route = useRoute()
 const runId = computed<string | null>(() => typeof route.params.runId === "string" ? route.params.runId : null)
 
 const resultManifest = ref<ResultEntry[]>([])
 const selectedResultID = ref<string | null>(null)
-const fields = shallowRef<IMutField[]>([])
-const data = shallowRef<IRow[]>([])
-
-watch([runId, selectedResultID], async ([newRunId, newId]) => {
-  if (newId !== null && newRunId !== null) {
-    fields.value = []
-    data.value = []
-    try {
-      const resultData = await api.getResult(newRunId, newId)
-      data.value = resultData.data
-      fields.value = resultData.fields as IMutField[]
-    } catch {
-      alert(`Could not load result for ${newId}`)
-    }
-  }
-})
 
 onActivated(async () => {
   try {

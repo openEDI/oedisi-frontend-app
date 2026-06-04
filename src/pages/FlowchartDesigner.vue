@@ -250,10 +250,10 @@ const edges = ref<Edge[]>([])
 const selectedNodeId = ref<string | null>(null)
 const selectedEdgeId = ref<string | null>(null)
 const selectedNode = computed<Node | null>(() => {
-  return nodes.value.find((node) => node.id === selectedNodeId.value) ?? null
+  return (nodes.value as Node[]).find((node) => node.id === selectedNodeId.value) ?? null
 })
 const selectedEdge = computed<Edge | null>(() => {
-  return edges.value.find((edge) => edge.id === selectedEdgeId.value) ?? null
+  return (edges.value as Edge[]).find((edge) => edge.id === selectedEdgeId.value) ?? null
 })
 const saveDialogOpen = ref(false)
 const templateName = ref('')
@@ -355,7 +355,7 @@ const parseWireOption = (value: string): EdgeWire | null => {
 }
 
 const getNodeComponentType = (nodeId: string): string | null => {
-  const node = nodes.value.find((n) => n.id === nodeId)
+  const node = (nodes.value as Node[]).find((n) => n.id === nodeId)
   const data = node?.data as Record<string, unknown> | undefined
   const componentType = data?.componentType
   return typeof componentType === 'string' ? componentType : null
