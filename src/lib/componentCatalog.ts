@@ -22,6 +22,12 @@ import pnnlHubPowerDefinition from '@/lib/definitions/pnnl_hub_power.json'
 import pnnlHubPowerSchema from '@/lib/schemas/pnnl_hub_power.json'
 import pnnlHubVoltageDefinition from '@/lib/definitions/pnnl_hub_voltage.json'
 import pnnlHubVoltageSchema from '@/lib/schemas/pnnl_hub_voltage.json'
+import ornlEvPsoDefinition from '@/lib/definitions/ornl_ev_pso.json'
+import ornlEvPsoSchema from '@/lib/schemas/ornl_ev_pso.json'
+import ornlDopfPsoDefinition from '@/lib/definitions/ornl_dopf_pso.json'
+import ornlDopfPsoSchema from '@/lib/schemas/ornl_dopf_pso.json'
+import ornlDsseGnwlsDefinition from '@/lib/definitions/ornl_dsse_gnwls.json'
+import ornlDsseGnwlsSchema from '@/lib/schemas/ornl_dsse_gnwls.json'
 
 export interface FederateDefinition {
   directory: string
@@ -136,5 +142,29 @@ export const COMPONENT_CATALOG: ComponentDefinition[] = [
     definitionFile: 'pnnl_hub_power.json',
     definition: pnnlHubPowerDefinition,
     inputSchema: pnnlHubPowerSchema,
+  },
+  {
+    id: 'EVCSComponent',
+    name: 'ORNL EV Scheduler',
+    description: 'PSO-based EV charging optimization',
+    definitionFile: 'ornl_ev_pso.json',
+    definition: ornlEvPsoDefinition,
+    inputSchema: ornlEvPsoSchema,
+  },
+  {
+    id: 'DOPFPSOComponent',
+    name: 'ORNL DOPF (PSO)',
+    description: 'Distribution OPF via Particle Swarm Optimization',
+    definitionFile: 'ornl_dopf_pso.json',
+    definition: ornlDopfPsoDefinition,
+    inputSchema: ornlDopfPsoSchema,
+  },
+  {
+    id: 'DSSEGNWLSComponent',
+    name: 'ORNL DSSE (GN-WLS)',
+    description: 'Distribution state estimation via Gauss-Newton WLS',
+    definitionFile: 'ornl_dsse_gnwls.json',
+    definition: ornlDsseGnwlsDefinition,
+    inputSchema: ornlDsseGnwlsSchema,
   },
 ]
