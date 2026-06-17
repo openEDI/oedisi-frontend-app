@@ -40,7 +40,7 @@
                   <span v-for="node in config.nodes" :key="node.id"
                     class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary text-secondary-foreground">
                     {{ node.data?.label || node.data?.componentType ||
-                    'Component' }}
+                      'Component' }}
                   </span>
                 </div>
               </div>
@@ -73,16 +73,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onActivated, toRaw } from 'vue'
+import { ref, onActivated, toRaw, shallowRef } from 'vue'
 import { type HistoryState, useRouter } from 'vue-router'
-import { api } from '@/lib/api'
+import { api, StartError } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { TemplateData } from '@/lib/flowTypes'
 import { toWiringDiagram } from '@/lib/wiringDiagram'
 
 const router = useRouter()
-const savedConfigs = ref<TemplateData[]>([])
+const savedConfigs = shallowRef<TemplateData[]>([])
 const loading = ref(false)
 
 const loadConfigs = async () => {
@@ -112,7 +112,11 @@ const runTemplate = async (config: TemplateData) => {
     router.push(`/runs/${runId}`)
   } catch (error) {
     console.error('runTemplate error:', error)
-    alert(`Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
+    if (error instanceof StartError && error.status === 409) {
+      alert(`Cannot run multiple simulations at once. Please try again later.`)
+    } else {
+      alert(`Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
+    }
   } finally {
     runPending.value = false
   }

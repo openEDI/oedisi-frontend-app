@@ -193,7 +193,7 @@ import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import { api } from '@/lib/api'
+import { api, StartError } from '@/lib/api'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
@@ -634,7 +634,11 @@ const saveAndRunTemplate = async () => {
       router.push(`/runs/${runId}`)
     } catch (error) {
       console.error('saveAndRunTemplate error:', error)
-      alert(`Saved template. Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
+      if (error instanceof StartError && error.status === 409) {
+        alert(`Saved template. Cannot run multiple simulations at once. Please try again later.`)
+      } else {
+        alert(`Saved template. Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
+      }
     }
   } finally {
     runPending.value = false

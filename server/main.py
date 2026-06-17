@@ -16,6 +16,7 @@ import asyncio
 import json
 import os
 import re
+import socket
 import sys
 import uuid
 from contextlib import asynccontextmanager
@@ -432,11 +433,53 @@ def _restore_runs() -> None:
         )
 
 
+# oedisi/HELICS can only host one simulation at a time: the ZMQ broker binds a
+# fixed pair of ports, so a second concurrent `helics run` collides on them.
+# Default ZMQ broker port (23404) plus its reply channel (23405).
+HELICS_BROKER_PORTS: tuple[int, ...] = (23404, 23405)
+
+
+def _port_in_use(port: int) -> bool:
+    """True if something is listening on 127.0.0.1:port.
+
+    Uses a TCP connect rather than psutil.net_connections() — the latter raises
+    AccessDenied without root on macOS. connect_ex returns 0 when the connection
+    succeeds, i.e. a broker is already bound here.
+    """
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(0.05)
+        return sock.connect_ex(("127.0.0.1", port)) == 0
+
+
+def _assert_no_run_in_progress() -> None:
+    """Reject the request (409) if a simulation is already running.
+
+    Two layers: the in-process check catches a rapid double-submit before the
+    broker has bound its port; the port check catches brokers started outside
+    this server or left alive (`"unknown"`) across a restart.
+    """
+    for run_id, record in runs.items():
+        if record.status == "running":
+            raise HTTPException(
+                status_code=409,
+                detail=f"A simulation is already running ({record.name or run_id}).",
+            )
+    busy = [p for p in HELICS_BROKER_PORTS if _port_in_use(p)]
+    if busy:
+        ports = ", ".join(str(p) for p in busy)
+        raise HTTPException(
+            status_code=409,
+            detail=f"HELICS broker port {ports} in use; a simulation is already running.",
+        )
+
+
 @app.post("/api/runs")
 async def start_run(
     wiring_diagram: AppWiringDiagram,
     template_id: str | None = None,
 ) -> dict[str, str]:
+    _assert_no_run_in_progress()
+
     run_id = uuid.uuid4().hex
     run_dir = RUNS_DIR / run_id
     build_dir = run_dir / "build"
@@ -454,14 +497,12 @@ async def start_run(
         wiring_diagram.model_dump_json(indent=2), encoding="utf-8"
     )
 
-    proc = await asyncio.create_subprocess_exec(
-        "helics",
-        "run",
-        f"--path={build_dir / 'system_runner.json'}",
-        cwd=build_dir,
-    )
+    # Reserve the slot *before* awaiting the subprocess spawn. The await is the
+    # first yield point in this handler, so a concurrent start_run could
+    # otherwise slip past _assert_no_run_in_progress() here — no record exists
+    # yet and the broker hasn't bound its port. pid is filled in once we have it.
     record = RunRecord(
-        pid=proc.pid,
+        pid=-1,
         started_at=datetime.now(timezone.utc),
         template_id=template_id,
         run_dir=run_dir,
@@ -469,6 +510,19 @@ async def start_run(
         status="running",
     )
     runs[run_id] = record
+
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "helics",
+            "run",
+            f"--path={build_dir / 'system_runner.json'}",
+            cwd=build_dir,
+        )
+    except Exception as exc:  # noqa: BLE001
+        del runs[run_id]  # release the slot — nothing is running
+        raise HTTPException(status_code=500, detail=f"Failed to launch helics: {exc}") from exc
+
+    record.pid = proc.pid
     _write_run_start(run_dir, record)
     task = asyncio.create_task(_watch_proc(run_id, proc))
     _watcher_tasks.add(task)

@@ -21,6 +21,15 @@ export interface ResultEntry {
   size_bytes: number
 }
 
+export class StartError extends Error {
+  status: number
+  constructor(status: number, message: string) {
+    super(message)
+    this.name = 'StartError'
+    this.status = status
+  }
+}
+
 export const api = {
   // Get all templates
   async getTemplates(): Promise<TemplateData[]> {
@@ -95,7 +104,7 @@ export const api = {
       const errorData = await response.json().catch(() => ({}))
       const errorMessage =
         errorData.detail || `HTTP ${response.status}: ${response.statusText}`
-      throw new Error(errorMessage)
+      throw new StartError(response.status, errorMessage)
     }
 
     return await response.json()
