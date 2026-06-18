@@ -29,7 +29,7 @@ import psutil
 import pyarrow.feather as pa_feather
 import pyarrow.types as pa_types
 import uvicorn
-from fastapi import FastAPI, HTTPException, Path as PathParam
+from fastapi import Depends, FastAPI, Header, HTTPException, Path as PathParam
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from oedisi.componentframework.basic_component import (
@@ -71,6 +71,54 @@ TEMPLATE_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
 # Accept any sane directory-name shape. Most runs are UUID hex,
 # but we accept potential new ones.
 RunId = Annotated[str, PathParam(pattern=r"^[a-zA-Z0-9_-]{1,64}$")]
+
+
+# ---------------------------------------------------------------------------
+# Per-user identity
+# ---------------------------------------------------------------------------
+#
+# nginx authenticates via HTTP Basic and injects the username as the
+# `X-Remote-User` header (see deploy/nginx.conf). The backend trusts that
+# header *because* it only listens on localhost — nginx is the only caller.
+# Every request's data is namespaced under the resolved user, so a username
+# that could escape its directory (`..`, `/`) must never reach the filesystem.
+
+# Same shape as a template id: directory-safe, no traversal characters.
+USER_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
+
+
+def current_user(
+    x_remote_user: Annotated[str | None, Header()] = None,
+) -> str:
+    """Resolve and validate the authenticated user from the nginx header.
+
+    Fail closed: a request with no/invalid identity gets no data, which forces
+    nginx to always sit in front of the backend in production.
+
+    Set OEDISI_DEV_USER to allow access to any user.
+    """
+    if x_remote_user is not None:
+        if USER_ID_PATTERN.match(x_remote_user):
+            return x_remote_user
+        else:
+            raise HTTPException(status_code=400, detail="Invalid user")
+    else:
+        user = os.environ.get("OEDISI_DEV_USER")
+        if user is not None:
+            return user
+        else:
+            raise HTTPException(status_code=401)
+
+
+CurrentUser = Annotated[str, Depends(current_user)]
+
+
+def _user_templates_dir(user: str) -> Path:
+    return TEMPLATES_DIR / user
+
+
+def _user_runs_dir(user: str) -> Path:
+    return RUNS_DIR / user
 
 
 # ---------------------------------------------------------------------------
@@ -135,9 +183,9 @@ def _validate_template_id(template_id: str) -> None:
         raise HTTPException(status_code=400, detail="Invalid template id format")
 
 
-def _template_path(template_id: str) -> Path:
+def _template_path(user: str, template_id: str) -> Path:
     _validate_template_id(template_id)
-    return TEMPLATES_DIR / f"{template_id}.json"
+    return _user_templates_dir(user) / f"{template_id}.json"
 
 
 def _validate_template_payload(template: dict[str, Any]) -> None:
@@ -168,10 +216,11 @@ def _read_template(path: Path) -> dict[str, Any]:
 
 
 @app.get("/api/templates")
-def list_templates() -> list[dict[str, Any]]:
-    TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
+def list_templates(user: CurrentUser) -> list[dict[str, Any]]:
+    user_dir = _user_templates_dir(user)
+    user_dir.mkdir(parents=True, exist_ok=True)
     templates: list[dict[str, Any]] = []
-    for path in TEMPLATES_DIR.glob("*.json"):
+    for path in user_dir.glob("*.json"):
         try:
             templates.append(_read_template(path))
         except json.JSONDecodeError:
@@ -182,15 +231,15 @@ def list_templates() -> list[dict[str, Any]]:
 
 
 @app.get("/api/templates/{template_id}")
-def get_template(template_id: str) -> dict[str, Any]:
-    path = _template_path(template_id)
+def get_template(template_id: str, user: CurrentUser) -> dict[str, Any]:
+    path = _template_path(user, template_id)
     if not path.exists():
         raise HTTPException(status_code=404, detail="Template not found")
     return _read_template(path)
 
 
 @app.post("/api/templates")
-def create_template(template: dict[str, Any]) -> dict[str, Any]:
+def create_template(template: dict[str, Any], user: CurrentUser) -> dict[str, Any]:
     if not template.get("id"):
         # Match the JS server: millisecond timestamp string.
         template["id"] = str(int(__import__("time").time() * 1000))
@@ -198,7 +247,7 @@ def create_template(template: dict[str, Any]) -> dict[str, Any]:
         template["createdAt"] = _iso(datetime.now(timezone.utc))
 
     _validate_template_payload(template)
-    _atomic_write_json(_template_path(template["id"]), template)
+    _atomic_write_json(_template_path(user, template["id"]), template)
     return {
         "success": True,
         "id": template["id"],
@@ -207,10 +256,12 @@ def create_template(template: dict[str, Any]) -> dict[str, Any]:
 
 
 @app.put("/api/templates/{template_id}")
-def update_template(template_id: str, template: dict[str, Any]) -> dict[str, Any]:
+def update_template(
+    template_id: str, template: dict[str, Any], user: CurrentUser
+) -> dict[str, Any]:
     template["id"] = template_id
 
-    path = _template_path(template_id)
+    path = _template_path(user, template_id)
     if path.exists():
         existing = _read_template(path)
         if existing.get("createdAt"):
@@ -222,8 +273,8 @@ def update_template(template_id: str, template: dict[str, Any]) -> dict[str, Any
 
 
 @app.delete("/api/templates/{template_id}")
-def delete_template(template_id: str) -> dict[str, Any]:
-    path = _template_path(template_id)
+def delete_template(template_id: str, user: CurrentUser) -> dict[str, Any]:
+    path = _template_path(user, template_id)
     if not path.exists():
         raise HTTPException(status_code=404, detail="Template not found")
     path.unlink()
@@ -292,6 +343,7 @@ def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
 @dataclass
 class RunRecord:
     pid: int
+    user: str
     started_at: datetime
     template_id: str | None
     run_dir: Path
@@ -326,9 +378,7 @@ def _write_run_start(run_dir: Path, record: RunRecord) -> None:
 
 def _write_run_finish(record: RunRecord) -> None:
     try:
-        data = json.loads(
-            _run_json_path(record.run_dir).read_text(encoding="utf-8")
-        )
+        data = json.loads(_run_json_path(record.run_dir).read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
     data["exit_code"] = record.exit_code
@@ -336,9 +386,7 @@ def _write_run_finish(record: RunRecord) -> None:
     _atomic_write_json(_run_json_path(record.run_dir), data)
 
 
-async def _watch_proc(
-    run_id: str, proc: asyncio.subprocess.Process
-) -> None:
+async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     """Await process exit, update the RunRecord, and persist completion.
 
     Sole writer of `exit_code`/`ended_at`/terminal `status` on the record —
@@ -390,12 +438,10 @@ def _restore_runs() -> None:
     """
     if not RUNS_DIR.exists():
         return
-    for run_dir in RUNS_DIR.iterdir():
-        if not run_dir.is_dir():
-            continue
-        path = _run_json_path(run_dir)
-        if not path.is_file():
-            continue
+    # Each run.json now sits at runs/<user>/<run_id>/run.json.
+    for path in RUNS_DIR.glob("*/*/run.json"):
+        run_dir = path.parent
+        user = run_dir.parent.name
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
@@ -423,6 +469,7 @@ def _restore_runs() -> None:
             status = "unknown"
         runs[run_dir.name] = RunRecord(
             pid=pid,
+            user=user,
             started_at=started_at,
             template_id=data.get("template_id"),
             run_dir=run_dir,
@@ -476,12 +523,13 @@ def _assert_no_run_in_progress() -> None:
 @app.post("/api/runs")
 async def start_run(
     wiring_diagram: AppWiringDiagram,
+    user: CurrentUser,
     template_id: str | None = None,
 ) -> dict[str, str]:
     _assert_no_run_in_progress()
 
     run_id = uuid.uuid4().hex
-    run_dir = RUNS_DIR / run_id
+    run_dir = _user_runs_dir(user) / run_id
     build_dir = run_dir / "build"
 
     try:
@@ -503,6 +551,7 @@ async def start_run(
     # yet and the broker hasn't bound its port. pid is filled in once we have it.
     record = RunRecord(
         pid=-1,
+        user=user,
         started_at=datetime.now(timezone.utc),
         template_id=template_id,
         run_dir=run_dir,
@@ -547,62 +596,74 @@ def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
 
 
 @app.get("/api/runs")
-def list_runs() -> list[dict[str, Any]]:
+def list_runs(user: CurrentUser) -> list[dict[str, Any]]:
     return sorted(
-        (_serialize_run(rid, rec) for rid, rec in runs.items()),
+        (_serialize_run(rid, rec) for rid, rec in runs.items() if rec.user == user),
         key=lambda r: r["started_at"],
         reverse=True,
     )
 
 
-@app.get("/api/runs/{run_id}")
-def run_status(run_id: RunId) -> dict[str, Any]:
+def _get_owned_run(run_id: str, user: str) -> RunRecord:
+    """Fetch a run only if it belongs to `user`, else 404.
+
+    The `runs` dict is keyed by globally-unique run_id, so it holds every
+    user's runs. 404 rather than 403 keeps another user's run ids unguessable.
+    """
     record = runs.get(run_id)
-    if record is None:
+    if record is None or record.user != user:
         raise HTTPException(status_code=404, detail="Run not found")
+    return record
+
+
+@app.get("/api/runs/{run_id}")
+def run_status(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    record = _get_owned_run(run_id, user)
     return _serialize_run(run_id, record)
 
 
 @app.get("/api/runs/{run_id}/wiring")
-def run_wiring(run_id: RunId) -> FileResponse:
+def run_wiring(run_id: RunId, user: CurrentUser) -> FileResponse:
     """Ship the snapshotted wiring.json straight from disk.
 
     Read from disk rather than `runs[run_id]` so this works for restored runs
     where we never held the diagram in memory.
     """
-    wiring_path = RUNS_DIR / run_id / "wiring.json"
+    wiring_path = _user_runs_dir(user) / run_id / "wiring.json"
     if not wiring_path.exists():
         raise HTTPException(status_code=404, detail="Wiring not found")
     return FileResponse(wiring_path, media_type="application/json")
 
 
 @app.get("/api/runs/{run_id}/logs/{component}")
-def run_log(run_id: RunId, component: str) -> FileResponse:
+def run_log(run_id: RunId, component: str, user: CurrentUser) -> FileResponse:
     # Guard against path traversal — component name is a filename segment only.
     if "/" in component or "\\" in component or ".." in component:
         raise HTTPException(status_code=400, detail="Invalid component name")
 
-    log_path = RUNS_DIR / run_id / "build" / f"{component}.log"
+    log_path = _user_runs_dir(user) / run_id / "build" / f"{component}.log"
     if not log_path.exists():
         raise HTTPException(status_code=404, detail="Log not found")
     return FileResponse(log_path, media_type="text/plain; charset=utf-8")
 
 
-def _load_run_wiring(run_id: str) -> dict[str, Any]:
-    wiring_path = RUNS_DIR / run_id / "wiring.json"
+def _load_run_wiring(user: str, run_id: str) -> dict[str, Any]:
+    wiring_path = _user_runs_dir(user) / run_id / "wiring.json"
     if not wiring_path.exists():
         raise HTTPException(status_code=404, detail="Run wiring not found")
     return json.loads(wiring_path.read_text())
 
 
-def _recorder_feather_path(run_id: str, component: dict[str, Any]) -> Path | None:
+def _recorder_feather_path(
+    user: str, run_id: str, component: dict[str, Any]
+) -> Path | None:
     """Path to the feather a Recorder writes, or None if it's not on disk yet."""
     name = component.get("name")
     params = component.get("parameters") or {}
     feather_name = params.get("feather_filename")
     if not name or not feather_name:
         return None
-    path = RUNS_DIR / run_id / "build" / name / feather_name
+    path = _user_runs_dir(user) / run_id / "build" / name / feather_name
     return path if path.exists() else None
 
 
@@ -623,38 +684,43 @@ def _infer_field(name: str, arrow_type: Any) -> dict[str, str]:
 
 
 @app.get("/api/runs/{run_id}/results")
-def list_results(run_id: RunId) -> list[dict[str, Any]]:
+def list_results(run_id: RunId, user: CurrentUser) -> list[dict[str, Any]]:
     """Manifest of datasets available for a run. v1: Recorder outputs only."""
-    wiring = _load_run_wiring(run_id)
+    wiring = _load_run_wiring(user, run_id)
     entries: list[dict[str, Any]] = []
     for component in wiring.get("components", []):
         if component.get("type") != "Recorder":
             continue
-        path = _recorder_feather_path(run_id, component)
+        path = _recorder_feather_path(user, run_id, component)
         if path is None:
             continue
-        entries.append({
-            "id": component["name"],
-            "label": component["name"],
-            "type": "Recorder",
-            "size_bytes": path.stat().st_size,
-        })
+        entries.append(
+            {
+                "id": component["name"],
+                "label": component["name"],
+                "type": "Recorder",
+                "size_bytes": path.stat().st_size,
+            }
+        )
     return entries
 
 
 @app.get("/api/runs/{run_id}/results/{dataset_id}")
-def get_result(run_id: RunId, dataset_id: str) -> dict[str, Any]:
+def get_result(run_id: RunId, dataset_id: str, user: CurrentUser) -> dict[str, Any]:
     if "/" in dataset_id or "\\" in dataset_id or ".." in dataset_id:
         raise HTTPException(status_code=400, detail="Invalid dataset id")
-    wiring = _load_run_wiring(run_id)
+    wiring = _load_run_wiring(user, run_id)
     component = next(
-        (c for c in wiring.get("components", [])
-         if c.get("type") == "Recorder" and c.get("name") == dataset_id),
+        (
+            c
+            for c in wiring.get("components", [])
+            if c.get("type") == "Recorder" and c.get("name") == dataset_id
+        ),
         None,
     )
     if component is None:
         raise HTTPException(status_code=404, detail="Dataset not found")
-    path = _recorder_feather_path(run_id, component)
+    path = _recorder_feather_path(user, run_id, component)
     if path is None:
         raise HTTPException(status_code=404, detail="Dataset file missing")
 
@@ -665,10 +731,8 @@ def get_result(run_id: RunId, dataset_id: str) -> dict[str, Any]:
 
 
 @app.delete("/api/runs/{run_id}")
-def kill_run(run_id: RunId) -> dict[str, bool]:
-    record = runs.get(run_id)
-    if record is None:
-        raise HTTPException(status_code=404, detail="Run not found")
+def kill_run(run_id: RunId, user: CurrentUser) -> dict[str, bool]:
+    record = _get_owned_run(run_id, user)
     # Only kill runs we launched in this process. "unknown" runs have a pid
     # from a previous boot; the OS may have reassigned it.
     if record.status == "running":
