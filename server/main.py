@@ -77,11 +77,16 @@ RunId = Annotated[str, PathParam(pattern=r"^[a-zA-Z0-9_-]{1,64}$")]
 # Per-user identity
 # ---------------------------------------------------------------------------
 #
-# nginx authenticates via HTTP Basic and injects the username as the
-# `X-Remote-User` header (see deploy/nginx.conf). The backend trusts that
-# header *because* it only listens on localhost — nginx is the only caller.
-# Every request's data is namespaced under the resolved user, so a username
-# that could escape its directory (`..`, `/`) must never reach the filesystem.
+# Single-user by default: every request resolves to DEFAULT_USER, so a local
+# `npm run dev:server` (and CI) needs no auth setup. Set OEDISI_MULTI_USER to
+# opt into per-user mode, where nginx authenticates via HTTP Basic and injects
+# the username as the `X-Remote-User` header (see deploy/nginx.conf). The
+# backend trusts that header *because* it only listens on localhost — nginx is
+# the only caller. Every request's data is namespaced under the resolved user,
+# so a username that could escape its directory (`..`, `/`) must never reach
+# the filesystem.
+
+DEFAULT_USER = "dev"
 
 # Same shape as a template id: directory-safe, no traversal characters.
 USER_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
@@ -90,24 +95,21 @@ USER_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
 def current_user(
     x_remote_user: Annotated[str | None, Header()] = None,
 ) -> str:
-    """Resolve and validate the authenticated user from the nginx header.
+    """Resolve the user for this request.
 
-    Fail closed: a request with no/invalid identity gets no data, which forces
-    nginx to always sit in front of the backend in production.
+    Single-user mode (default): always DEFAULT_USER; the header is ignored.
 
-    Set OEDISI_DEV_USER to allow access to any user.
+    Multi-user mode (OEDISI_MULTI_USER set): resolve from the nginx-injected
+    header and fail closed on a missing/invalid identity, which forces nginx to
+    always sit in front of the backend in production.
     """
-    if x_remote_user is not None:
-        if USER_ID_PATTERN.match(x_remote_user):
-            return x_remote_user
-        else:
-            raise HTTPException(status_code=400, detail="Invalid user")
-    else:
-        user = os.environ.get("OEDISI_DEV_USER")
-        if user is not None:
-            return user
-        else:
-            raise HTTPException(status_code=401)
+    if not os.environ.get("OEDISI_MULTI_USER"):
+        return DEFAULT_USER
+    if x_remote_user is None:
+        raise HTTPException(status_code=401)
+    if not USER_ID_PATTERN.match(x_remote_user):
+        raise HTTPException(status_code=400, detail="Invalid user")
+    return x_remote_user
 
 
 CurrentUser = Annotated[str, Depends(current_user)]
