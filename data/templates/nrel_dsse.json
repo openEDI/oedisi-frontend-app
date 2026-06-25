@@ -1,14 +1,14 @@
 {
-  "id": "1776965713642",
-  "name": "v4",
-  "description": "",
+  "id": "1777321557901",
+  "name": "NREL DSSE IEEE 123",
+  "description": "Weighted Least Squares Estimator with IEEE 123",
   "nodes": [
     {
       "id": "Feeder-1776801555228",
       "type": "custom",
       "dimensions": {
         "width": 120,
-        "height": 49
+        "height": 63
       },
       "computedPosition": {
         "x": 350,
@@ -22,8 +22,8 @@
             "type": "source",
             "nodeId": "Feeder-1776801555228",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 113.46422378574586,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -34,8 +34,8 @@
             "type": "target",
             "nodeId": "Feeder-1776801555228",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -64,7 +64,7 @@
           "opendss_location": "gadal_ieee123/qsts",
           "sensor_location": "gadal_ieee123/sensors.json",
           "start_date": "2017-01-01 00:00:00",
-          "number_of_timesteps": 96,
+          "number_of_timesteps": 6,
           "start_time_index": 0
         }
       },
@@ -74,8 +74,8 @@
       "id": "StateEstimatorComponent-1776801601935",
       "type": "custom",
       "dimensions": {
-        "width": 138,
-        "height": 49
+        "width": 139,
+        "height": 63
       },
       "computedPosition": {
         "x": 974.8986106494488,
@@ -89,8 +89,8 @@
             "type": "source",
             "nodeId": "StateEstimatorComponent-1776801601935",
             "position": "right",
-            "x": 130.9000244140625,
-            "y": 19.5,
+            "x": 132.18497127802144,
+            "y": 26.52984440201637,
             "width": 10,
             "height": 10
           }
@@ -101,8 +101,8 @@
             "type": "target",
             "nodeId": "StateEstimatorComponent-1776801601935",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.52984440201637,
             "width": 10,
             "height": 10
           }
@@ -134,8 +134,8 @@
       "id": "MeasurementComponent-1776801604028",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 169,
+        "height": 63
       },
       "computedPosition": {
         "x": 689.3769235798854,
@@ -149,8 +149,8 @@
             "type": "source",
             "nodeId": "MeasurementComponent-1776801604028",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 162.0495913330991,
+            "y": 26.529863724863787,
             "width": 10,
             "height": 10
           }
@@ -161,8 +161,8 @@
             "type": "target",
             "nodeId": "MeasurementComponent-1776801604028",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.529863724863787,
             "width": 10,
             "height": 10
           }
@@ -184,7 +184,7 @@
           "additive_noise_stddev": 0,
           "multiplicative_noise_stddev": 0,
           "run_freq_time_step": 1,
-          "measurement_file": "sensors.json",
+          "measurement_file": "../feeder/sensors/sensors.json",
           "name": "sensor_voltage_real"
         }
       },
@@ -194,8 +194,8 @@
       "id": "Recorder-1776801607029",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 185,
+        "height": 63
       },
       "computedPosition": {
         "x": 1191.4524134561987,
@@ -209,8 +209,8 @@
             "type": "source",
             "nodeId": "Recorder-1776801607029",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 178.02649449204498,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -221,8 +221,8 @@
             "type": "target",
             "nodeId": "Recorder-1776801607029",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.46134030364798,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -254,8 +254,8 @@
       "id": "MeasurementComponent-1776801610044",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 214,
+        "height": 63
       },
       "computedPosition": {
         "x": 710.8641822592297,
@@ -269,8 +269,8 @@
             "type": "source",
             "nodeId": "MeasurementComponent-1776801610044",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 207.80671234960164,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -281,8 +281,8 @@
             "type": "target",
             "nodeId": "MeasurementComponent-1776801610044",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -304,7 +304,7 @@
           "additive_noise_stddev": 0,
           "multiplicative_noise_stddev": 0,
           "run_freq_time_step": 1,
-          "measurement_file": "sensors.json",
+          "measurement_file": "../feeder/sensors/sensors.json",
           "name": "sensor_voltage_magnitude"
         }
       },
@@ -314,12 +314,12 @@
       "id": "MeasurementComponent-1776801613737",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 209,
+        "height": 63
       },
       "computedPosition": {
-        "x": 699.5,
-        "y": 320,
+        "x": 621.5,
+        "y": 326,
         "z": 0
       },
       "handleBounds": {
@@ -329,8 +329,8 @@
             "type": "source",
             "nodeId": "MeasurementComponent-1776801613737",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 202.29815500773103,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -341,8 +341,8 @@
             "type": "target",
             "nodeId": "MeasurementComponent-1776801613737",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -354,8 +354,8 @@
       "initialized": false,
       "isParent": false,
       "position": {
-        "x": 699.5,
-        "y": 320
+        "x": 621.5,
+        "y": 326
       },
       "data": {
         "label": "Sensor",
@@ -364,7 +364,7 @@
           "additive_noise_stddev": 0,
           "multiplicative_noise_stddev": 0,
           "run_freq_time_step": 1,
-          "measurement_file": "sensors.json",
+          "measurement_file": "../feeder/sensors/sensors.json",
           "name": "sensor_voltage_imaginary"
         }
       },
@@ -374,12 +374,12 @@
       "id": "MeasurementComponent-1776801620094",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 160,
+        "height": 63
       },
       "computedPosition": {
-        "x": 636.417949053257,
-        "y": 411.7461528402291,
+        "x": 508.41794905325696,
+        "y": 419.7461528402291,
         "z": 0
       },
       "handleBounds": {
@@ -389,8 +389,8 @@
             "type": "source",
             "nodeId": "MeasurementComponent-1776801620094",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 153.8816691468095,
+            "y": 26.52984440201637,
             "width": 10,
             "height": 10
           }
@@ -401,8 +401,8 @@
             "type": "target",
             "nodeId": "MeasurementComponent-1776801620094",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.52984440201637,
             "width": 10,
             "height": 10
           }
@@ -414,8 +414,8 @@
       "initialized": false,
       "isParent": false,
       "position": {
-        "x": 636.417949053257,
-        "y": 411.7461528402291
+        "x": 508.41794905325696,
+        "y": 419.7461528402291
       },
       "data": {
         "label": "Sensor",
@@ -424,7 +424,7 @@
           "additive_noise_stddev": 0,
           "multiplicative_noise_stddev": 0,
           "run_freq_time_step": 1,
-          "measurement_file": "sensors.json",
+          "measurement_file": "../feeder/sensors/sensors.json",
           "name": "sensor_power_real"
         }
       },
@@ -434,8 +434,8 @@
       "id": "MeasurementComponent-1776801624907",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 201,
+        "height": 63
       },
       "computedPosition": {
         "x": 488.21282168639937,
@@ -449,8 +449,8 @@
             "type": "source",
             "nodeId": "MeasurementComponent-1776801624907",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 194.15137201651652,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -461,8 +461,8 @@
             "type": "target",
             "nodeId": "MeasurementComponent-1776801624907",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.46134030364798,
+            "y": 26.529883047711206,
             "width": 10,
             "height": 10
           }
@@ -484,7 +484,7 @@
           "additive_noise_stddev": 0,
           "multiplicative_noise_stddev": 0,
           "run_freq_time_step": 1,
-          "measurement_file": "sensors.json",
+          "measurement_file": "../feeder/sensors/sensors.json",
           "name": "sensor_power_imaginary"
         }
       },
@@ -494,13 +494,13 @@
       "id": "Recorder-1776801630390",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 188,
+        "height": 63
       },
       "computedPosition": {
         "x": 538.2180337066769,
         "y": 43.40614259420025,
-        "z": 1000
+        "z": 0
       },
       "handleBounds": {
         "source": [
@@ -509,8 +509,8 @@
             "type": "source",
             "nodeId": "Recorder-1776801630390",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 181.50905128215774,
+            "y": 26.529863724863787,
             "width": 10,
             "height": 10
           }
@@ -521,14 +521,14 @@
             "type": "target",
             "nodeId": "Recorder-1776801630390",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.529863724863787,
             "width": 10,
             "height": 10
           }
         ]
       },
-      "selected": true,
+      "selected": false,
       "dragging": false,
       "resizing": false,
       "initialized": false,
@@ -554,8 +554,8 @@
       "id": "Recorder-1776801632526",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 180,
+        "height": 63
       },
       "computedPosition": {
         "x": 437.13969405979446,
@@ -569,8 +569,8 @@
             "type": "source",
             "nodeId": "Recorder-1776801632526",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 173.95316096498,
+            "y": 26.55098359709146,
             "width": 10,
             "height": 10
           }
@@ -581,8 +581,8 @@
             "type": "target",
             "nodeId": "Recorder-1776801632526",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.46134030364798,
+            "y": 26.55098359709146,
             "width": 10,
             "height": 10
           }
@@ -605,7 +605,7 @@
           "feather_path": "voltage_real.feather",
           "csv_path": "voltage_real.csv",
           "csv_filename": "voltage_real.csv",
-          "feather_filename": "voltage_real.imag"
+          "feather_filename": "voltage_real.feather"
         }
       },
       "events": {}
@@ -614,8 +614,8 @@
       "id": "Recorder-1776801644340",
       "type": "custom",
       "dimensions": {
-        "width": 120,
-        "height": 49
+        "width": 192,
+        "height": 63
       },
       "computedPosition": {
         "x": 1218.3065945464562,
@@ -629,8 +629,8 @@
             "type": "source",
             "nodeId": "Recorder-1776801644340",
             "position": "right",
-            "x": 113,
-            "y": 19.5,
+            "x": 185.35016282895543,
+            "y": 26.55098359709146,
             "width": 10,
             "height": 10
           }
@@ -641,8 +641,8 @@
             "type": "target",
             "nodeId": "Recorder-1776801644340",
             "position": "left",
-            "x": -3,
-            "y": 19.5,
+            "x": -3.482440853028234,
+            "y": 26.55098359709146,
             "width": 10,
             "height": 10
           }
@@ -693,7 +693,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -707,8 +707,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -719,8 +719,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -749,7 +749,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -759,8 +759,8 @@
         "id": "MeasurementComponent-1776801604028",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 169,
+          "height": 63
         },
         "computedPosition": {
           "x": 689.3769235798854,
@@ -774,8 +774,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801604028",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 162.0495913330991,
+              "y": 26.529863724863787,
               "width": 10,
               "height": 10
             }
@@ -786,8 +786,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801604028",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529863724863787,
               "width": 10,
               "height": 10
             }
@@ -809,16 +809,16 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_voltage_real"
           }
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 686.3769235798854,
-      "targetY": 163.88461789942718,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 685.8944827268572,
+      "targetY": 170.91448162429097,
       "selected": false
     },
     {
@@ -842,7 +842,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -856,8 +856,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -868,8 +868,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -898,7 +898,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -908,13 +908,13 @@
         "id": "Recorder-1776801630390",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 188,
+          "height": 63
         },
         "computedPosition": {
           "x": 538.2180337066769,
           "y": 43.40614259420025,
-          "z": 1000
+          "z": 0
         },
         "handleBounds": {
           "source": [
@@ -923,8 +923,8 @@
               "type": "source",
               "nodeId": "Recorder-1776801630390",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 181.50905128215774,
+              "y": 26.529863724863787,
               "width": 10,
               "height": 10
             }
@@ -935,14 +935,14 @@
               "type": "target",
               "nodeId": "Recorder-1776801630390",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529863724863787,
               "width": 10,
               "height": 10
             }
           ]
         },
-        "selected": true,
+        "selected": false,
         "dragging": false,
         "resizing": false,
         "initialized": false,
@@ -964,10 +964,10 @@
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 535.2180337066769,
-      "targetY": 67.90614259420025,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 534.7355928536487,
+      "targetY": 74.93600631906403,
       "selected": false
     },
     {
@@ -991,7 +991,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -1005,8 +1005,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1017,8 +1017,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1047,7 +1047,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -1057,8 +1057,8 @@
         "id": "Recorder-1776801632526",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 180,
+          "height": 63
         },
         "computedPosition": {
           "x": 437.13969405979446,
@@ -1072,8 +1072,8 @@
               "type": "source",
               "nodeId": "Recorder-1776801632526",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 173.95316096498,
+              "y": 26.55098359709146,
               "width": 10,
               "height": 10
             }
@@ -1084,8 +1084,8 @@
               "type": "target",
               "nodeId": "Recorder-1776801632526",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.46134030364798,
+              "y": 26.55098359709146,
               "width": 10,
               "height": 10
             }
@@ -1108,15 +1108,15 @@
             "feather_path": "voltage_real.feather",
             "csv_path": "voltage_real.csv",
             "csv_filename": "voltage_real.csv",
-            "feather_filename": "voltage_real.imag"
+            "feather_filename": "voltage_real.feather"
           }
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 434.13969405979446,
-      "targetY": -4.047929696800793,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 433.67835375614646,
+      "targetY": 3.0030539002906664,
       "selected": false
     },
     {
@@ -1140,7 +1140,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -1154,8 +1154,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1166,8 +1166,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1196,7 +1196,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -1206,8 +1206,8 @@
         "id": "MeasurementComponent-1776801610044",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 214,
+          "height": 63
         },
         "computedPosition": {
           "x": 710.8641822592297,
@@ -1221,8 +1221,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801610044",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 207.80671234960164,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1233,8 +1233,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801610044",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1256,16 +1256,16 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_voltage_magnitude"
           }
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 707.8641822592297,
-      "targetY": 244.69937998789254,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 707.3817414062014,
+      "targetY": 251.72926303560374,
       "selected": false
     },
     {
@@ -1289,7 +1289,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -1303,8 +1303,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1315,8 +1315,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1345,7 +1345,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -1355,12 +1355,12 @@
         "id": "MeasurementComponent-1776801613737",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 209,
+          "height": 63
         },
         "computedPosition": {
-          "x": 699.5,
-          "y": 320,
+          "x": 621.5,
+          "y": 326,
           "z": 0
         },
         "handleBounds": {
@@ -1370,8 +1370,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801613737",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 202.29815500773103,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1382,8 +1382,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801613737",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1395,8 +1395,8 @@
         "initialized": false,
         "isParent": false,
         "position": {
-          "x": 699.5,
-          "y": 320
+          "x": 621.5,
+          "y": 326
         },
         "data": {
           "label": "Sensor",
@@ -1405,16 +1405,16 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_voltage_imaginary"
           }
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 696.5,
-      "targetY": 344.5,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 618.0175591469717,
+      "targetY": 357.5298830477112,
       "selected": false
     },
     {
@@ -1438,7 +1438,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -1452,8 +1452,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1464,8 +1464,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1494,7 +1494,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -1504,12 +1504,12 @@
         "id": "MeasurementComponent-1776801620094",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 160,
+          "height": 63
         },
         "computedPosition": {
-          "x": 636.417949053257,
-          "y": 411.7461528402291,
+          "x": 508.41794905325696,
+          "y": 419.7461528402291,
           "z": 0
         },
         "handleBounds": {
@@ -1519,8 +1519,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801620094",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 153.8816691468095,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -1531,8 +1531,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801620094",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -1544,8 +1544,8 @@
         "initialized": false,
         "isParent": false,
         "position": {
-          "x": 636.417949053257,
-          "y": 411.7461528402291
+          "x": 508.41794905325696,
+          "y": 419.7461528402291
         },
         "data": {
           "label": "Sensor",
@@ -1554,16 +1554,16 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_power_real"
           }
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 633.417949053257,
-      "targetY": 436.2461528402291,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 504.93550820022875,
+      "targetY": 451.27599724224547,
       "selected": false
     },
     {
@@ -1587,7 +1587,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -1601,8 +1601,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1613,8 +1613,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1643,7 +1643,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -1653,8 +1653,8 @@
         "id": "MeasurementComponent-1776801624907",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 201,
+          "height": 63
         },
         "computedPosition": {
           "x": 488.21282168639937,
@@ -1668,8 +1668,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801624907",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 194.15137201651652,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1680,8 +1680,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801624907",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.46134030364798,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1703,16 +1703,16 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_power_imaginary"
           }
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 485.21282168639937,
-      "targetY": 514.7051273668576,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 484.75148138275136,
+      "targetY": 521.7350104145688,
       "selected": false
     },
     {
@@ -1735,8 +1735,8 @@
         "id": "StateEstimatorComponent-1776801601935",
         "type": "custom",
         "dimensions": {
-          "width": 138,
-          "height": 49
+          "width": 139,
+          "height": 63
         },
         "computedPosition": {
           "x": 974.8986106494488,
@@ -1750,8 +1750,8 @@
               "type": "source",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "right",
-              "x": 130.9000244140625,
-              "y": 19.5,
+              "x": 132.18497127802144,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -1762,8 +1762,8 @@
               "type": "target",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -1795,8 +1795,8 @@
         "id": "Recorder-1776801607029",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 185,
+          "height": 63
         },
         "computedPosition": {
           "x": 1191.4524134561987,
@@ -1810,8 +1810,8 @@
               "type": "source",
               "nodeId": "Recorder-1776801607029",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 178.02649449204498,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1822,8 +1822,8 @@
               "type": "target",
               "nodeId": "Recorder-1776801607029",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.46134030364798,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -1851,10 +1851,10 @@
         },
         "events": {}
       },
-      "sourceX": 1115.7986350635113,
-      "sourceY": 481.6675324320889,
-      "targetX": 1188.4524134561987,
-      "targetY": 352.2695305998093,
+      "sourceX": 1117.0835819274703,
+      "sourceY": 488.6973768341052,
+      "targetX": 1187.9910731525506,
+      "targetY": 359.2994136475205,
       "selected": false
     },
     {
@@ -1877,8 +1877,8 @@
         "id": "StateEstimatorComponent-1776801601935",
         "type": "custom",
         "dimensions": {
-          "width": 138,
-          "height": 49
+          "width": 139,
+          "height": 63
         },
         "computedPosition": {
           "x": 974.8986106494488,
@@ -1892,8 +1892,8 @@
               "type": "source",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "right",
-              "x": 130.9000244140625,
-              "y": 19.5,
+              "x": 132.18497127802144,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -1904,8 +1904,8 @@
               "type": "target",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -1937,8 +1937,8 @@
         "id": "Recorder-1776801644340",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 192,
+          "height": 63
         },
         "computedPosition": {
           "x": 1218.3065945464562,
@@ -1952,8 +1952,8 @@
               "type": "source",
               "nodeId": "Recorder-1776801644340",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 185.35016282895543,
+              "y": 26.55098359709146,
               "width": 10,
               "height": 10
             }
@@ -1964,8 +1964,8 @@
               "type": "target",
               "nodeId": "Recorder-1776801644340",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.55098359709146,
               "width": 10,
               "height": 10
             }
@@ -1993,10 +1993,10 @@
         },
         "events": {}
       },
-      "sourceX": 1115.7986350635113,
-      "sourceY": 481.6675324320889,
-      "targetX": 1215.3065945464562,
-      "targetY": 435.32918080691684,
+      "sourceX": 1117.0835819274703,
+      "sourceY": 488.6973768341052,
+      "targetX": 1214.824153693428,
+      "targetY": 442.38016440400827,
       "selected": false
     },
     {
@@ -2020,7 +2020,7 @@
         "type": "custom",
         "dimensions": {
           "width": 120,
-          "height": 49
+          "height": 63
         },
         "computedPosition": {
           "x": 350,
@@ -2034,8 +2034,8 @@
               "type": "source",
               "nodeId": "Feeder-1776801555228",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 113.46422378574586,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -2046,8 +2046,8 @@
               "type": "target",
               "nodeId": "Feeder-1776801555228",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -2076,7 +2076,7 @@
             "opendss_location": "gadal_ieee123/qsts",
             "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 00:00:00",
-            "number_of_timesteps": 96,
+            "number_of_timesteps": 6,
             "start_time_index": 0
           }
         },
@@ -2086,8 +2086,8 @@
         "id": "StateEstimatorComponent-1776801601935",
         "type": "custom",
         "dimensions": {
-          "width": 138,
-          "height": 49
+          "width": 139,
+          "height": 63
         },
         "computedPosition": {
           "x": 974.8986106494488,
@@ -2101,8 +2101,8 @@
               "type": "source",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "right",
-              "x": 130.9000244140625,
-              "y": 19.5,
+              "x": 132.18497127802144,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2113,8 +2113,8 @@
               "type": "target",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2142,10 +2142,10 @@
         },
         "events": {}
       },
-      "sourceX": 473,
-      "sourceY": 289,
-      "targetX": 971.8986106494488,
-      "targetY": 481.6675324320889,
+      "sourceX": 473.46422378574584,
+      "sourceY": 296.0298830477112,
+      "targetX": 971.4161697964205,
+      "targetY": 488.6973768341052,
       "selected": false
     },
     {
@@ -2168,8 +2168,8 @@
         "id": "MeasurementComponent-1776801610044",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 214,
+          "height": 63
         },
         "computedPosition": {
           "x": 710.8641822592297,
@@ -2183,8 +2183,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801610044",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 207.80671234960164,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -2195,8 +2195,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801610044",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -2218,7 +2218,7 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_voltage_magnitude"
           }
         },
@@ -2228,8 +2228,8 @@
         "id": "StateEstimatorComponent-1776801601935",
         "type": "custom",
         "dimensions": {
-          "width": 138,
-          "height": 49
+          "width": 139,
+          "height": 63
         },
         "computedPosition": {
           "x": 974.8986106494488,
@@ -2243,8 +2243,8 @@
               "type": "source",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "right",
-              "x": 130.9000244140625,
-              "y": 19.5,
+              "x": 132.18497127802144,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2255,8 +2255,8 @@
               "type": "target",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2284,10 +2284,10 @@
         },
         "events": {}
       },
-      "sourceX": 833.8641822592297,
-      "sourceY": 244.69937998789254,
-      "targetX": 971.8986106494488,
-      "targetY": 481.6675324320889,
+      "sourceX": 928.6708946088313,
+      "sourceY": 251.72926303560374,
+      "targetX": 971.4161697964205,
+      "targetY": 488.6973768341052,
       "selected": false
     },
     {
@@ -2310,12 +2310,12 @@
         "id": "MeasurementComponent-1776801620094",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 160,
+          "height": 63
         },
         "computedPosition": {
-          "x": 636.417949053257,
-          "y": 411.7461528402291,
+          "x": 508.41794905325696,
+          "y": 419.7461528402291,
           "z": 0
         },
         "handleBounds": {
@@ -2325,8 +2325,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801620094",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 153.8816691468095,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2337,8 +2337,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801620094",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2350,8 +2350,8 @@
         "initialized": false,
         "isParent": false,
         "position": {
-          "x": 636.417949053257,
-          "y": 411.7461528402291
+          "x": 508.41794905325696,
+          "y": 419.7461528402291
         },
         "data": {
           "label": "Sensor",
@@ -2360,7 +2360,7 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_power_real"
           }
         },
@@ -2370,8 +2370,8 @@
         "id": "StateEstimatorComponent-1776801601935",
         "type": "custom",
         "dimensions": {
-          "width": 138,
-          "height": 49
+          "width": 139,
+          "height": 63
         },
         "computedPosition": {
           "x": 974.8986106494488,
@@ -2385,8 +2385,8 @@
               "type": "source",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "right",
-              "x": 130.9000244140625,
-              "y": 19.5,
+              "x": 132.18497127802144,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2397,8 +2397,8 @@
               "type": "target",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2426,10 +2426,10 @@
         },
         "events": {}
       },
-      "sourceX": 759.417949053257,
-      "sourceY": 436.2461528402291,
-      "targetX": 971.8986106494488,
-      "targetY": 481.6675324320889,
+      "sourceX": 672.2996182000664,
+      "sourceY": 451.27599724224547,
+      "targetX": 971.4161697964205,
+      "targetY": 488.6973768341052,
       "selected": false
     },
     {
@@ -2452,8 +2452,8 @@
         "id": "MeasurementComponent-1776801624907",
         "type": "custom",
         "dimensions": {
-          "width": 120,
-          "height": 49
+          "width": 201,
+          "height": 63
         },
         "computedPosition": {
           "x": 488.21282168639937,
@@ -2467,8 +2467,8 @@
               "type": "source",
               "nodeId": "MeasurementComponent-1776801624907",
               "position": "right",
-              "x": 113,
-              "y": 19.5,
+              "x": 194.15137201651652,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -2479,8 +2479,8 @@
               "type": "target",
               "nodeId": "MeasurementComponent-1776801624907",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.46134030364798,
+              "y": 26.529883047711206,
               "width": 10,
               "height": 10
             }
@@ -2502,7 +2502,7 @@
             "additive_noise_stddev": 0,
             "multiplicative_noise_stddev": 0,
             "run_freq_time_step": 1,
-            "measurement_file": "sensors.json",
+            "measurement_file": "../feeder/sensors/sensors.json",
             "name": "sensor_power_imaginary"
           }
         },
@@ -2512,8 +2512,8 @@
         "id": "StateEstimatorComponent-1776801601935",
         "type": "custom",
         "dimensions": {
-          "width": 138,
-          "height": 49
+          "width": 139,
+          "height": 63
         },
         "computedPosition": {
           "x": 974.8986106494488,
@@ -2527,8 +2527,8 @@
               "type": "source",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "right",
-              "x": 130.9000244140625,
-              "y": 19.5,
+              "x": 132.18497127802144,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2539,8 +2539,8 @@
               "type": "target",
               "nodeId": "StateEstimatorComponent-1776801601935",
               "position": "left",
-              "x": -3,
-              "y": 19.5,
+              "x": -3.482440853028234,
+              "y": 26.52984440201637,
               "width": 10,
               "height": 10
             }
@@ -2568,12 +2568,12 @@
         },
         "events": {}
       },
-      "sourceX": 611.2128216863994,
-      "sourceY": 514.7051273668576,
-      "targetX": 971.8986106494488,
-      "targetY": 481.6675324320889,
+      "sourceX": 692.3641937029158,
+      "sourceY": 521.7350104145688,
+      "targetX": 971.4161697964205,
+      "targetY": 488.6973768341052,
       "selected": false
     }
   ],
-  "createdAt": "2026-04-23T17:35:13.642Z"
+  "createdAt": "2026-04-27T20:25:57.901Z"
 }
