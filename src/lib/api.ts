@@ -157,6 +157,9 @@ export const api = {
     }
     return await response.text()
   },
+  runDownloadUrl(run_id: string): string {
+    return `${API_BASE_URL}/runs/${run_id}/download`
+  },
   async getWiring(run_id: string): Promise<WiringDiagram> {
     const response = await fetch(`${API_BASE_URL}/runs/${run_id}/wiring`, {
       method: 'GET',

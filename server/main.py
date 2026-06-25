@@ -16,8 +16,10 @@ import asyncio
 import json
 import os
 import re
+import shutil
 import socket
 import sys
+import tempfile
 import uuid
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
@@ -29,7 +31,14 @@ import psutil
 import pyarrow.feather as pa_feather
 import pyarrow.types as pa_types
 import uvicorn
-from fastapi import Depends, FastAPI, Header, HTTPException, Path as PathParam
+from fastapi import (
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    Header,
+    HTTPException,
+    Path as PathParam,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from oedisi.componentframework.basic_component import (
@@ -635,6 +644,30 @@ def run_wiring(run_id: RunId, user: CurrentUser) -> FileResponse:
     if not wiring_path.exists():
         raise HTTPException(status_code=404, detail="Wiring not found")
     return FileResponse(wiring_path, media_type="application/json")
+
+
+@app.get("/api/runs/{run_id}/download")
+def download_run(
+    run_id: RunId, user: CurrentUser, background_tasks: BackgroundTasks
+) -> FileResponse:
+    """Zip the run directory so a remote user can download its outputs."""
+    run_dir = _user_runs_dir(user) / run_id
+    if not run_dir.is_dir():
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    tmp_dir = Path(tempfile.mkdtemp())
+    # base_dir=run_id nests the contents under a run_id/ folder in the zip.
+    archive_base = tmp_dir / run_id
+    shutil.make_archive(
+        str(archive_base), "zip", root_dir=run_dir.parent, base_dir=run_id
+    )
+
+    background_tasks.add_task(shutil.rmtree, tmp_dir)
+    return FileResponse(
+        archive_base.with_suffix(".zip"),
+        media_type="application/zip",
+        filename=f"{run_id}.zip",
+    )
 
 
 @app.get("/api/runs/{run_id}/logs/{component}")
