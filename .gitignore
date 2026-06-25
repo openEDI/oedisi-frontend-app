@@ -33,3 +33,4 @@ data/templates/*.json
 !data/.gitkeep
 !data/templates/.gitkeep
 !data/templates/ornl_*.json
+!data/templates/nlpd*.json
