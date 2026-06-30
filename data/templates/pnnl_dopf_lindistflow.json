@@ -1,0 +1,86 @@
+{
+  "name": "pnnl-dopf-lindistflow-ieee123",
+  "description": "example usecase for the lindistflow algorithm on ieee123 model",
+  "createdAt": "2026-06-30T22:00:59.704Z",
+  "components": [
+    {
+      "name": "feeder",
+      "type": "Feeder",
+      "parameters": {
+        "use_smartds": true,
+        "user_uploads_model": false,
+        "profile_location": "gadal_ieee123/profiles",
+        "opendss_location": "gadal_ieee123/qsts",
+        "sensor_location": "gadal_ieee123/sensors.json",
+        "start_date": "2017-01-01 00:00:00",
+        "number_of_timesteps": 1,
+        "run_freq_sec": 900,
+        "start_time_index": 0,
+        "topology_output": "topology.json",
+        "use_sparse_admittance": true,
+        "tap_setting": 1
+      }
+    },
+    {
+      "name": "LinDistFlowComponent-1781877377605",
+      "type": "LinDistFlowComponent",
+      "parameters": {}
+    },
+    {
+      "name": "feeder_vreal",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/feeder_vreal.csv",
+        "feather_filename": "../outputs/feeder_vreal.feather"
+      }
+    },
+    {
+      "name": "feeder_preal",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/feeder_preal.csv",
+        "feather_filename": "../outputs/feeder_preal.feather"
+      }
+    },
+    {
+      "name": "dopf_vmag",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/feeder_vmag.csv",
+        "feather_filename": "../outputs/feeder_vmag.feather"
+      }
+    }
+  ],
+  "links": [
+    {
+      "source": "feeder",
+      "target": "feeder_vreal",
+      "source_port": "voltages_real",
+      "target_port": "subscription"
+    },
+    {
+      "source": "feeder",
+      "target": "feeder_preal",
+      "source_port": "powers_real",
+      "target_port": "subscription"
+    },
+    {
+      "source": "LinDistFlowComponent-1781877377605",
+      "target": "dopf_vmag",
+      "source_port": "opf_voltages_magnitude",
+      "target_port": "subscription"
+    },
+    {
+      "source": "feeder",
+      "target": "LinDistFlowComponent-1781877377605",
+      "source_port": "topology",
+      "target_port": "topology"
+    },
+    {
+      "source": "feeder",
+      "target": "LinDistFlowComponent-1781877377605",
+      "source_port": "voltages_magnitude",
+      "target_port": "voltages_magnitude"
+    }
+  ]
+}

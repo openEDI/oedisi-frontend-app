@@ -1,0 +1,607 @@
+{
+  "name": "pnnl-dopf-admm",
+  "description": "Microgrid DOPF using relaxed EnAPP version of ADMM",
+  "createdAt": "2026-06-30T21:58:48.703Z",
+  "components": [
+    {
+      "name": "feeder",
+      "type": "Feeder",
+      "parameters": {
+        "use_smartds": true,
+        "user_uploads_model": false,
+        "profile_location": "gadal_ieee123/profiles",
+        "opendss_location": "gadal_ieee123/qsts",
+        "sensor_location": "gadal_ieee123/sensors.json",
+        "start_date": "2017-01-01 00:00:00",
+        "number_of_timesteps": 1,
+        "run_freq_sec": 900,
+        "start_time_index": 0,
+        "topology_output": "topology.json",
+        "use_sparse_admittance": true
+      }
+    },
+    {
+      "name": "hub_control",
+      "type": "PnnlHubControlComponent",
+      "parameters": {
+        "max_itr": 10,
+        "t_steps": 1
+      }
+    },
+    {
+      "name": "PnnlDopfAdmmComponent-1781715793462",
+      "type": "PnnlDopfAdmmComponent",
+      "parameters": {
+        "t_steps": 1,
+        "max_itr": 10,
+        "control_type": "real",
+        "switches": [
+          "sw2",
+          "sw3"
+        ],
+        "source_bus": "150",
+        "source_line": "150",
+        "rho_sup": 0,
+        "rho_vup": 1000,
+        "rho_sdn": 1000,
+        "rho_vdn": 0,
+        "vup_tol": 0.01,
+        "sdn_tol": 0.01
+      }
+    },
+    {
+      "name": "PnnlDopfAdmmComponent-1781715795518",
+      "type": "PnnlDopfAdmmComponent",
+      "parameters": {
+        "t_steps": 1,
+        "max_itr": 10,
+        "control_type": "real",
+        "switches": [
+          "sw3"
+        ],
+        "source_bus": "sw3",
+        "source_line": "sw3",
+        "rho_sup": 0,
+        "rho_vup": 1000,
+        "rho_sdn": 1000,
+        "rho_vdn": 0,
+        "vup_tol": 0.01,
+        "sdn_tol": 0.01
+      }
+    },
+    {
+      "name": "PnnlDopfAdmmComponent-1781715798479",
+      "type": "PnnlDopfAdmmComponent",
+      "parameters": {
+        "t_steps": 1,
+        "max_itr": 10,
+        "control_type": "real",
+        "switches": [
+          "sw2",
+          "sw4"
+        ],
+        "source_bus": "sw2",
+        "source_line": "sw2",
+        "rho_sup": 0,
+        "rho_vup": 1000,
+        "rho_sdn": 1000,
+        "rho_vdn": 0,
+        "vup_tol": 0.01,
+        "sdn_tol": 0.01
+      }
+    },
+    {
+      "name": "PnnlDopfAdmmComponent-1781715801818",
+      "type": "PnnlDopfAdmmComponent",
+      "parameters": {
+        "t_steps": 1,
+        "max_itr": 10,
+        "control_type": "real",
+        "switches": [
+          "sw4",
+          "sw5"
+        ],
+        "source_bus": "sw4",
+        "source_line": "sw4",
+        "rho_sup": 0,
+        "rho_vup": 1000,
+        "rho_sdn": 999.8,
+        "rho_vdn": 0,
+        "vup_tol": 0.01,
+        "sdn_tol": 0.01
+      }
+    },
+    {
+      "name": "PnnlDopfAdmmComponent-1781715817754",
+      "type": "PnnlDopfAdmmComponent",
+      "parameters": {
+        "t_steps": 1,
+        "max_itr": 10,
+        "control_type": "real",
+        "switches": [
+          "sw5"
+        ],
+        "source_bus": "sw5",
+        "source_line": "sw5",
+        "rho_sup": 0,
+        "rho_vup": 1000,
+        "rho_sdn": 1000,
+        "rho_vdn": 0,
+        "vup_tol": 0.01,
+        "sdn_tol": 0.01
+      }
+    },
+    {
+      "name": "PnnlHubVoltageComponent-1782855584640",
+      "type": "PnnlHubVoltageComponent",
+      "parameters": {}
+    },
+    {
+      "name": "PnnlHubPowerComponent-1782855812303",
+      "type": "PnnlHubPowerComponent",
+      "parameters": {}
+    },
+    {
+      "name": "stats0",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/stats_0.csv",
+        "feather_filename": "../outputs/stats_0.feather"
+      }
+    },
+    {
+      "name": "stats2",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/stats_2.csv",
+        "feather_filename": "../outputs/stats_2.feather"
+      }
+    },
+    {
+      "name": "stats1",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/stats_1.csv",
+        "feather_filename": "../outputs/stats_1.feather"
+      }
+    },
+    {
+      "name": "stats3",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/stats_3.csv",
+        "feather_filename": "../outputs/stats_3.feather"
+      }
+    },
+    {
+      "name": "stats4",
+      "type": "Recorder",
+      "parameters": {
+        "csv_filename": "../outputs/stats_4.csv",
+        "feather_filename": "../outputs/stats_4.feather"
+      }
+    }
+  ],
+  "links": [
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "voltages_magnitude",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "powers_real",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "powers_imag",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "topology",
+      "target_port": "topology"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "voltages_real",
+      "target_port": "voltage_real"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "voltages_imag",
+      "target_port": "voltage_imag"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "voltages_magnitude",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "powers_real",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "powers_imag",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "voltages_imag",
+      "target_port": "voltage_imag"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "voltages_real",
+      "target_port": "voltage_real"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "topology",
+      "target_port": "topology"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "voltages_magnitude",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "voltages_real",
+      "target_port": "voltage_real"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "voltages_imag",
+      "target_port": "voltage_imag"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "powers_real",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "powers_imag",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "topology",
+      "target_port": "topology"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "voltages_magnitude",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "voltages_real",
+      "target_port": "voltage_real"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "voltages_imag",
+      "target_port": "voltage_imag"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "powers_real",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "powers_imag",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "topology",
+      "target_port": "topology"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "voltages_magnitude",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "voltages_real",
+      "target_port": "voltage_real"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "voltages_imag",
+      "target_port": "voltage_imag"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "powers_real",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "powers_imag",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "feeder",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "topology",
+      "target_port": "topology"
+    },
+    {
+      "source": "hub_control",
+      "target": "feeder",
+      "source_port": "pub_c",
+      "target_port": "change_commands"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715793462",
+      "target": "hub_control",
+      "source_port": "pub_c",
+      "target_port": "sub_c0"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715795518",
+      "target": "hub_control",
+      "source_port": "pub_c",
+      "target_port": "sub_c1"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715798479",
+      "target": "hub_control",
+      "source_port": "pub_c",
+      "target_port": "sub_c2"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715801818",
+      "target": "hub_control",
+      "source_port": "pub_c",
+      "target_port": "sub_c3"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715817754",
+      "target": "hub_control",
+      "source_port": "pub_c",
+      "target_port": "sub_c4"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715817754",
+      "target": "PnnlHubVoltageComponent-1782855584640",
+      "source_port": "pub_v",
+      "target_port": "sub_v4"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715801818",
+      "target": "PnnlHubVoltageComponent-1782855584640",
+      "source_port": "pub_v",
+      "target_port": "sub_v3"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715798479",
+      "target": "PnnlHubVoltageComponent-1782855584640",
+      "source_port": "pub_v",
+      "target_port": "sub_v2"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715795518",
+      "target": "PnnlHubVoltageComponent-1782855584640",
+      "source_port": "pub_v",
+      "target_port": "sub_v1"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715793462",
+      "target": "PnnlHubVoltageComponent-1782855584640",
+      "source_port": "pub_v",
+      "target_port": "sub_v0"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715793462",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_p",
+      "target_port": "sub_p0"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715793462",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_q",
+      "target_port": "sub_q0"
+    },
+    {
+      "source": "PnnlHubVoltageComponent-1782855584640",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "pub_v4",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "PnnlHubVoltageComponent-1782855584640",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "pub_v3",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "PnnlHubVoltageComponent-1782855584640",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "pub_v2",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "PnnlHubVoltageComponent-1782855584640",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "pub_v1",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "PnnlHubVoltageComponent-1782855584640",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "pub_v0",
+      "target_port": "sub_v"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "pub_p0",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715793462",
+      "source_port": "pub_q0",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "pub_p1",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715795518",
+      "source_port": "pub_q1",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715795518",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_p",
+      "target_port": "sub_p1"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715795518",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_q",
+      "target_port": "sub_q1"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715798479",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_p",
+      "target_port": "sub_p2"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715798479",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_q",
+      "target_port": "sub_q2"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "pub_p2",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715798479",
+      "source_port": "pub_q2",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "pub_p3",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715801818",
+      "source_port": "pub_q3",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715801818",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_p",
+      "target_port": "sub_p3"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715801818",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_q",
+      "target_port": "sub_q3"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715817754",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_p",
+      "target_port": "sub_p4"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715817754",
+      "target": "PnnlHubPowerComponent-1782855812303",
+      "source_port": "pub_q",
+      "target_port": "sub_q4"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "pub_p4",
+      "target_port": "sub_p"
+    },
+    {
+      "source": "PnnlHubPowerComponent-1782855812303",
+      "target": "PnnlDopfAdmmComponent-1781715817754",
+      "source_port": "pub_q4",
+      "target_port": "sub_q"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715793462",
+      "target": "stats0",
+      "source_port": "solver_stats",
+      "target_port": "subscription"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715795518",
+      "target": "stats1",
+      "source_port": "solver_stats",
+      "target_port": "subscription"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715798479",
+      "target": "stats2",
+      "source_port": "solver_stats",
+      "target_port": "subscription"
+    },
+    {
+      "source": "PnnlDopfAdmmComponent-1781715801818",
+      "target": "stats3",
+      "source_port": "solver_stats",
+      "target_port": "subscription"
+    }
+  ]
+}
