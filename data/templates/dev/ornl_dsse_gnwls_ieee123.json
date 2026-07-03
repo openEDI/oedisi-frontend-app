@@ -53,7 +53,7 @@
       },
       "data": {
         "label": "Feeder",
-        "componentType": "LocalFeeder",
+        "componentType": "Feeder",
         "config": {
           "use_smartds": false,
           "user_uploads_model": false,
@@ -546,7 +546,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -692,7 +692,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -838,7 +838,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -984,7 +984,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -1828,7 +1828,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
