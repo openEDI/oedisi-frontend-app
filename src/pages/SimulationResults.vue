@@ -17,6 +17,11 @@
         </Select>
       </div>
     </div>
+    <div class="flex items-center gap-3 mb-3">
+      <label for="row_index">Time Index</label>
+      <input id="row_index" v-model.number="selectedRow" type="range" :min="0"
+        :max="maxRow" class="flex-1 max-w-lg" />
+    </div>
     <div ref="chartEl" class="overflow-x-auto text-foreground"></div>
   </div>
 </template>
@@ -33,7 +38,11 @@ const runId = computed<string | null>(() => typeof route.params.runId === "strin
 
 const resultManifest = ref<ResultEntry[]>([])
 const selectedResultIndex = ref<number | null>(null)
+const selectedRow = ref<number>(0)
 const resultData = ref<Awaited<ReturnType<typeof api.getResult>> | null>(null)
+const maxRow = computed<number>(() =>
+  resultData.value ? resultData.value.data.length - 1 : 0
+)
 
 const topology = ref<Topology | null>(null)
 
@@ -42,6 +51,7 @@ const chartEl = ref<HTMLElement | null>(null)
 watch(selectedResultIndex, async (selectedId) => {
   if (typeof runId.value === 'string' && typeof selectedId === 'number') {
     resultData.value = await api.getResult(runId.value, resultManifest.value[selectedId].id)
+    selectedRow.value = Math.min(selectedRow.value, resultData.value.data.length - 1)
   }
 })
 
@@ -53,13 +63,14 @@ function divideTopology(data: Record<string, number>, base_voltage_magnitudes: {
   return newData
 }
 
-watch([resultData, topology], ([data, topology]) => {
+watch([resultData, topology, selectedRow], ([data, topology, row_index]) => {
   if (!chartEl.value) return
-  if (!data || typeof selectedResultIndex.value !== 'number') {
+  if (!data || typeof selectedResultIndex.value !== 'number' ||
+    data.data.length == 0) {
     chartEl.value.replaceChildren()
     return
   }
-  let rowData = getDataRow(data.data, 0)
+  let rowData = getDataRow(data.data, row_index)
   const entry: ResultEntry = resultManifest.value[selectedResultIndex.value]
   if (topology && entry.quantity) {
     const type = entry.quantity.type
@@ -75,7 +86,7 @@ watch([resultData, topology], ([data, topology]) => {
     x: { type: 'band', ticks: [], label: 'bus' },
     marginBottom: 40,
     style: { background: 'transparent' },
-    title: `${getTitleName(entry)} at ${getTime(data.data, 0)}`,
+    title: `${getTitleName(entry)} at ${getTime(data.data, row_index)}`,
     y: { zero: true },
   })
   chartEl.value.replaceChildren(chart)
@@ -112,6 +123,7 @@ onActivated(async () => {
   }
   selectedResultIndex.value = null
   topology.value = null
+  selectedRow.value = 0
   try {
     resultManifest.value = await api.listResults(runId.value)
     if (resultManifest.value.length > 0) {
