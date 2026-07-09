@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import re
 import shutil
@@ -29,7 +30,6 @@ from typing import Annotated, Any
 
 import psutil
 import pyarrow.feather as pa_feather
-import pyarrow.types as pa_types
 import uvicorn
 from fastapi import (
     BackgroundTasks,
@@ -50,6 +50,8 @@ from oedisi.componentframework.system_configuration import (
     generate_runner_config,
 )
 from pydantic import ConfigDict
+
+from output_annotations import OutputsList, annotate_outputs
 
 
 class AppWiringDiagram(WiringDiagram):
@@ -320,29 +322,39 @@ def _resolve_component_path(raw: str) -> str:
     return os.path.expanduser(raw)
 
 
-def load_component_types() -> dict[str, Any]:
-    """Load the component-name → BasicComponent mapping from components.json."""
+def load_component_descriptions() -> dict[str, ComponentDescription]:
+    """Load the component-name → ComponentDescription mapping from components.json."""
     with open(COMPONENTS_JSON_PATH) as f:
         mapping = json.load(f)
 
-    types: dict[str, Any] = {}
+    descriptions: dict[str, ComponentDescription] = {}
     for name, component_def_path in mapping.items():
         path = _resolve_component_path(component_def_path)
         with open(path) as f:
             comp_desc = ComponentDescription.model_validate(json.load(f))
         comp_desc.directory = os.path.dirname(path)
-        types[name] = basic_component(comp_desc, _bad_type_checker)
-    return types
+        descriptions[name] = comp_desc
+    return descriptions
 
 
 def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
-    component_types = load_component_types()
+    descriptions = load_component_descriptions()
+    component_types = {
+        name: basic_component(desc, _bad_type_checker)
+        for name, desc in descriptions.items()
+    }
     runner_config = generate_runner_config(
         wiring_diagram, component_types, target_directory=str(build_dir)
     )
     build_dir.mkdir(parents=True, exist_ok=True)
     (build_dir / "system_runner.json").write_text(
         runner_config.model_dump_json(indent=2), encoding="utf-8"
+    )
+    (build_dir / "outputs_list.json").write_text(
+        annotate_outputs(wiring_diagram, descriptions).model_dump_json(
+            indent=2, exclude_none=True
+        ),
+        encoding="utf-8",
     )
 
 
@@ -580,7 +592,9 @@ async def start_run(
         )
     except Exception as exc:  # noqa: BLE001
         del runs[run_id]  # release the slot — nothing is running
-        raise HTTPException(status_code=500, detail=f"Failed to launch helics: {exc}") from exc
+        raise HTTPException(
+            status_code=500, detail=f"Failed to launch helics: {exc}"
+        ) from exc
 
     record.pid = proc.pid
     _write_run_start(run_dir, record)
@@ -689,6 +703,19 @@ def _load_run_wiring(user: str, run_id: str) -> dict[str, Any]:
     return json.loads(wiring_path.read_text())
 
 
+def _load_run_outputs(user: str, run_id: str) -> OutputsList:
+    """Read the build's outputs_list.json; compute on the fly for older runs."""
+    path = _user_runs_dir(user) / run_id / "build" / "outputs_list.json"
+    if path.exists():
+        return OutputsList.model_validate_json(path.read_text())
+    try:
+        wiring = WiringDiagram.model_validate(_load_run_wiring(user, run_id))
+        return annotate_outputs(wiring, load_component_descriptions())
+    except Exception:  # noqa: BLE001 — annotations are optional; never break listing
+        logging.exception("Could not backfill output annotations for run %s", run_id)
+        return OutputsList()
+
+
 def _recorder_feather_path(
     user: str, run_id: str, component: dict[str, Any]
 ) -> Path | None:
@@ -702,26 +729,11 @@ def _recorder_feather_path(
     return path if path.exists() else None
 
 
-def _infer_field(name: str, arrow_type: Any) -> dict[str, str]:
-    """Map an Arrow column to a graphic-walker IMutField."""
-    if name == "time" or pa_types.is_temporal(arrow_type):
-        semantic, analytic = "temporal", "dimension"
-    elif pa_types.is_integer(arrow_type) or pa_types.is_floating(arrow_type):
-        semantic, analytic = "quantitative", "measure"
-    else:
-        semantic, analytic = "nominal", "dimension"
-    return {
-        "fid": name,
-        "name": name,
-        "semanticType": semantic,
-        "analyticType": analytic,
-    }
-
-
 @app.get("/api/runs/{run_id}/results")
 def list_results(run_id: RunId, user: CurrentUser) -> list[dict[str, Any]]:
     """Manifest of datasets available for a run. v1: Recorder outputs only."""
     wiring = _load_run_wiring(user, run_id)
+    outputs = _load_run_outputs(user, run_id)
     entries: list[dict[str, Any]] = []
     for component in wiring.get("components", []):
         if component.get("type") != "Recorder":
@@ -729,14 +741,18 @@ def list_results(run_id: RunId, user: CurrentUser) -> list[dict[str, Any]]:
         path = _recorder_feather_path(user, run_id, component)
         if path is None:
             continue
-        entries.append(
-            {
-                "id": component["name"],
-                "label": component["name"],
-                "type": "Recorder",
-                "size_bytes": path.stat().st_size,
-            }
-        )
+        annotations = outputs.components.get(component["name"], {})
+        feather_name = (component.get("parameters") or {}).get("feather_filename")
+        annotation = annotations.get(feather_name)
+        entry = {
+            "id": component["name"],
+            "label": component["name"],
+            "type": "Recorder",
+            "size_bytes": path.stat().st_size,
+        }
+        if annotation is not None and annotation.type is not None:
+            entry["quantity"] = annotation.model_dump(exclude_none=True)
+        entries.append(entry)
     return entries
 
 
@@ -760,9 +776,24 @@ def get_result(run_id: RunId, dataset_id: str, user: CurrentUser) -> dict[str, A
         raise HTTPException(status_code=404, detail="Dataset file missing")
 
     table = pa_feather.read_table(path)
-    fields = [_infer_field(f.name, f.type) for f in table.schema]
-    data = table.to_pylist()
-    return {"fields": fields, "data": data}
+    columns = [name for name in table.column_names if name != "time"]
+    return {"columns": columns, "data": table.to_pylist()}
+
+
+@app.get("/api/runs/{run_id}/topology")
+def get_topology(run_id: RunId, user: CurrentUser) -> dict[str, Any] | None:
+    """Feeder topology minus the bulky admittance matrix.
+
+    Dropping ``admittance`` cuts ~99% of the ~1 MB file, which matters
+    when the server isn't on localhost.
+    """
+    run_dir = _user_runs_dir(user) / run_id
+    topo_files = sorted(run_dir.glob("*/topology.json"))
+    if not topo_files:
+        return
+    topo = json.loads(topo_files[0].read_text())
+    topo.pop("admittance", None)
+    return topo
 
 
 @app.delete("/api/runs/{run_id}")
