@@ -18,6 +18,9 @@
           aria-label="Copy run directory path" @click="copyPath">
           <Copy /> Copy path
         </Button>
+        <a download :href="api.runDownloadUrl(runId)"><Button variant="ghost"
+            size="sm" :title="runDir ?? 'Download'"
+            aria-label="Download All Results">Download</Button></a>
         <Button v-if="status === 'running'" variant="destructive" size="sm"
           :disabled="cancelling" title="Cancel" aria-label="Cancel simulation"
           @click="cancelSimulation">
