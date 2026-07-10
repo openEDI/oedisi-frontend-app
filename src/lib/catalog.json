@@ -226,6 +226,26 @@
         {
           "type": "VoltagesMagnitude",
           "port_id": "opf_voltages_magnitude"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "opf_voltages_angle"
+        },
+        {
+          "type": "PowersMagnitude",
+          "port_id": "opf_power_magnitude"
+        },
+        {
+          "type": "PowersAngle",
+          "port_id": "opf_power_angle"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "opf_control_power_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "opf_control_power_imaginary"
         }
       ]
     },
@@ -235,8 +255,7 @@
           "description": "Enum for different types of DER control modes.",
           "enum": [
             1,
-            2,
-            3
+            2
           ],
           "title": "ControlType",
           "type": "integer"
@@ -245,8 +264,8 @@
       "description": "Static configuration parameters defining schema.",
       "properties": {
         "name": {
-          "type": "string",
-          "title": "Name"
+          "title": "Name",
+          "type": "string"
         },
         "deltat": {
           "default": 0.1,
@@ -256,15 +275,18 @@
         },
         "control_type": {
           "$ref": "#/$defs/ControlType",
-          "default": 3,
-          "title": "Control Type"
+          "default": 1,
+          "title": "Control Type (Watt or VAR)"
         },
         "pf_flag": {
-          "default": false,
-          "title": "Relaxed Power Flow",
+          "default": true,
+          "title": "Run Relaxed Power Flow",
           "type": "boolean"
         }
       },
+      "required": [
+        "name"
+      ],
       "title": "LinDistFlowConfig",
       "type": "object"
     }
@@ -1205,7 +1227,7 @@
           "port_id": "topology"
         },
         {
-          "type": "Injections",
+          "type": "Injection",
           "port_id": "injections"
         },
         {
@@ -1460,8 +1482,6 @@
       ]
     },
     "inputSchema": {
-      "title": "ComponentParameters",
-      "type": "object",
       "properties": {
         "name": {
           "title": "Name",
@@ -1472,15 +1492,17 @@
           "type": "integer"
         },
         "t_steps": {
+          "default": 1,
           "title": "T Steps",
           "type": "integer"
         }
       },
       "required": [
         "name",
-        "max_itr",
-        "t_steps"
-      ]
+        "max_itr"
+      ],
+      "title": "ComponentParameters",
+      "type": "object"
     }
   },
   {
@@ -1836,6 +1858,160 @@
         }
       },
       "title": "StateEstimatorConfig",
+      "type": "object"
+    }
+  },
+  {
+    "id": "PnnlEmtSwodComponent",
+    "name": "PNNL EMT SWOD",
+    "description": "sliding wave oscillation detection",
+    "definitionFile": "pnnl_emt_swod.json",
+    "definition": {
+      "directory": "swod_federate",
+      "execute_function": "python -m src.pnnl_emt_swod.federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "name"
+        },
+        {
+          "type": "",
+          "port_id": "window_length"
+        },
+        {
+          "type": "",
+          "port_id": "overlap_length"
+        },
+        {
+          "type": "",
+          "port_id": "fs"
+        },
+        {
+          "type": "",
+          "port_id": "f0_nom"
+        },
+        {
+          "type": "",
+          "port_id": "peak_thresh"
+        },
+        {
+          "type": "",
+          "port_id": "freq_max"
+        },
+        {
+          "type": "",
+          "port_id": "sideband_tol"
+        },
+        {
+          "type": "",
+          "port_id": "freq_match_tol"
+        },
+        {
+          "type": "",
+          "port_id": "deltat"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_abs"
+        },
+        {
+          "type": "CurrentsMagnitude",
+          "port_id": "currents_abs"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "oscillation_frequency"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "oscillation_amplitude"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "harmonic_frequency"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "harmonic_amplitude"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "real_ssp"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "reactive_ssp"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "watts_rms"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "vars_rms"
+        }
+      ]
+    },
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "window_length": {
+          "title": "Window Length",
+          "type": "integer"
+        },
+        "overlap_length": {
+          "default": 25000,
+          "title": "Overlap Length",
+          "type": "integer"
+        },
+        "fs": {
+          "default": 25000,
+          "title": "Fs",
+          "type": "number"
+        },
+        "f0_nom": {
+          "default": 50.0,
+          "title": "F0 Nom",
+          "type": "number"
+        },
+        "peak_thresh": {
+          "default": 0.003,
+          "title": "Peak Thresh",
+          "type": "number"
+        },
+        "freq_max": {
+          "default": 150.0,
+          "title": "Freq Max",
+          "type": "number"
+        },
+        "sideband_tol": {
+          "default": 0.1,
+          "title": "Sideband Tol",
+          "type": "number"
+        },
+        "freq_match_tol": {
+          "default": 0.05,
+          "title": "Freq Match Tol",
+          "type": "number"
+        },
+        "deltat": {
+          "default": 1.0,
+          "title": "Deltat",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "window_length"
+      ],
+      "title": "ComponentParameters",
       "type": "object"
     }
   }

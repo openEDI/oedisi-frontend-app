@@ -15,5 +15,6 @@
     "EVCSComponent": "${OEDISI_COMPONENTS}/ornl-ev-pso/component_definition.json",
     "DOPFPSOComponent": "${OEDISI_COMPONENTS}/ornl-dopf-pso/component_definition.json",
     "DSSEGNWLSComponent": "${OEDISI_COMPONENTS}/ornl-dsse-gnwls/component_definition.json",
-    "PnnlDsseEkfComponent": "${OEDISI_COMPONENTS}/pnnl-dsse-ekf/component_definition.json"
+    "PnnlDsseEkfComponent": "${OEDISI_COMPONENTS}/pnnl-dsse-ekf/component_definition.json",
+    "PnnlEmtSwodComponent": "${OEDISI_COMPONENTS}/pnnl-emt-swod/component_definition.json"
 }
