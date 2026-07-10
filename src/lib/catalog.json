@@ -245,15 +245,7 @@
       "description": "Static configuration parameters defining schema.",
       "properties": {
         "name": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
+          "type": "string",
           "title": "Name"
         },
         "deltat": {
@@ -268,8 +260,8 @@
           "title": "Control Type"
         },
         "pf_flag": {
-          "default": true,
-          "title": "Run Power Flow",
+          "default": false,
+          "title": "Relaxed Power Flow",
           "type": "boolean"
         }
       },

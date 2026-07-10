@@ -2,11 +2,7 @@
   "$defs": {
     "ControlType": {
       "description": "Enum for different types of DER control modes.",
-      "enum": [
-        1,
-        2,
-        3
-      ],
+      "enum": [1, 2, 3],
       "title": "ControlType",
       "type": "integer"
     }
@@ -14,15 +10,7 @@
   "description": "Static configuration parameters defining schema.",
   "properties": {
     "name": {
-      "anyOf": [
-        {
-          "type": "string"
-        },
-        {
-          "type": "null"
-        }
-      ],
-      "default": null,
+      "type": "string",
       "title": "Name"
     },
     "deltat": {
@@ -38,7 +26,7 @@
     },
     "pf_flag": {
       "default": true,
-      "title": "Run Power Flow",
+      "title": "Relaxed Power Flow",
       "type": "boolean"
     }
   },
