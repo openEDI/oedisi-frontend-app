@@ -1,0 +1,1850 @@
+[
+  {
+    "id": "Feeder",
+    "name": "Feeder",
+    "description": "OpenDSS simulation engine",
+    "definitionFile": "feeder.json",
+    "definition": {
+      "directory": "LocalFeeder",
+      "execute_function": "python -m src.localfeeder.sender_cosim",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "feeder_file"
+        },
+        {
+          "type": "",
+          "port_id": "start_date"
+        },
+        {
+          "type": "",
+          "port_id": "run_freq_sec"
+        },
+        {
+          "type": "",
+          "port_id": "number_of_timesteps"
+        },
+        {
+          "type": "",
+          "port_id": "start_time_index"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "",
+          "port_id": "pv_set",
+          "optional": true
+        },
+        {
+          "type": "CommandList",
+          "port_id": "change_commands",
+          "optional": true
+        },
+        {
+          "type": "InverterControlList",
+          "port_id": "inv_control",
+          "optional": true
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_magnitude"
+        },
+        {
+          "type": "VoltagesReal",
+          "port_id": "voltages_real"
+        },
+        {
+          "type": "VoltagesImaginary",
+          "port_id": "voltages_imag"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imag"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        },
+        {
+          "type": "Injection",
+          "port_id": "injections"
+        },
+        {
+          "type": "",
+          "port_id": "load_y_matrix"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "available_power"
+        },
+        {
+          "type": "",
+          "port_id": "pv_forecast"
+        }
+      ]
+    },
+    "inputSchema": {
+      "description": "JSON configuration for the feeder simulator.\n\nSpecial cases S3 sources right now.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "use_smartds": {
+          "default": false,
+          "title": "Use Smartds",
+          "type": "boolean"
+        },
+        "user_uploads_model": {
+          "default": false,
+          "title": "User Uploads Model",
+          "type": "boolean"
+        },
+        "profile_location": {
+          "default": "gadal_ieee123/profiles",
+          "title": "Profile Location",
+          "type": "string"
+        },
+        "opendss_location": {
+          "default": "gadal_ieee123/qsts",
+          "title": "Opendss Location",
+          "type": "string"
+        },
+        "existing_feeder_file": {
+          "type": "string",
+          "title": "Existing Feeder File"
+        },
+        "sensor_location": {
+          "type": "string",
+          "title": "Sensor Location",
+          "default": "gadal_ieee123/sensors.json"
+        },
+        "start_date": {
+          "default": "2017-01-01 00:00:00",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "number_of_timesteps": {
+          "default": 1,
+          "title": "Number Of Timesteps",
+          "type": "integer"
+        },
+        "run_freq_sec": {
+          "default": 900,
+          "title": "Run Freq Sec",
+          "type": "number",
+          "minimum": 0
+        },
+        "start_time_index": {
+          "default": 0,
+          "title": "Start Time Index",
+          "type": "integer"
+        },
+        "topology_output": {
+          "default": "topology.json",
+          "title": "Topology Output",
+          "type": "string"
+        },
+        "use_sparse_admittance": {
+          "default": false,
+          "title": "Use Sparse Admittance",
+          "type": "boolean"
+        },
+        "tap_setting": {
+          "type": "integer",
+          "title": "Tap Setting"
+        },
+        "open_lines": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Open Lines"
+        }
+      },
+      "required": [
+        "profile_location",
+        "opendss_location",
+        "start_date",
+        "number_of_timesteps"
+      ],
+      "title": "FeederConfig",
+      "type": "object"
+    }
+  },
+  {
+    "id": "LinDistFlowComponent",
+    "name": "LinDistFlow Algorithm",
+    "description": "LinDistFlow optimization algorithm",
+    "definitionFile": "lin_dist_flow_algorithm.json",
+    "definition": {
+      "directory": "lindistflow_federate",
+      "execute_function": "python -m src.lindistflow_federate.opf_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "name"
+        },
+        {
+          "type": "",
+          "port_id": "deltat"
+        },
+        {
+          "type": "",
+          "port_id": "control_type"
+        },
+        {
+          "type": "",
+          "port_id": "pf_flag"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_magnitude"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        },
+        {
+          "type": "Injection",
+          "port_id": "injections"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "CommandList",
+          "port_id": "change_commands"
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "opf_voltages_magnitude"
+        }
+      ]
+    },
+    "inputSchema": {
+      "$defs": {
+        "ControlType": {
+          "description": "Enum for different types of DER control modes.",
+          "enum": [
+            1,
+            2,
+            3
+          ],
+          "title": "ControlType",
+          "type": "integer"
+        }
+      },
+      "description": "Static configuration parameters defining schema.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "deltat": {
+          "default": 0.1,
+          "minimum": 0.0,
+          "title": "Time Step (s)",
+          "type": "number"
+        },
+        "control_type": {
+          "$ref": "#/$defs/ControlType",
+          "default": 3,
+          "title": "Control Type"
+        },
+        "pf_flag": {
+          "default": true,
+          "title": "Run Power Flow",
+          "type": "boolean"
+        }
+      },
+      "title": "LinDistFlowConfig",
+      "type": "object"
+    }
+  },
+  {
+    "id": "MeasurementComponent",
+    "name": "Sensor",
+    "description": "Sensor model",
+    "definitionFile": "sensor.json",
+    "definition": {
+      "directory": "measuring_federate",
+      "execute_function": "python -m src.measuring_federate.measuring_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "additive_noise_stddev"
+        },
+        {
+          "type": "",
+          "port_id": "multiplicative_noise_stddev"
+        },
+        {
+          "type": "",
+          "port_id": "measurement_file"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "subscription"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "publication"
+        }
+      ]
+    },
+    "inputSchema": {
+      "description": "Configuration for the measurement federate.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "additive_noise_stddev": {
+          "default": 0.0,
+          "title": "Additive Noise Stddev",
+          "type": "number",
+          "minimum": 0.0
+        },
+        "multiplicative_noise_stddev": {
+          "default": 0.0,
+          "title": "Multiplicative Noise Stddev",
+          "type": "number",
+          "minimum": 0.0
+        },
+        "measurement_file": {
+          "title": "Measurement File",
+          "type": "string"
+        },
+        "run_freq_time_step": {
+          "default": 1.0,
+          "title": "Run Freq Time Step",
+          "type": "number",
+          "minimum": 0.0
+        }
+      },
+      "required": [
+        "measurement_file"
+      ],
+      "title": "MeasurementConfig",
+      "type": "object"
+    }
+  },
+  {
+    "id": "NlpDopfComponent",
+    "name": "NLP DOPF",
+    "description": "Optimal Power Flow",
+    "definitionFile": "nlpdopf.json",
+    "definition": {
+      "directory": "./",
+      "execute_function": "python federate_distflowopf.py",
+      "static_inputs": [],
+      "dynamic_inputs": [
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imaginary"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        },
+        {
+          "type": "Injection",
+          "port_id": "injections"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "available_power"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imaginary"
+        }
+      ]
+    },
+    "inputSchema": {
+      "properties": {
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "run_freq_sec": {
+          "default": 900,
+          "title": "Run Freq Sec",
+          "type": "integer"
+        },
+        "start_time_index": {
+          "default": 0,
+          "title": "Start Time Index",
+          "type": "integer"
+        },
+        "number_of_timesteps": {
+          "default": 8,
+          "title": "Number Of Timesteps",
+          "type": "integer"
+        }
+      },
+      "title": "StaticInputs",
+      "type": "object"
+    }
+  },
+  {
+    "id": "NlpDsseComponent",
+    "name": "NLP DSSE",
+    "description": "NLP State Estimator",
+    "definitionFile": "nlpdsse.json",
+    "definition": {
+      "directory": "nlpdsse",
+      "execute_function": "python fed.py",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "start_date"
+        },
+        {
+          "type": "",
+          "port_id": "run_freq_sec"
+        },
+        {
+          "type": "",
+          "port_id": "start_time_index"
+        },
+        {
+          "type": "",
+          "port_id": "number_of_timesteps"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imaginary"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle"
+        }
+      ]
+    },
+    "inputSchema": {
+      "properties": {
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Start Date"
+        },
+        "run_freq_sec": {
+          "default": 900,
+          "title": "Run Freq Sec",
+          "type": "integer"
+        },
+        "start_time_index": {
+          "default": 0,
+          "title": "Start Time Index",
+          "type": "integer"
+        },
+        "number_of_timesteps": {
+          "default": 8,
+          "title": "Number Of Timesteps",
+          "type": "integer"
+        }
+      },
+      "title": "StaticInputs",
+      "type": "object"
+    }
+  },
+  {
+    "id": "OMOOComponent",
+    "name": "OMOO",
+    "description": "Optimal Power Flow",
+    "definitionFile": "omoo_federate.json",
+    "definition": {
+      "directory": "omoo_federate",
+      "execute_function": "python -m src.omoo_federate.omoo",
+      "static_inputs": [],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesReal",
+          "port_id": "voltages_real"
+        },
+        {
+          "type": "VoltagesImaginary",
+          "port_id": "voltages_imag"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imag"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        },
+        {
+          "type": "Injections",
+          "port_id": "injections"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "available_power"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle"
+        },
+        {
+          "type": "CommandList",
+          "port_id": "P_set"
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "OMOOConfig",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "algorithm_parameters": {
+          "title": "Algorithm Parameters",
+          "type": "object",
+          "properties": {
+            "Vmax": {
+              "title": "Vmax",
+              "type": "number",
+              "default": 1.05
+            },
+            "Vmin_act": {
+              "title": "Vmin (active)",
+              "type": "number",
+              "default": 0.95
+            },
+            "Vmin": {
+              "title": "Vmin",
+              "type": "number",
+              "default": 0.95
+            },
+            "alpha": {
+              "title": "Alpha",
+              "type": "number",
+              "default": 0.5
+            },
+            "epsilon": {
+              "title": "Epsilon",
+              "type": "number",
+              "default": 1e-08,
+              "minimum": 0
+            },
+            "nu": {
+              "title": "Nu",
+              "type": "number",
+              "default": 0.016,
+              "minimum": 0
+            },
+            "ratio_t_k": {
+              "title": "Ratio t/k",
+              "type": "integer",
+              "default": 1000,
+              "minimum": 1
+            },
+            "units": {
+              "title": "Units",
+              "type": "string",
+              "enum": [
+                "SI",
+                "PER_UNIT"
+              ],
+              "default": "PER_UNIT"
+            },
+            "base_power": {
+              "title": "Base Power",
+              "type": "number",
+              "default": 100.0
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "DOPFPSOComponent",
+    "name": "ORNL DOPF (PSO)",
+    "description": "Distribution OPF via Particle Swarm Optimization",
+    "definitionFile": "ornl_dopf_pso.json",
+    "definition": {
+      "directory": "dopf_federate",
+      "execute_function": "python -m src.dopf_federate.dopf_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "name",
+          "description": "Federate name",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "pv_buses",
+          "description": "List of PV system bus IDs",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "pv_capacity_kw",
+          "description": "PV capacity in kW per system",
+          "unit": "kW"
+        },
+        {
+          "type": "",
+          "port_id": "algorithm_parameters",
+          "description": "PSO parameters",
+          "unit": ""
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real",
+          "description": "Real power measurements from feeder",
+          "unit": "kW"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imag",
+          "description": "Reactive power measurements from feeder",
+          "unit": "kVAR"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology",
+          "description": "Network topology with Y-bus",
+          "unit": ""
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_magnitude",
+          "description": "Bus voltage magnitudes from feeder",
+          "unit": "V"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "CommandList",
+          "port_id": "change_commands",
+          "description": "PV reactive power setpoint commands",
+          "unit": ""
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ComponentParameters",
+      "type": "object",
+      "properties": {
+        "pv_buses": {
+          "title": "PV Buses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pv_capacity_kw": {
+          "title": "PV Capacity kW",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "num_particles": {
+          "title": "Num Particles",
+          "type": "integer"
+        },
+        "max_iterations": {
+          "title": "Max Iterations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "pv_buses",
+        "pv_capacity_kw",
+        "num_particles",
+        "max_iterations"
+      ]
+    }
+  },
+  {
+    "id": "DSSEGNWLSComponent",
+    "name": "ORNL DSSE (GN-WLS)",
+    "description": "Distribution state estimation via Gauss-Newton WLS",
+    "definitionFile": "ornl_dsse_gnwls.json",
+    "definition": {
+      "directory": "dsse_federate",
+      "execute_function": "python -m src.dsse_federate.dsse_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "name",
+          "description": "Federate name",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "algorithm_parameters",
+          "description": "WLS parameters (tol, base_power)",
+          "unit": ""
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_magnitude",
+          "description": "Voltage magnitude measurements",
+          "unit": "V"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real",
+          "description": "Real power measurements",
+          "unit": "kW"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imaginary",
+          "description": "Reactive power measurements",
+          "unit": "kVAR"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology",
+          "description": "Network topology with Y-bus",
+          "unit": ""
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag",
+          "description": "Estimated voltage magnitudes",
+          "unit": "V"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle",
+          "description": "Estimated voltage angles",
+          "unit": "deg"
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ComponentParameters",
+      "type": "object",
+      "properties": {
+        "tol": {
+          "title": "Tolerance",
+          "type": "number"
+        },
+        "base_power": {
+          "title": "Base Power",
+          "type": "number"
+        },
+        "max_iter": {
+          "title": "Max Iterations",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "tol",
+        "base_power",
+        "max_iter"
+      ]
+    }
+  },
+  {
+    "id": "EVCSComponent",
+    "name": "ORNL EV Scheduler",
+    "description": "PSO-based EV charging optimization",
+    "definitionFile": "ornl_ev_pso.json",
+    "definition": {
+      "directory": "evcs_federate",
+      "execute_function": "python -m src.evcs_federate.evcs_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "evcs_bus",
+          "description": "List of bus IDs for EVCS locations",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "evcs_bus_assignment",
+          "description": "Mapping of bus IDs to EV indices",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "num_evs_per_station",
+          "description": "Number of EVs per charging station",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "max_charging_rate",
+          "description": "Maximum charging rate per EV",
+          "unit": "kW"
+        },
+        {
+          "type": "",
+          "port_id": "battery_capacity",
+          "description": "EV battery capacity",
+          "unit": "kWh"
+        },
+        {
+          "type": "",
+          "port_id": "charging_efficiency",
+          "description": "Charging efficiency (0-1)",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "desired_soc",
+          "description": "Target state of charge (0-1)",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "soc_mean",
+          "description": "Initial SOC distribution mean",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "soc_std",
+          "description": "Initial SOC distribution std dev",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "soc_lower",
+          "description": "Initial SOC lower bound",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "soc_upper",
+          "description": "Initial SOC upper bound",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "arrival_mean",
+          "description": "Arrival time distribution mean (hours)",
+          "unit": "hours"
+        },
+        {
+          "type": "",
+          "port_id": "arrival_std",
+          "description": "Arrival time distribution std dev",
+          "unit": "hours"
+        },
+        {
+          "type": "",
+          "port_id": "arrival_lower",
+          "description": "Earliest arrival time",
+          "unit": "hours"
+        },
+        {
+          "type": "",
+          "port_id": "arrival_upper",
+          "description": "Latest arrival time",
+          "unit": "hours"
+        },
+        {
+          "type": "",
+          "port_id": "departure_shift",
+          "description": "Departure time shift parameter",
+          "unit": "hours"
+        },
+        {
+          "type": "",
+          "port_id": "departure_mu",
+          "description": "Departure lognormal mu parameter",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "departure_sigma",
+          "description": "Departure lognormal sigma parameter",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "total_hours",
+          "description": "Simulation duration",
+          "unit": "hours"
+        },
+        {
+          "type": "",
+          "port_id": "control_interval",
+          "description": "Control time interval",
+          "unit": "hours"
+        },
+        {
+          "type": "",
+          "port_id": "random_seed",
+          "description": "Random seed for reproducibility",
+          "unit": ""
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real_in",
+          "description": "Real power from feeder",
+          "unit": "kW"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imag_in",
+          "description": "Imaginary power from feeder",
+          "unit": "kVAR"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology",
+          "description": "Network topology for linearized model",
+          "unit": ""
+        },
+        {
+          "type": "VoltagesReal",
+          "port_id": "voltages_real",
+          "description": "Real voltages from feeder for voltage estimation",
+          "unit": "pu"
+        },
+        {
+          "type": "VoltagesImaginary",
+          "port_id": "voltages_imag",
+          "description": "Imaginary voltages from feeder for voltage estimation",
+          "unit": "pu"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "CommandList",
+          "port_id": "change_commands",
+          "description": "OpenDSS load commands for EV charging power injection",
+          "unit": ""
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ComponentParameters",
+      "type": "object",
+      "properties": {
+        "evcs_bus": {
+          "title": "EVCS Bus",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evcs_bus_assignment": {
+          "title": "EVCS Bus Assignment",
+          "type": "object"
+        },
+        "num_evs_per_station": {
+          "title": "Num EVs per Station",
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "max_charging_rate": {
+          "title": "Max Charging Rate",
+          "type": "number"
+        },
+        "battery_capacity": {
+          "title": "Battery Capacity",
+          "type": "number"
+        },
+        "charging_efficiency": {
+          "title": "Charging Efficiency",
+          "type": "number"
+        },
+        "desired_soc": {
+          "title": "Desired SOC",
+          "type": "number"
+        },
+        "soc_mean": {
+          "title": "SOC Mean",
+          "type": "number"
+        },
+        "soc_std": {
+          "title": "SOC Std",
+          "type": "number"
+        },
+        "soc_lower": {
+          "title": "SOC Lower",
+          "type": "number"
+        },
+        "soc_upper": {
+          "title": "SOC Upper",
+          "type": "number"
+        },
+        "arrival_mean": {
+          "title": "Arrival Mean",
+          "type": "number"
+        },
+        "arrival_std": {
+          "title": "Arrival Std",
+          "type": "number"
+        },
+        "arrival_lower": {
+          "title": "Arrival Lower",
+          "type": "number"
+        },
+        "arrival_upper": {
+          "title": "Arrival Upper",
+          "type": "number"
+        },
+        "departure_shift": {
+          "title": "Departure Shift",
+          "type": "number"
+        },
+        "departure_mu": {
+          "title": "Departure Mu",
+          "type": "number"
+        },
+        "departure_sigma": {
+          "title": "Departure Sigma",
+          "type": "number"
+        },
+        "total_hours": {
+          "title": "Total Hours",
+          "type": "number"
+        },
+        "control_interval": {
+          "title": "Control Interval",
+          "type": "number"
+        },
+        "random_seed": {
+          "title": "Random Seed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "evcs_bus",
+        "evcs_bus_assignment",
+        "num_evs_per_station",
+        "max_charging_rate",
+        "battery_capacity",
+        "charging_efficiency",
+        "desired_soc",
+        "soc_mean",
+        "soc_std",
+        "soc_lower",
+        "soc_upper",
+        "arrival_mean",
+        "arrival_std",
+        "arrival_lower",
+        "arrival_upper",
+        "departure_shift",
+        "departure_mu",
+        "departure_sigma",
+        "total_hours",
+        "control_interval",
+        "random_seed"
+      ]
+    }
+  },
+  {
+    "id": "PnnlDopfAdmmComponent",
+    "name": "ADMM DOPF",
+    "description": "Optimal Power Flow (requires Hub)",
+    "definitionFile": "pnnl_dopf_admm.json",
+    "definition": {
+      "directory": "admm_federate",
+      "execute_function": "python -m src.admm_federate.opf_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "name"
+        },
+        {
+          "type": "",
+          "port_id": "deltat"
+        },
+        {
+          "type": "",
+          "port_id": "t_steps"
+        },
+        {
+          "type": "",
+          "port_id": "max_itr"
+        },
+        {
+          "type": "",
+          "port_id": "control_type"
+        },
+        {
+          "type": "",
+          "port_id": "switches"
+        },
+        {
+          "type": "",
+          "port_id": "source_bus"
+        },
+        {
+          "type": "",
+          "port_id": "source_line"
+        },
+        {
+          "type": "",
+          "port_id": "relaxed"
+        },
+        {
+          "type": "",
+          "port_id": "rho_vup"
+        },
+        {
+          "type": "",
+          "port_id": "rho_sup"
+        },
+        {
+          "type": "",
+          "port_id": "rho_vdn"
+        },
+        {
+          "type": "",
+          "port_id": "rho_sdn"
+        },
+        {
+          "type": "",
+          "port_id": "vup_tol"
+        },
+        {
+          "type": "",
+          "port_id": "sdn_tol"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesReal",
+          "port_id": "voltages_real"
+        },
+        {
+          "type": "VoltagesImaginary",
+          "port_id": "voltages_imag"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        },
+        {
+          "type": "Injections",
+          "port_id": "injections"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "sub_p"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "sub_q"
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "sub_v"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "PowersReal",
+          "port_id": "estimated_power"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "solver_stats"
+        },
+        {
+          "type": "PowersMagnitude",
+          "port_id": "power_mag"
+        },
+        {
+          "type": "PowersAngle",
+          "port_id": "power_angle"
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "pub_p"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "pub_q"
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "pub_v"
+        },
+        {
+          "type": "CommandList",
+          "port_id": "pub_c"
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ComponentParameters",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "t_steps": {
+          "title": "T Steps",
+          "type": "integer"
+        },
+        "max_itr": {
+          "title": "Max Itr",
+          "type": "integer"
+        },
+        "control_type": {
+          "title": "Control Type",
+          "type": "string"
+        },
+        "switches": {
+          "title": "Switches",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "source_bus": {
+          "title": "Source Bus",
+          "type": "string"
+        },
+        "source_line": {
+          "title": "Source Line",
+          "type": "string"
+        },
+        "relaxed": {
+          "title": "Relaxed",
+          "type": "boolean"
+        },
+        "rho_sup": {
+          "title": "Rho Sup",
+          "type": "number"
+        },
+        "rho_vup": {
+          "title": "Rho Vup",
+          "type": "number"
+        },
+        "rho_sdn": {
+          "title": "Rho Sdn",
+          "type": "number"
+        },
+        "rho_vdn": {
+          "title": "Rho Vdn",
+          "type": "number"
+        },
+        "vup_tol": {
+          "title": "Vup Tol",
+          "type": "number"
+        },
+        "sdn_tol": {
+          "title": "Sdn Tol",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "t_steps",
+        "max_itr",
+        "control_type",
+        "switches",
+        "source_bus",
+        "source_line",
+        "relaxed",
+        "rho_sup",
+        "rho_vup",
+        "rho_sdn",
+        "rho_vdn",
+        "vup_tol",
+        "sdn_tol"
+      ]
+    }
+  },
+  {
+    "id": "PnnlDsseEkfComponent",
+    "name": "PNNL DSSE EKF",
+    "description": "PNNL DSSE EKF component",
+    "definitionFile": "pnnl_dsse_ekf.json",
+    "definition": {
+      "directory": "ekf_federate",
+      "execute_function": "./state-estimator-gadal",
+      "static_inputs": [],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "power_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "power_imag"
+        },
+        {
+          "type": "Injections",
+          "port_id": "injections"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle"
+        }
+      ]
+    },
+    "inputSchema": {
+      "properties": {
+        "sigma_v": {
+          "title": "Sigma V",
+          "type": "number"
+        },
+        "sigma_p": {
+          "title": "Sigma P",
+          "type": "number"
+        },
+        "sigma_q": {
+          "title": "Sigma Q",
+          "type": "number"
+        }
+      },
+      "required": [
+        "sigma_v",
+        "sigma_p",
+        "sigma_q"
+      ],
+      "title": "ComponentParameters",
+      "type": "object"
+    }
+  },
+  {
+    "id": "PnnlHubControlComponent",
+    "name": "DOPF Hub Control",
+    "description": "Hub for controlling multiple DOPF",
+    "definitionFile": "pnnl_hub_control.json",
+    "definition": {
+      "directory": "hub_control",
+      "execute_function": "python -m src.pnnl-hub-control.hub_federate",
+      "static_inputs": [],
+      "dynamic_inputs": [
+        {
+          "type": "CommandList",
+          "port_id": "sub_c0",
+          "optional": true
+        },
+        {
+          "type": "CommandList",
+          "port_id": "sub_c1",
+          "optional": true
+        },
+        {
+          "type": "CommandList",
+          "port_id": "sub_c2",
+          "optional": true
+        },
+        {
+          "type": "CommandList",
+          "port_id": "sub_c3",
+          "optional": true
+        },
+        {
+          "type": "CommandList",
+          "port_id": "sub_c4",
+          "optional": true
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "CommandList",
+          "port_id": "pub_c"
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ComponentParameters",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "max_itr": {
+          "title": "Max Itr",
+          "type": "integer"
+        },
+        "t_steps": {
+          "title": "T Steps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "max_itr",
+        "t_steps"
+      ]
+    }
+  },
+  {
+    "id": "PnnlHubPowerComponent",
+    "name": "DOPF Hub Power",
+    "description": "Hub for splitting power",
+    "definitionFile": "pnnl_hub_power.json",
+    "definition": {
+      "directory": "hub_power",
+      "execute_function": "python -m src.pnnl-hub-power.hub_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "max_itr"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "PowersReal",
+          "port_id": "sub_p0",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "sub_p1",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "sub_p2",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "sub_p3",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "sub_p4",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "sub_q0",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "sub_q1",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "sub_q2",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "sub_q3",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "sub_q4",
+          "optional": true
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "PowersReal",
+          "port_id": "pub_p0",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "pub_p1",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "pub_p2",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "pub_p3",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "pub_p4",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "pub_q0",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "pub_q1",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "pub_q2",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "pub_q3",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "pub_q4",
+          "optional": true
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ComponentParameters",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "max_itr": {
+          "title": "Max Itr",
+          "type": "integer"
+        },
+        "t_steps": {
+          "title": "T Steps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "max_itr",
+        "t_steps"
+      ]
+    }
+  },
+  {
+    "id": "PnnlHubVoltageComponent",
+    "name": "DOPF Hub Voltage",
+    "description": "Hub for splitting voltage",
+    "definitionFile": "pnnl_hub_voltage.json",
+    "definition": {
+      "directory": "hub_voltage",
+      "execute_function": "python -m src.pnnl-hub-voltage.hub_federate",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "max_itr"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "sub_v0",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "sub_v1",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "sub_v2",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "sub_v3",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "sub_v4",
+          "optional": true
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "pub_v0",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "pub_v1",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "pub_v2",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "pub_v3",
+          "optional": true
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "pub_v4",
+          "optional": true
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ComponentParameters",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "max_itr": {
+          "title": "Max Itr",
+          "type": "integer"
+        },
+        "t_steps": {
+          "title": "T Steps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "max_itr",
+        "t_steps"
+      ]
+    }
+  },
+  {
+    "id": "Recorder",
+    "name": "Recorder",
+    "description": "Records simulation results",
+    "definitionFile": "recorder.json",
+    "definition": {
+      "directory": "recorder",
+      "execute_function": "python -m src.recorder.record_subscription",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "filename"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "subscription"
+        }
+      ],
+      "dynamic_outputs": []
+    },
+    "inputSchema": {
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "csv_filename": {
+          "title": "Csv Path",
+          "type": "string"
+        },
+        "feather_filename": {
+          "title": "Feather Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "csv_filename",
+        "feather_filename"
+      ],
+      "title": "RecorderConfig",
+      "type": "object"
+    }
+  },
+  {
+    "id": "StateEstimatorComponent",
+    "name": "State Estimator",
+    "description": "WLS state estimator",
+    "definitionFile": "wls_federate.json",
+    "definition": {
+      "directory": "wls_federate",
+      "execute_function": "python -m src.wls_federate.state_estimator_federate",
+      "static_inputs": [],
+      "dynamic_inputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_magnitude"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imaginary"
+        },
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltage_mag"
+        },
+        {
+          "type": "VoltagesAngle",
+          "port_id": "voltage_angle"
+        }
+      ]
+    },
+    "inputSchema": {
+      "$defs": {
+        "AlgorithmParameters": {
+          "description": "Parameters for the state estimation algorithm.",
+          "properties": {
+            "tol": {
+              "default": 5e-07,
+              "title": "Tol",
+              "type": "number"
+            },
+            "base_power": {
+              "type": "number",
+              "default": 100.0,
+              "title": "Base Power"
+            }
+          },
+          "title": "AlgorithmParameters",
+          "type": "object"
+        }
+      },
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "algorithm_parameters": {
+          "$ref": "#/$defs/AlgorithmParameters",
+          "default": {
+            "tol": 5e-07,
+            "base_power": 100.0
+          }
+        }
+      },
+      "title": "StateEstimatorConfig",
+      "type": "object"
+    }
+  }
+]

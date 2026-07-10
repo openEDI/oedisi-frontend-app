@@ -1,6 +1,6 @@
 {
     "directory": "admm_federate",
-    "execute_function": "python opf_federate.py",
+    "execute_function": "python -m src.admm_federate.opf_federate",
     "static_inputs": [
         {
             "type": "",
@@ -9,6 +9,10 @@
         {
             "type": "",
             "port_id": "deltat"
+        },
+        {
+            "type": "",
+            "port_id": "t_steps"
         },
         {
             "type": "",
@@ -24,7 +28,11 @@
         },
         {
             "type": "",
-            "port_id": "source"
+            "port_id": "source_bus"
+        },
+        {
+            "type": "",
+            "port_id": "source_line"
         },
         {
             "type": "",
@@ -45,16 +53,24 @@
         {
             "type": "",
             "port_id": "rho_sdn"
+        },
+        {
+            "type": "",
+            "port_id": "vup_tol"
+        },
+        {
+            "type": "",
+            "port_id": "sdn_tol"
         }
     ],
     "dynamic_inputs": [
         {
             "type": "VoltagesReal",
-            "port_id": "voltage_real"
+            "port_id": "voltages_real"
         },
         {
             "type": "VoltagesImaginary",
-            "port_id": "voltage_imag"
+            "port_id": "voltages_imag"
         },
         {
             "type": "Topology",
@@ -63,14 +79,6 @@
         {
             "type": "Injections",
             "port_id": "injections"
-        },
-        {
-            "type": "PowersReal",
-            "port_id": "power_real"
-        },
-        {
-            "type": "PowersImaginary",
-            "port_id": "power_imag"
         },
         {
             "type": "PowersReal",
