@@ -214,38 +214,18 @@
           "port_id": "topology"
         },
         {
-          "type": "Injection",
+          "type": "Injections",
           "port_id": "injections"
         }
       ],
       "dynamic_outputs": [
         {
-          "type": "CommandList",
+          "type": "ControlList",
           "port_id": "change_commands"
         },
         {
           "type": "VoltagesMagnitude",
           "port_id": "opf_voltages_magnitude"
-        },
-        {
-          "type": "VoltagesAngle",
-          "port_id": "opf_voltages_angle"
-        },
-        {
-          "type": "PowersMagnitude",
-          "port_id": "opf_power_magnitude"
-        },
-        {
-          "type": "PowersAngle",
-          "port_id": "opf_power_angle"
-        },
-        {
-          "type": "PowersReal",
-          "port_id": "opf_control_power_real"
-        },
-        {
-          "type": "PowersImaginary",
-          "port_id": "opf_control_power_imaginary"
         }
       ]
     },
@@ -255,17 +235,25 @@
           "description": "Enum for different types of DER control modes.",
           "enum": [
             1,
-            2
+            2,
+            3
           ],
           "title": "ControlType",
           "type": "integer"
         }
       },
-      "description": "Static configuration parameters defining schema.",
       "properties": {
         "name": {
-          "title": "Name",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
         },
         "deltat": {
           "default": 0.1,
@@ -275,18 +263,15 @@
         },
         "control_type": {
           "$ref": "#/$defs/ControlType",
-          "default": 1,
-          "title": "Control Type (Watt or VAR)"
+          "default": 3,
+          "title": "Control Type"
         },
         "pf_flag": {
           "default": true,
-          "title": "Run Relaxed Power Flow",
+          "title": "Run Power Flow",
           "type": "boolean"
         }
       },
-      "required": [
-        "name"
-      ],
       "title": "LinDistFlowConfig",
       "type": "object"
     }
@@ -1162,10 +1147,6 @@
         },
         {
           "type": "",
-          "port_id": "t_steps"
-        },
-        {
-          "type": "",
           "port_id": "max_itr"
         },
         {
@@ -1287,85 +1268,108 @@
       ]
     },
     "inputSchema": {
-      "title": "ComponentParameters",
-      "type": "object",
+      "description": "Static configuration parameters defining schema.",
       "properties": {
         "name": {
+          "description": "Unique identifier for the federate name",
           "title": "Name",
           "type": "string"
         },
-        "t_steps": {
-          "title": "T Steps",
-          "type": "integer"
+        "deltat": {
+          "default": 1.0,
+          "description": "Co-simulation time step interval in seconds",
+          "minimum": 0.0,
+          "title": "Time Step (s)",
+          "type": "number"
         },
         "max_itr": {
+          "default": 10,
+          "description": "Maximum number of ADMM iterations per step",
+          "minimum": 1,
           "title": "Max Itr",
           "type": "integer"
         },
         "control_type": {
+          "description": "Control mode (e.g. 'real', 'reactive')",
           "title": "Control Type",
           "type": "string"
         },
         "switches": {
-          "title": "Switches",
-          "type": "array",
+          "description": "List of switches/controllable lines in the area",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "Switches",
+          "type": "array"
         },
         "source_bus": {
+          "description": "ID of the boundary/source bus",
           "title": "Source Bus",
           "type": "string"
         },
         "source_line": {
+          "description": "ID of the boundary/source line",
           "title": "Source Line",
           "type": "string"
         },
         "relaxed": {
+          "default": false,
+          "description": "Boolean flag to enable relaxed model formulation",
           "title": "Relaxed",
           "type": "boolean"
         },
         "rho_sup": {
+          "description": "ADMM penalty parameter for active power injection",
+          "minimum": 0.0,
           "title": "Rho Sup",
           "type": "number"
         },
         "rho_vup": {
+          "description": "ADMM penalty parameter for upstream voltage",
+          "minimum": 0.0,
           "title": "Rho Vup",
           "type": "number"
         },
         "rho_sdn": {
+          "description": "ADMM penalty parameter for active/reactive power flow discrepancy",
+          "minimum": 0.0,
           "title": "Rho Sdn",
           "type": "number"
         },
         "rho_vdn": {
+          "description": "ADMM penalty parameter for downstream voltage discrepancy",
+          "minimum": 0.0,
           "title": "Rho Vdn",
           "type": "number"
         },
         "vup_tol": {
+          "description": "Convergence tolerance for upstream voltage mismatch",
+          "minimum": 0.0,
           "title": "Vup Tol",
           "type": "number"
         },
         "sdn_tol": {
+          "description": "Convergence tolerance for power mismatch",
+          "minimum": 0.0,
           "title": "Sdn Tol",
           "type": "number"
         }
       },
       "required": [
         "name",
-        "t_steps",
-        "max_itr",
         "control_type",
         "switches",
         "source_bus",
         "source_line",
-        "relaxed",
         "rho_sup",
         "rho_vup",
         "rho_sdn",
         "rho_vdn",
         "vup_tol",
         "sdn_tol"
-      ]
+      ],
+      "title": "ADMMConfig",
+      "type": "object"
     }
   },
   {
@@ -1375,28 +1379,20 @@
     "definitionFile": "pnnl_dsse_ekf.json",
     "definition": {
       "directory": "ekf_federate",
-      "execute_function": "./state-estimator-gadal",
+      "execute_function": "ekf-state-estimator",
       "static_inputs": [],
       "dynamic_inputs": [
         {
           "type": "VoltagesMagnitude",
-          "port_id": "voltage_mag"
-        },
-        {
-          "type": "VoltagesAngle",
-          "port_id": "voltage_angle"
+          "port_id": "sensor_voltage_magnitude"
         },
         {
           "type": "PowersReal",
-          "port_id": "power_real"
+          "port_id": "sensor_power_real"
         },
         {
           "type": "PowersImaginary",
-          "port_id": "power_imag"
-        },
-        {
-          "type": "Injections",
-          "port_id": "injections"
+          "port_id": "sensor_power_imaginary"
         },
         {
           "type": "Topology",
@@ -1406,11 +1402,11 @@
       "dynamic_outputs": [
         {
           "type": "VoltagesMagnitude",
-          "port_id": "voltage_mag"
+          "port_id": "Vmag_SE"
         },
         {
           "type": "VoltagesAngle",
-          "port_id": "voltage_angle"
+          "port_id": "Vang_SE"
         }
       ]
     },
@@ -1489,11 +1485,6 @@
         },
         "max_itr": {
           "title": "Max Itr",
-          "type": "integer"
-        },
-        "t_steps": {
-          "default": 1,
-          "title": "T Steps",
           "type": "integer"
         }
       },
@@ -1635,16 +1626,11 @@
         "max_itr": {
           "title": "Max Itr",
           "type": "integer"
-        },
-        "t_steps": {
-          "title": "T Steps",
-          "type": "integer"
         }
       },
       "required": [
         "name",
-        "max_itr",
-        "t_steps"
+        "max_itr"
       ]
     }
   },
@@ -1728,16 +1714,11 @@
         "max_itr": {
           "title": "Max Itr",
           "type": "integer"
-        },
-        "t_steps": {
-          "title": "T Steps",
-          "type": "integer"
         }
       },
       "required": [
         "name",
-        "max_itr",
-        "t_steps"
+        "max_itr"
       ]
     }
   },
@@ -1868,7 +1849,7 @@
     "definitionFile": "pnnl_emt_swod.json",
     "definition": {
       "directory": "swod_federate",
-      "execute_function": "python -m src.pnnl_emt_swod.federate",
+      "execute_function": "python federate.py",
       "static_inputs": [
         {
           "type": "",
@@ -1955,64 +1936,6 @@
           "port_id": "vars_rms"
         }
       ]
-    },
-    "inputSchema": {
-      "properties": {
-        "name": {
-          "title": "Name",
-          "type": "string"
-        },
-        "window_length": {
-          "title": "Window Length",
-          "type": "integer"
-        },
-        "overlap_length": {
-          "default": 25000,
-          "title": "Overlap Length",
-          "type": "integer"
-        },
-        "fs": {
-          "default": 25000,
-          "title": "Fs",
-          "type": "number"
-        },
-        "f0_nom": {
-          "default": 50.0,
-          "title": "F0 Nom",
-          "type": "number"
-        },
-        "peak_thresh": {
-          "default": 0.003,
-          "title": "Peak Thresh",
-          "type": "number"
-        },
-        "freq_max": {
-          "default": 150.0,
-          "title": "Freq Max",
-          "type": "number"
-        },
-        "sideband_tol": {
-          "default": 0.1,
-          "title": "Sideband Tol",
-          "type": "number"
-        },
-        "freq_match_tol": {
-          "default": 0.05,
-          "title": "Freq Match Tol",
-          "type": "number"
-        },
-        "deltat": {
-          "default": 1.0,
-          "title": "Deltat",
-          "type": "number"
-        }
-      },
-      "required": [
-        "name",
-        "window_length"
-      ],
-      "title": "ComponentParameters",
-      "type": "object"
     }
   }
 ]
