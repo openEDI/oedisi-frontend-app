@@ -210,7 +210,7 @@ import { createAjv, JsonSchema } from '@jsonforms/core'
 import { toWiringDiagram, WiringDiagram } from '@/lib/wiringDiagram'
 
 const renderers = markRaw(vanillaRenderers)
-const ajv = createAjv({ useDefaults: true, coerceTypes: true })
+const ajv = createAjv({ coerceTypes: true })
 
 const nodePropertyStyles = mergeStyles(defaultStyles, {
   control: {
@@ -261,6 +261,16 @@ const templateDescription = ref('')
 const selectedWireOption = ref('')
 const { screenToFlowCoordinate } = useVueFlow()
 
+function makeDefaults(inputSchema: Record<string, unknown>) {
+  const props = inputSchema.properties
+  if (typeof props === 'object' && props !== null) {
+    return Object.fromEntries(Object.entries(props).filter(([, value]) => value.default !== undefined)
+      .map(([key, value]) => [key, structuredClone(value.default)]))
+  } else {
+    return {}
+  }
+}
+
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
   const newNode: Node<NodeData> = {
@@ -270,6 +280,7 @@ const addNode = (type: string, position: { x: number; y: number }) => {
     data: {
       label: component?.name || type.charAt(0).toUpperCase() + type.slice(1),
       componentType: type,
+      config: component?.inputSchema ? makeDefaults(component?.inputSchema) : {},
     },
   }
   nodes.value.push(newNode)

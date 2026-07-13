@@ -120,7 +120,12 @@
       },
       "data": {
         "label": "LinDistFlow Algorithm",
-        "componentType": "LinDistFlowComponent"
+        "componentType": "LinDistFlowComponent",
+        "config": {
+          "deltat": 0.1,
+          "control_type": 3,
+          "pf_flag": false
+        }
       },
       "events": {}
     },
