@@ -788,7 +788,11 @@ def get_topology(run_id: RunId, user: CurrentUser) -> dict[str, Any] | None:
     when the server isn't on localhost.
     """
     run_dir = _user_runs_dir(user) / run_id
-    topo_files = sorted(run_dir.glob("*/topology.json"))
+    # Shallow globs only: component .venvs and state_estimator test fixtures
+    # deeper in the tree also contain topology.json files.
+    topo_files = sorted(run_dir.glob("*/topology.json")) or sorted(
+        run_dir.glob("build/*/topology.json")
+    )
     if not topo_files:
         return
     topo = json.loads(topo_files[0].read_text())
