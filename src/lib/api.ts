@@ -12,6 +12,7 @@ export interface RunSummary {
   template_id: string | null
   exit_code?: number
   run_dir: string
+  usecase?: string | null
 }
 
 export interface ResultEntry {
@@ -159,6 +160,25 @@ export const api = {
   },
   runDownloadUrl(run_id: string): string {
     return `${API_BASE_URL}/runs/${run_id}/download`
+  },
+  reportUrl(run_id: string): string {
+    return `${API_BASE_URL}/runs/${run_id}/report`
+  },
+  async createReport(
+    run_id: string,
+    force = false
+  ): Promise<{ engine: string; usecase: string; cached: boolean; url: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/report${force ? '?force=true' : ''}`,
+      { method: 'POST' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
   },
   async getWiring(run_id: string): Promise<WiringDiagram> {
     const response = await fetch(`${API_BASE_URL}/runs/${run_id}/wiring`, {

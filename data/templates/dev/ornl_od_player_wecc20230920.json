@@ -1,0 +1,482 @@
+{
+  "id": "1780000000400",
+  "name": "ORNL OD (Prony) - WECC 2023-09-20 (well-damped)",
+  "description": "Real WECC field event, 3 PMUs, ~0.20 Hz, damping ~+3% - the oscillation decays on its own (safe: monitor). Pair with the EI 2019-01-11 sustained case for the good-vs-bad contrast.",
+  "createdAt": "2026-06-01T00:00:00.000Z",
+  "nodes": [
+    {
+      "id": "Player-1780000000001",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 200.0,
+        "y": 400.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Player-1780000000001",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Player-1780000000001",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 200.0,
+        "y": 400.0
+      },
+      "data": {
+        "label": "Player (PMU data)",
+        "componentType": "Player",
+        "config": {
+          "name": "player",
+          "filename": "/components/ornl-od/data/WECC_OscillationEvent_20230920.csv",
+          "data_type": "MeasurementArray",
+          "number_of_timesteps": 3600,
+          "start_time_index": 0,
+          "run_freq_time_step": 0.1
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "ODComponent-1780000000002",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 650.0,
+        "y": 400.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "ODComponent-1780000000002",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "ODComponent-1780000000002",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 650.0,
+        "y": 400.0
+      },
+      "data": {
+        "label": "ORNL Oscillation Detection",
+        "componentType": "ODComponent",
+        "config": {
+          "name": "od",
+          "sample_rate_hz": 10.0,
+          "detection_window_sec": 5.0,
+          "prony_window_sec": 90.0,
+          "trigger_threshold": 0.005,
+          "detection_threshold2": 0.005,
+          "detection_cooldown_sec": 9999.0,
+          "event_clustering_window_sec": 5.0,
+          "ground_truth_json": "[{\"frequency_hz\": 0.2}]"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1780000000003",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 1050.0,
+        "y": 400.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1780000000003",
+            "position": "right",
+            "x": 113,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1780000000003",
+            "position": "left",
+            "x": -3,
+            "y": 19,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 1050.0,
+        "y": 400.0
+      },
+      "data": {
+        "label": "Recorder (events)",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_events",
+          "feather_filename": "../../outputs/events.feather",
+          "csv_filename": "../../outputs/events.csv"
+        }
+      },
+      "events": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-Player-1780000000001-ODComponent-1780000000002-1780000000010",
+      "type": "wiring",
+      "source": "Player-1780000000001",
+      "target": "ODComponent-1780000000002",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "frequency"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "Player-1780000000001",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 200.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Player-1780000000001",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Player-1780000000001",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 200.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "Player (PMU data)",
+          "componentType": "Player",
+          "config": {
+            "name": "player",
+            "filename": "/components/ornl-od/data/ERCOT_OscillationEvent_20250208.csv",
+            "data_type": "MeasurementArray",
+            "number_of_timesteps": 2401,
+            "start_time_index": 0,
+            "run_freq_time_step": 0.1
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "ODComponent-1780000000002",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 650.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "ODComponent-1780000000002",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "ODComponent-1780000000002",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 650.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "ORNL Oscillation Detection",
+          "componentType": "ODComponent",
+          "config": {
+            "name": "od",
+            "sample_rate_hz": 10.0,
+            "detection_window_sec": 5.0,
+            "prony_window_sec": 90.0,
+            "trigger_threshold": 0.01,
+            "detection_threshold2": 0.01,
+            "detection_cooldown_sec": 50.0,
+            "event_clustering_window_sec": 2.0
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 320.0,
+      "sourceY": 424.0,
+      "targetX": 650.0,
+      "targetY": 424.0,
+      "selected": false
+    },
+    {
+      "id": "edge-ODComponent-1780000000002-Recorder-1780000000003-1780000000011",
+      "type": "wiring",
+      "source": "ODComponent-1780000000002",
+      "target": "Recorder-1780000000003",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "events",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "ODComponent-1780000000002",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 650.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "ODComponent-1780000000002",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "ODComponent-1780000000002",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 650.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "ORNL Oscillation Detection",
+          "componentType": "ODComponent",
+          "config": {
+            "name": "od",
+            "sample_rate_hz": 10.0,
+            "detection_window_sec": 5.0,
+            "prony_window_sec": 90.0,
+            "trigger_threshold": 0.01,
+            "detection_threshold2": 0.01,
+            "detection_cooldown_sec": 50.0,
+            "event_clustering_window_sec": 2.0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1780000000003",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 1050.0,
+          "y": 400.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1780000000003",
+              "position": "right",
+              "x": 113,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1780000000003",
+              "position": "left",
+              "x": -3,
+              "y": 19,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 1050.0,
+          "y": 400.0
+        },
+        "data": {
+          "label": "Recorder (events)",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_events",
+            "feather_filename": "../../outputs/events.feather",
+            "csv_filename": "../../outputs/events.csv"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 770.0,
+      "sourceY": 424.0,
+      "targetX": 1050.0,
+      "targetY": 424.0,
+      "selected": false
+    }
+  ]
+}

@@ -51,6 +51,8 @@ from oedisi.componentframework.system_configuration import (
 )
 from pydantic import ConfigDict
 
+import postprocess as pp
+
 
 class AppWiringDiagram(WiringDiagram):
     """WiringDiagram + whatever frontend extras.
@@ -590,6 +592,19 @@ async def start_run(
     return {"run_id": run_id}
 
 
+_usecase_cache: dict[str, str | None] = {}
+
+
+def _run_usecase(run_id: str, run_dir: Path) -> str | None:
+    """Use case for a run ('ev' / 'od' / None), cached per run id."""
+    if run_id not in _usecase_cache:
+        try:
+            _usecase_cache[run_id] = pp.detect_usecase(run_dir)
+        except Exception:  # noqa: BLE001 — unknown/other use cases are simply None
+            _usecase_cache[run_id] = None
+    return _usecase_cache[run_id]
+
+
 def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
     out: dict[str, Any] = {
         "run_id": run_id,
@@ -598,6 +613,7 @@ def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
         "template_id": record.template_id,
         "run_dir": str(record.run_dir),
         "status": record.status,
+        "usecase": _run_usecase(run_id, record.run_dir),
     }
     if record.exit_code is not None:
         out["exit_code"] = record.exit_code
@@ -680,6 +696,39 @@ def run_log(run_id: RunId, component: str, user: CurrentUser) -> FileResponse:
     if not log_path.exists():
         raise HTTPException(status_code=404, detail="Log not found")
     return FileResponse(log_path, media_type="text/plain; charset=utf-8")
+
+
+@app.post("/api/runs/{run_id}/report")
+def create_report(
+    run_id: RunId, user: CurrentUser, force: bool = False
+) -> dict[str, Any]:
+    """Generate (or reuse) the per-use-case post-process report for a run."""
+    run_dir = _user_runs_dir(user) / run_id
+    if not run_dir.exists():
+        raise HTTPException(status_code=404, detail="Run not found")
+    try:
+        info = pp.generate(run_dir, force=force)
+    except pp.UnsupportedUseCase as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except pp.OutputsMissing as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {
+        "engine": info.engine,
+        "usecase": info.usecase,
+        "cached": info.cached,
+        "url": f"/api/runs/{run_id}/report",
+    }
+
+
+@app.get("/api/runs/{run_id}/report")
+def get_report(run_id: RunId, user: CurrentUser) -> FileResponse:
+    path = pp.html_path(_user_runs_dir(user) / run_id)
+    if not path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Report not generated yet — POST /api/runs/{run_id}/report first.",
+        )
+    return FileResponse(path, media_type="text/html; charset=utf-8")
 
 
 def _load_run_wiring(user: str, run_id: str) -> dict[str, Any]:

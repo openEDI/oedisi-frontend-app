@@ -32,6 +32,12 @@
             Results
           </Button>
         </router-link>
+        <Button v-if="status === 'done' && usecase"
+          size="sm" variant="secondary" :disabled="reporting"
+          title="Generate & open the post-process report"
+          @click="openReport">
+          {{ reporting ? 'Generating…' : 'Post-process report' }}
+        </Button>
       </div>
       <section>
         <h2 class="text-xl font-semibold">Federates</h2>
@@ -61,6 +67,8 @@ const exitCode = ref<number | null>(null)
 const runDir = ref<string | null>(null)
 const runName = ref<string | null>(null)
 const cancelling = ref<boolean>(false)
+const reporting = ref<boolean>(false)
+const usecase = ref<string | null>(null)
 
 const components = ref<string[]>(['broker'])
 const logs = ref<Record<string, string>>({})
@@ -87,6 +95,7 @@ function setStatus(currentStatus: RunSummary) {
   }
   runDir.value = currentStatus.run_dir
   runName.value = currentStatus.name
+  usecase.value = currentStatus.usecase ?? null
 }
 
 function resetStatus() {
@@ -94,8 +103,21 @@ function resetStatus() {
   exitCode.value = null
   runDir.value = null
   runName.value = null
+  usecase.value = null
   logs.value = {}
   components.value = ['broker']
+}
+
+async function openReport() {
+  try {
+    reporting.value = true
+    await api.createReport(runId.value)
+    window.open(api.reportUrl(runId.value), '_blank')
+  } catch (error) {
+    alert(`Could not generate report: ${error instanceof Error ? error.message : String(error)}`)
+  } finally {
+    reporting.value = false
+  }
 }
 
 function copyPath() {
