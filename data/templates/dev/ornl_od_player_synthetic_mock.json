@@ -1,7 +1,7 @@
 {
   "id": "1780000000300",
-  "name": "ORNL OD (Prony) - Synthetic",
-  "description": "Synthetic 10 Hz oscillation data with full ground truth - shows the complete metrics (latency, frequency, amplitude, damping accuracy).",
+  "name": "ORNL OD (Prony) — Synthetic",
+  "description": "ORNL Prony oscillation detection on synthetic 10 Hz data.",
   "createdAt": "2026-06-01T00:00:00.000Z",
   "nodes": [
     {

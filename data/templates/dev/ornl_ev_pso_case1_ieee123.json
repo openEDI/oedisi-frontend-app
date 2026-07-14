@@ -1,7 +1,7 @@
 {
   "id": "1779415503001",
-  "name": "ORNL EV - Case 1: IEEE-123 Economics",
-  "description": "Strong MV feeder (IEEE-123), 60 EVs @22kW. Voltage is a non-issue here; the control's value is economic. Toggle the EVCS 'control_mode' dropdown: 'uncontrolled' vs 'dopf' (cost-aware) -> DOPF cuts charging cost ~11% and system loss ~2%, with voltage fine (~0.97pu) in both.",
+  "name": "ORNL EV (PSO) — IEEE 123",
+  "description": "ORNL EV charging (PSO), 60 EVs on the IEEE 123-bus feeder.",
   "createdAt": "2026-05-22T02:05:01.000Z",
   "nodes": [
     {

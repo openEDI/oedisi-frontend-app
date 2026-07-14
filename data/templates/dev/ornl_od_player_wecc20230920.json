@@ -1,7 +1,7 @@
 {
   "id": "1780000000400",
-  "name": "ORNL OD (Prony) - WECC 2023-09-20 (well-damped)",
-  "description": "Real WECC field event, 3 PMUs, ~0.20 Hz, damping ~+3% - the oscillation decays on its own (safe: monitor). Pair with the EI 2019-01-11 sustained case for the good-vs-bad contrast.",
+  "name": "ORNL OD (Prony) — WECC 2023-09-20",
+  "description": "ORNL Prony oscillation detection on a WECC field event.",
   "createdAt": "2026-06-01T00:00:00.000Z",
   "nodes": [
     {

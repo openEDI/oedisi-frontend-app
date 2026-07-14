@@ -1,7 +1,7 @@
 {
   "id": "1779415503004",
-  "name": "ORNL EV - Case 2: SmartDS P1U (UNCONTROLLED baseline)",
-  "description": "Baseline for the SmartDS voltage case: same feeder and EVs with control off. Run this once so the Case-2 post-process report can overlay with vs without control.",
+  "name": "ORNL EV (PSO) — SmartDS P1U (uncontrolled)",
+  "description": "SmartDS P1U, 75 EVs, charging control off (baseline).",
   "createdAt": "2026-05-22T02:05:01.000Z",
   "nodes": [
     {

@@ -1,7 +1,7 @@
 {
   "id": "1779415503003",
-  "name": "ORNL EV - Case 2: SmartDS P1U Voltage (dopf)",
-  "description": "Weak LV feeder (SmartDS P1U, 277V), 75 EVs @22kW on residential buses. PSO control with the diagonal-Zbus (dopf) sensitivity - shifts and trims charging to hold every bus >= 0.95 p.u.",
+  "name": "ORNL EV (PSO) — SmartDS P1U",
+  "description": "ORNL EV charging (PSO), 75 EVs on the SmartDS P1U feeder.",
   "createdAt": "2026-05-22T02:05:01.000Z",
   "nodes": [
     {
