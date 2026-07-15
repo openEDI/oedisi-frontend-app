@@ -131,7 +131,7 @@ watch([resultData, comparisonData, topology, selectedRow], ([data, comparisonDat
       marginBottom: 40,
       style: { background: 'transparent' },
       title: `${getTitleName(entry)} at ${getTime(data.data, row_index)}`,
-      y: { zero: true },
+      y: {},
     })
     chartEl.value.replaceChildren(chart)
     return
@@ -145,7 +145,7 @@ watch([resultData, comparisonData, topology, selectedRow], ([data, comparisonDat
     marginBottom: 40,
     style: { background: 'transparent' },
     title: `Comparing ${getTitleName(entry)} to ${getTitleName(entry2)} at ${getTime(data.data, row_index)}`,
-    y: { zero: true },
+    y: {},
     color: { legend: true }
   })
   chartEl.value.replaceChildren(chart)
