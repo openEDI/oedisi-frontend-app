@@ -19,6 +19,7 @@ export interface ResultEntry {
   label: string
   type: string
   size_bytes: number
+  quantity?: OutputAnnotation
 }
 
 export class StartError extends Error {
@@ -28,6 +29,20 @@ export class StartError extends Error {
     this.name = 'StartError'
     this.status = status
   }
+}
+
+export interface Topology {
+  base_voltage_magnitudes: {
+    ids: string[]
+    values: number[]
+  }
+}
+
+export interface OutputAnnotation {
+  type?: string
+  unit?: string
+  source?: string
+  source_port?: string
 }
 
 export const api = {
@@ -190,13 +205,8 @@ export const api = {
     run_id: string,
     dataset_id: string
   ): Promise<{
-    fields: Array<{
-      fid: string
-      name: string
-      semanticType: string
-      analyticType: string
-    }>
-    data: Array<Record<string, unknown>>
+    columns: string[]
+    data: Array<Record<string, number | string>>
   }> {
     const response = await fetch(
       `${API_BASE_URL}/runs/${run_id}/results/${encodeURIComponent(dataset_id)}`,
@@ -204,6 +214,43 @@ export const api = {
         method: 'GET',
       }
     )
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
+  async getMetrics(
+    run_id: string,
+    primary: string,
+    comparison: string
+  ): Promise<{
+    metric: string
+    columns: string[]
+    data: Array<{ time: string; value: number }>
+  }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/metrics?primary=${encodeURIComponent(primary)}&comparison=${encodeURIComponent(comparison)}`,
+      {
+        method: 'GET',
+      }
+    )
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
+  async getTopology(run_id: string): Promise<Topology | null> {
+    const response = await fetch(`${API_BASE_URL}/runs/${run_id}/topology`, {
+      method: 'GET',
+    })
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
