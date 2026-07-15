@@ -756,8 +756,8 @@ def list_results(run_id: RunId, user: CurrentUser) -> list[dict[str, Any]]:
     return entries
 
 
-@app.get("/api/runs/{run_id}/results/{dataset_id}")
-def get_result(run_id: RunId, dataset_id: str, user: CurrentUser) -> dict[str, Any]:
+def _read_result_table(user: str, run_id: str, dataset_id: str):
+    """Load a Recorder dataset's feather table, or raise 400/404."""
     if "/" in dataset_id or "\\" in dataset_id or ".." in dataset_id:
         raise HTTPException(status_code=400, detail="Invalid dataset id")
     wiring = _load_run_wiring(user, run_id)
@@ -774,10 +774,55 @@ def get_result(run_id: RunId, dataset_id: str, user: CurrentUser) -> dict[str, A
     path = _recorder_feather_path(user, run_id, component)
     if path is None:
         raise HTTPException(status_code=404, detail="Dataset file missing")
+    return pa_feather.read_table(path)
 
-    table = pa_feather.read_table(path)
+
+@app.get("/api/runs/{run_id}/results/{dataset_id}")
+def get_result(run_id: RunId, dataset_id: str, user: CurrentUser) -> dict[str, Any]:
+    table = _read_result_table(user, run_id, dataset_id)
     columns = [name for name in table.column_names if name != "time"]
     return {"columns": columns, "data": table.to_pylist()}
+
+
+def _rows_by_time(table) -> dict[Any, dict[str, Any]]:
+    """Index rows by time, insertion-ordered; duplicate times keep the last row."""
+    return {row["time"]: row for row in table.to_pylist() if "time" in row}
+
+
+@app.get("/api/runs/{run_id}/metrics")
+def get_metrics(
+    run_id: RunId, primary: str, comparison: str, user: CurrentUser
+) -> dict[str, Any]:
+    """Per-timestep mean absolute relative error between two datasets.
+
+    ``primary`` is the reference: value = mean over shared buses of
+    ``|comparison - primary| / |primary|``, skipping zero-valued buses.
+
+    See oedisi library for the "definitive" calculation.
+    """
+    primary_table = _read_result_table(user, run_id, primary)
+    comparison_table = _read_result_table(user, run_id, comparison)
+    shared_columns = [
+        name
+        for name in primary_table.column_names
+        if name != "time" and name in set(comparison_table.column_names)
+    ]
+    comparison_rows = _rows_by_time(comparison_table)
+    data: list[dict[str, Any]] = []
+    for time, row in _rows_by_time(primary_table).items():
+        other = comparison_rows.get(time)
+        if other is None:
+            continue
+        errors = [
+            abs(other[name] - row[name]) / abs(row[name])
+            for name in shared_columns
+            if isinstance(row[name], (int, float))
+            and isinstance(other[name], (int, float))
+            and row[name] != 0
+        ]
+        if errors:
+            data.append({"time": time, "value": sum(errors) / len(errors)})
+    return {"metric": "MARE", "columns": shared_columns, "data": data}
 
 
 @app.get("/api/runs/{run_id}/topology")

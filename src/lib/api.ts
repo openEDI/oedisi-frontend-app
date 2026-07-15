@@ -223,6 +223,30 @@ export const api = {
     }
     return await response.json()
   },
+  async getMetrics(
+    run_id: string,
+    primary: string,
+    comparison: string
+  ): Promise<{
+    metric: string
+    columns: string[]
+    data: Array<{ time: string; value: number }>
+  }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/metrics?primary=${encodeURIComponent(primary)}&comparison=${encodeURIComponent(comparison)}`,
+      {
+        method: 'GET',
+      }
+    )
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
   async getTopology(run_id: string): Promise<Topology | null> {
     const response = await fetch(`${API_BASE_URL}/runs/${run_id}/topology`, {
       method: 'GET',

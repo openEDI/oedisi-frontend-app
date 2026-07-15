@@ -35,6 +35,9 @@
       <label for="row_index">Time Index</label>
       <input id="row_index" v-model.number="selectedRow" type="range" :min="0"
         :max="maxRow" class="flex-1 max-w-lg" />
+      <p v-if="avgMetric">{{ avgMetric.metric }}: {{ (avgMetric.avg *
+        100).toFixed(2) }}%
+      </p>
     </div>
     <div ref="chartEl" class="overflow-x-auto text-foreground"></div>
   </div>
@@ -57,6 +60,24 @@ const comparisonResultIndex = ref<number | null>(null)
 const selectedRow = ref<number>(0)
 const resultData = ref<Awaited<ReturnType<typeof api.getResult>> | null>(null)
 const comparisonData = ref<Awaited<ReturnType<typeof api.getResult>> | null>(null)
+
+const metrics = ref<{
+  metric: string, data: Array<{ time: string, value: number }>
+} | null>(null)
+const avgMetric = computed<{
+  metric: string, avg: number
+} | null>(
+  () => {
+    if (!metrics.value || metrics.value.data.length === 0) {
+      return null
+    }
+    return {
+      metric: metrics.value.metric,
+      avg: metrics.value.data.reduce(
+        (sum, current) => sum + current.value, 0) / metrics.value.data.length
+    }
+  })
+
 const maxRow = computed<number>(() => sharedTimes.value.length - 1)
 const sharedTimes = computed<string[]>(() => {
   if (resultData.value === null) {
@@ -98,8 +119,16 @@ watch(comparisonResultIndex, async (selectedId) => {
   if (typeof runId.value === 'string' && typeof selectedId === 'number') {
     comparisonData.value = await api.getResult(runId.value, resultManifest.value[selectedId].id)
     selectedRow.value = Math.max(0, Math.min(selectedRow.value, maxRow.value))
+    if (typeof selectedResultIndex.value === 'number') {
+      metrics.value = await api.getMetrics(
+        runId.value,
+        resultManifest.value[selectedResultIndex.value].id,
+        resultManifest.value[selectedId].id
+      )
+    }
   } else if (selectedId === null) {
     comparisonData.value = null
+    metrics.value = null
   }
 })
 
@@ -149,15 +178,17 @@ watch([resultData, comparisonData, topology, selectedRow], ([data, comparisonDat
   const second_index = getAllTimes(comparisonData.data).findIndex(t => t === time)
   const entry2 = resultManifest.value[comparisonResultIndex.value]
   const snapshot2 = getPlotVersion(topology, comparisonData, entry2, second_index)
-  const series = snapshot.concat(snapshot2)
   const chart = Plot.plot({
-    marks: [Plot.dot(series, { x: 'bus', y: 'value', fill: 'dataset', tip: { fill: 'var(--popover)' } })],
+    marks: [
+      Plot.dot(snapshot, { x: 'bus', y: 'value', fill: 'dataset', tip: { fill: 'var(--popover)' } }),
+      Plot.dot(snapshot2, { x: 'bus', y: 'value', stroke: 'dataset', r: 5, tip: { fill: 'var(--popover)' } })
+    ],
     x: { type: 'band', ticks: [], label: 'bus' },
     marginBottom: 40,
     style: { background: 'transparent' },
     title: `Comparing ${getTitleName(entry)} to ${getTitleName(entry2)} at ${time}`,
     y: {},
-    color: { legend: true }
+    color: { legend: true },
   })
   chartEl.value.replaceChildren(chart)
 
