@@ -57,10 +57,18 @@ const comparisonResultIndex = ref<number | null>(null)
 const selectedRow = ref<number>(0)
 const resultData = ref<Awaited<ReturnType<typeof api.getResult>> | null>(null)
 const comparisonData = ref<Awaited<ReturnType<typeof api.getResult>> | null>(null)
-const maxRow = computed<number>(() =>
-  Math.min(resultData.value ? resultData.value.data.length - 1 : 0,
-    comparisonData.value ? comparisonData.value.data.length - 1 : Infinity)
-)
+const maxRow = computed<number>(() => sharedTimes.value.length - 1)
+const sharedTimes = computed<string[]>(() => {
+  if (resultData.value === null) {
+    return []
+  }
+  const times = getAllTimes(resultData.value.data)
+  if (comparisonData.value === null) {
+    return times
+  }
+  const comparisonTimes: Set<string> = new Set(getAllTimes(comparisonData.value.data))
+  return times.filter(time => comparisonTimes.has(time))
+})
 
 const topology = ref<Topology | null>(null)
 
@@ -82,14 +90,14 @@ watch(selectedResultIndex, async (selectedId) => {
   if (typeof runId.value === 'string' && typeof selectedId === 'number') {
     comparisonResultIndex.value = null
     resultData.value = await api.getResult(runId.value, resultManifest.value[selectedId].id)
-    selectedRow.value = Math.min(selectedRow.value, maxRow.value)
+    selectedRow.value = Math.max(0, Math.min(selectedRow.value, maxRow.value))
   }
 })
 
 watch(comparisonResultIndex, async (selectedId) => {
   if (typeof runId.value === 'string' && typeof selectedId === 'number') {
     comparisonData.value = await api.getResult(runId.value, resultManifest.value[selectedId].id)
-    selectedRow.value = Math.min(selectedRow.value, maxRow.value)
+    selectedRow.value = Math.max(0, Math.min(selectedRow.value, maxRow.value))
   } else if (selectedId === null) {
     comparisonData.value = null
   }
@@ -118,33 +126,36 @@ function getPlotVersion(topology: Topology | null, data: Awaited<ReturnType<type
 watch([resultData, comparisonData, topology, selectedRow], ([data, comparisonData, topology, row_index]) => {
   if (!chartEl.value) return
   if (!data || typeof selectedResultIndex.value !== 'number' ||
-    data.data.length == 0) {
+    data.data.length == 0 || row_index >= sharedTimes.value.length) {
     chartEl.value.replaceChildren()
     return
   }
+  const time = sharedTimes.value[row_index]
+  const main_index = getAllTimes(data.data).findIndex(t => t === time)
   const entry = resultManifest.value[selectedResultIndex.value]
-  const snapshot = getPlotVersion(topology, data, entry, row_index)
+  const snapshot = getPlotVersion(topology, data, entry, main_index)
   if (!comparisonData || typeof comparisonResultIndex.value !== 'number' || comparisonData.data.length == 0) {
     const chart = Plot.plot({
       marks: [Plot.dot(snapshot, { x: 'bus', y: 'value', tip: { fill: 'var(--popover)' } })],
       x: { type: 'band', ticks: [], label: 'bus' },
       marginBottom: 40,
       style: { background: 'transparent' },
-      title: `${getTitleName(entry)} at ${getTime(data.data, row_index)}`,
+      title: `${getTitleName(entry)} at ${time}`,
       y: {},
     })
     chartEl.value.replaceChildren(chart)
     return
   }
+  const second_index = getAllTimes(comparisonData.data).findIndex(t => t === time)
   const entry2 = resultManifest.value[comparisonResultIndex.value]
-  const snapshot2 = getPlotVersion(topology, comparisonData, entry2, row_index)
+  const snapshot2 = getPlotVersion(topology, comparisonData, entry2, second_index)
   const series = snapshot.concat(snapshot2)
   const chart = Plot.plot({
     marks: [Plot.dot(series, { x: 'bus', y: 'value', fill: 'dataset', tip: { fill: 'var(--popover)' } })],
     x: { type: 'band', ticks: [], label: 'bus' },
     marginBottom: 40,
     style: { background: 'transparent' },
-    title: `Comparing ${getTitleName(entry)} to ${getTitleName(entry2)} at ${getTime(data.data, row_index)}`,
+    title: `Comparing ${getTitleName(entry)} to ${getTitleName(entry2)} at ${time}`,
     y: {},
     color: { legend: true }
   })
@@ -163,11 +174,8 @@ function getDataRow(data: Array<Record<string, string | number>>, rowIndex: numb
   return subset
 }
 
-function getTime(data: Array<Record<string, string | number>>, rowIndex: number): string {
-  if ("time" in data[rowIndex] && typeof data[rowIndex]["time"] === 'string') {
-    return data[rowIndex]["time"]
-  }
-  throw new Error("Could not get time from data")
+function getAllTimes(data: Array<Record<string, string | number>>): string[] {
+  return data.map(row => row.time).filter(time => typeof time === 'string')
 }
 
 function getTitleName(entry: ResultEntry) {
