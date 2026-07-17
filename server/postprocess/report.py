@@ -14,14 +14,26 @@ from pathlib import Path
 from . import common as C
 from . import ev as ev_mod
 from . import od as od_mod
+from . import admm as admm_mod
+from . import swod as swod_mod
 
 SERVER_DIR = Path(__file__).resolve().parent.parent
 NOTEBOOKS_DIR = SERVER_DIR.parent / "notebooks"
 
 _LOCK = threading.Lock()
 
-_BUILDERS = {"ev": ev_mod.build_sections, "od": od_mod.build_sections}
-_NOTEBOOKS = {"ev": "ev_report.ipynb", "od": "od_report.ipynb"}
+_BUILDERS = {
+    "ev": ev_mod.build_sections,
+    "od": od_mod.build_sections,
+    "admm": admm_mod.build_sections,
+    "swod": swod_mod.build_sections,
+}
+_NOTEBOOKS = {
+    "ev": "ev_report.ipynb",
+    "od": "od_report.ipynb",
+    "admm": "admm_report.ipynb",
+    "swod": "swod_report.ipynb",
+}
 _CONTEXTS = {"ev": ev_mod.context_signature}
 
 
@@ -66,18 +78,28 @@ def detect_usecase(run_dir: Path) -> str:
         return "ev"
     if "ODComponent" in types:
         return "od"
+    if "PnnlDopfAdmmComponent" in types:
+        return "admm"
+    if "PnnlEmtSwodComponent" in types or "SWODComponent" in types:
+        return "swod"
     raise UnsupportedUseCase(
-        "Post-process reports are available for the ORNL EV and OD use cases only."
+        "Post-process reports are available for the ORNL EV, OD, ADMM, and SWOD use cases only."
     )
 
 
 def _require_outputs(usecase: str, run_dir: Path) -> None:
     out = run_dir / "outputs"
-    needed = (
-        ["voltage_real.feather", "voltage_imag.feather", "topology.json"]
-        if usecase == "ev"
-        else ["events.feather"]
-    )
+    if usecase == "ev":
+        needed = ["voltage_real.feather", "voltage_imag.feather", "topology.json"]
+    elif usecase == "od":
+        needed = ["events.feather"]
+    elif usecase == "admm":
+        needed = ["topology.json"]
+    elif usecase == "swod":
+        needed = ["swod_oscillation_frequency.feather"]
+    else:
+        needed = []
+        
     missing = [f for f in needed if not (out / f).exists()]
     if missing:
         raise OutputsMissing(
