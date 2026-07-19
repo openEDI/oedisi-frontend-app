@@ -15,20 +15,6 @@
               :key="result.id" :value="index">{{ result.label }}</SelectItem>
           </SelectContent>
         </Select>
-        <div class="flex items-center gap-3">
-          <label for="comparison">Compare with:</label>
-          <Select v-model="comparisonResultIndex">
-            <SelectTrigger id="comparison" class="w-48">
-              <SelectValue placeholder="None" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem :value="null">None</SelectItem>
-              <SelectItem
-                v-for="{ result, index } in getCompatibleResults(resultManifest, selectedResultIndex)"
-                :key="result.id" :value="index">{{ result.label }}</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
     </div>
     <div class="flex items-center gap-3 mb-3">
@@ -45,7 +31,6 @@ import { watch, ref, computed, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, Topology, type ResultEntry, } from '@/lib/api'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select/'
-import { isCompatible } from '@/lib/portCompatibility'
 import * as Plot from '@observablehq/plot'
 
 const route = useRoute()
@@ -53,53 +38,20 @@ const runId = computed<string | null>(() => typeof route.params.runId === "strin
 
 const resultManifest = ref<ResultEntry[]>([])
 const selectedResultIndex = ref<number | null>(null)
-const comparisonResultIndex = ref<number | null>(null)
 const selectedRow = ref<number>(0)
 const resultData = ref<Awaited<ReturnType<typeof api.getResult>> | null>(null)
-const comparisonData = ref<Awaited<ReturnType<typeof api.getResult>> | null>(null)
-const maxRow = computed<number>(() => sharedTimes.value.length - 1)
-const sharedTimes = computed<string[]>(() => {
-  if (resultData.value === null) {
-    return []
-  }
-  const times = getAllTimes(resultData.value.data)
-  if (comparisonData.value === null) {
-    return times
-  }
-  const comparisonTimes: Set<string> = new Set(getAllTimes(comparisonData.value.data))
-  return times.filter(time => comparisonTimes.has(time))
-})
+const maxRow = computed<number>(() =>
+  resultData.value ? resultData.value.data.length - 1 : 0
+)
 
 const topology = ref<Topology | null>(null)
 
 const chartEl = ref<HTMLElement | null>(null)
 
-function getCompatibleResults(resultManifest: ResultEntry[], index: number | null) {
-  if (typeof index !== 'number') {
-    return []
-  }
-  const annotation = resultManifest[index].quantity
-  return resultManifest.map(
-    (result, index) => ({ result, index })
-  ).filter(
-    ({ result, index: comparedIndex }) => index !== comparedIndex && isCompatible(result?.quantity?.type ?? null, annotation?.type ?? null)
-  )
-}
-
 watch(selectedResultIndex, async (selectedId) => {
   if (typeof runId.value === 'string' && typeof selectedId === 'number') {
-    comparisonResultIndex.value = null
     resultData.value = await api.getResult(runId.value, resultManifest.value[selectedId].id)
-    selectedRow.value = Math.max(0, Math.min(selectedRow.value, maxRow.value))
-  }
-})
-
-watch(comparisonResultIndex, async (selectedId) => {
-  if (typeof runId.value === 'string' && typeof selectedId === 'number') {
-    comparisonData.value = await api.getResult(runId.value, resultManifest.value[selectedId].id)
-    selectedRow.value = Math.max(0, Math.min(selectedRow.value, maxRow.value))
-  } else if (selectedId === null) {
-    comparisonData.value = null
+    selectedRow.value = Math.min(selectedRow.value, resultData.value.data.length - 1)
   }
 })
 
@@ -111,8 +63,15 @@ function divideTopology(data: Record<string, number>, base_voltage_magnitudes: {
   return newData
 }
 
-function getPlotVersion(topology: Topology | null, data: Awaited<ReturnType<typeof api.getResult>>, entry: ResultEntry, row_index: number) {
+watch([resultData, topology, selectedRow], ([data, topology, row_index]) => {
+  if (!chartEl.value) return
+  if (!data || typeof selectedResultIndex.value !== 'number' ||
+    data.data.length == 0) {
+    chartEl.value.replaceChildren()
+    return
+  }
   let rowData = getDataRow(data.data, row_index)
+  const entry: ResultEntry = resultManifest.value[selectedResultIndex.value]
   if (topology && entry.quantity) {
     const type = entry.quantity.type
     if (type === 'VoltagesReal' || type === 'VoltagesMagnitude' ||
@@ -120,47 +79,17 @@ function getPlotVersion(topology: Topology | null, data: Awaited<ReturnType<type
       rowData = divideTopology(rowData, topology.base_voltage_magnitudes)
     }
   }
-  return Object.entries(rowData).map(([bus, value]) => ({ bus, value, dataset: entry.label }))
-}
-
-watch([resultData, comparisonData, topology, selectedRow], ([data, comparisonData, topology, row_index]) => {
-  if (!chartEl.value) return
-  if (!data || typeof selectedResultIndex.value !== 'number' ||
-    data.data.length == 0 || row_index >= sharedTimes.value.length) {
-    chartEl.value.replaceChildren()
-    return
-  }
-  const time = sharedTimes.value[row_index]
-  const main_index = getAllTimes(data.data).findIndex(t => t === time)
-  const entry = resultManifest.value[selectedResultIndex.value]
-  const snapshot = getPlotVersion(topology, data, entry, main_index)
-  if (!comparisonData || typeof comparisonResultIndex.value !== 'number' || comparisonData.data.length == 0) {
-    const chart = Plot.plot({
-      marks: [Plot.dot(snapshot, { x: 'bus', y: 'value', tip: { fill: 'var(--popover)' } })],
-      x: { type: 'band', ticks: [], label: 'bus' },
-      marginBottom: 40,
-      style: { background: 'transparent' },
-      title: `${getTitleName(entry)} at ${time}`,
-      y: {},
-    })
-    chartEl.value.replaceChildren(chart)
-    return
-  }
-  const second_index = getAllTimes(comparisonData.data).findIndex(t => t === time)
-  const entry2 = resultManifest.value[comparisonResultIndex.value]
-  const snapshot2 = getPlotVersion(topology, comparisonData, entry2, second_index)
-  const series = snapshot.concat(snapshot2)
+  const snapshot = Object.entries(rowData)
+    .map(([bus, value]) => ({ bus, value }))
   const chart = Plot.plot({
-    marks: [Plot.dot(series, { x: 'bus', y: 'value', fill: 'dataset', tip: { fill: 'var(--popover)' } })],
+    marks: [Plot.dot(snapshot, { x: 'bus', y: 'value', tip: { fill: 'var(--popover)' } })],
     x: { type: 'band', ticks: [], label: 'bus' },
     marginBottom: 40,
     style: { background: 'transparent' },
-    title: `Comparing ${getTitleName(entry)} to ${getTitleName(entry2)} at ${time}`,
-    y: {},
-    color: { legend: true }
+    title: `${getTitleName(entry)} at ${getTime(data.data, row_index)}`,
+    y: { zero: true },
   })
   chartEl.value.replaceChildren(chart)
-
 })
 
 function getDataRow(data: Array<Record<string, string | number>>, rowIndex: number): Record<string, number> {
@@ -174,8 +103,11 @@ function getDataRow(data: Array<Record<string, string | number>>, rowIndex: numb
   return subset
 }
 
-function getAllTimes(data: Array<Record<string, string | number>>): string[] {
-  return data.map(row => row.time).filter(time => typeof time === 'string')
+function getTime(data: Array<Record<string, string | number>>, rowIndex: number): string {
+  if ("time" in data[rowIndex] && typeof data[rowIndex]["time"] === 'string') {
+    return data[rowIndex]["time"]
+  }
+  throw new Error("Could not get time from data")
 }
 
 function getTitleName(entry: ResultEntry) {
@@ -190,7 +122,6 @@ onActivated(async () => {
     return
   }
   selectedResultIndex.value = null
-  comparisonResultIndex.value = null
   topology.value = null
   selectedRow.value = 0
   try {
