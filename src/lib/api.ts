@@ -260,4 +260,46 @@ export const api = {
     }
     return await response.json()
   },
+  async createNotebook(
+    run_id: string
+  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/notebook`,
+      { method: 'POST' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
+  async getNotebookStatus(
+    run_id: string
+  ): Promise<{ exists: boolean; jupyter_url: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/notebook`,
+      { method: 'GET' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
+  async deleteNotebook(run_id: string): Promise<void> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/notebook`,
+      { method: 'DELETE' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+  },
 }

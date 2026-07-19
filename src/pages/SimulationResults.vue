@@ -29,6 +29,9 @@
             </SelectContent>
           </Select>
         </div>
+        <router-link v-if="runId" :to="`/runs/${runId}/notebook`">
+          <Button size="sm">Notebook</Button>
+        </router-link>
       </div>
     </div>
     <div class="flex items-center gap-3 mb-3">
@@ -48,6 +51,7 @@ import { watch, ref, computed, onActivated } from 'vue'
 import { useRoute } from 'vue-router'
 import { api, Topology, type ResultEntry, } from '@/lib/api'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select/'
+import { Button } from '@/components/ui/button'
 import { isCompatible } from '@/lib/portCompatibility'
 import * as Plot from '@observablehq/plot'
 

@@ -32,6 +32,11 @@
             Results
           </Button>
         </router-link>
+        <router-link v-if="status === 'done'" :to="`/runs/${runId}/notebook`">
+          <Button size="sm" variant="secondary" title="Open Analysis Notebook">
+            Notebook
+          </Button>
+        </router-link>
       </div>
       <section>
         <h2 class="text-xl font-semibold">Federates</h2>

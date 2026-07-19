@@ -3,6 +3,7 @@ import Home from '@/pages/HomePage.vue'
 import FlowchartDesigner from '@/pages/FlowchartDesigner.vue'
 import SavedConfigs from '@/pages/SavedConfigs.vue'
 import SimulationResults from '@/pages/SimulationResults.vue'
+import NotebookView from '@/pages/NotebookView.vue'
 import RunsList from '@/pages/RunsList.vue'
 import RunsDetail from '@/pages/RunsDetail.vue'
 
@@ -22,6 +23,10 @@ const routes = [
   {
     path: '/runs/:runId/results',
     component: SimulationResults,
+  },
+  {
+    path: '/runs/:runId/notebook',
+    component: NotebookView,
   },
   {
     path: '/runs',

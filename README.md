@@ -11,6 +11,7 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 - **Responsive UI**: Built with Tailwind CSS and Radix UI Vue components
 - **Backend API**: Python FastAPI server with file-based JSON storage and oedisi simulation runner
 - **Persistent Storage**: Templates stored as JSON files in `data/templates/`
+- **Jupyter Notebooks**: Create and edit analysis notebooks for completed simulation runs, with JupyterLab embedded in the browser
 
 ## Project Structure
 
@@ -31,6 +32,7 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 │   │   ├── FlowchartDesigner.vue   # Main designer interface with Vue Flow
 │   │   ├── SavedConfigs.vue        # Template management
 │   │   ├── SimulationResults.vue   # Results viewer
+│   │   ├── NotebookView.vue        # Embedded JupyterLab notebook
 │   │   └── SimulationStatus.vue   # Status monitoring
 │   ├── router/
 │   │   └── index.ts         # Vue Router configuration
@@ -51,6 +53,7 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 - Node.js 18+ and npm/pnpm
 - Python 3.12+ and [`uv`](https://docs.astral.sh/uv/) for the backend
 - `helics` binary on `PATH` (only needed to actually run simulations)
+- `jupyterlab` is installed automatically with the backend dependencies
 
 ### Installation
 
@@ -94,7 +97,8 @@ npm run dev
 ```
 
 The frontend will be available at `http://localhost:5173`  
-The backend API will be available at `http://localhost:3001`
+The backend API will be available at `http://localhost:3001`  
+JupyterLab will be available at `http://localhost:8888/jupyter/` (auto-started with the backend)
 
 ## Building
 
@@ -142,11 +146,26 @@ Manage previously created templates:
 
 ### Simulation Results
 
-View and analyze simulation outputs (placeholder for future implementation)
+View and analyze simulation outputs:
+
+- Select datasets from completed runs
+- Compare two datasets side-by-side with MARE (Mean Absolute Relative Error) metrics
+- Time-slider to step through simulation timesteps
+- Open a Jupyter notebook for deeper analysis
+
+### Notebook View
+
+Embedded JupyterLab environment for custom analysis:
+
+- Auto-creates a blank notebook pre-populated with the run's data path
+- Full JupyterLab editing and execution inside the browser
+- Notebooks are saved at `server/runs/<user>/<run_id>/notebook.ipynb`
+- Changes persist across sessions
+- Notebooks can be deleted from the UI
 
 ### Simulation Status
 
-Monitor active simulations and their progress (placeholder for future implementation)
+Monitor active simulations and their progress
 
 ## Technology Stack
 
@@ -230,6 +249,11 @@ Simulation runs:
 - `GET /api/runs/{run_id}` - Poll run status (`running` / `done` / `failed`)
 - `GET /api/runs/{run_id}/logs/{component}` - Stream a component log file
 - `DELETE /api/runs/{run_id}` - Kill a running simulation
+
+Notebooks:
+- `POST /api/runs/{run_id}/notebook` - Create a blank analysis notebook for the run
+- `GET /api/runs/{run_id}/notebook` - Check if a notebook exists and get its JupyterLab URL
+- `DELETE /api/runs/{run_id}/notebook` - Delete the notebook
 
 Interactive docs are at `http://localhost:3001/docs` when the server is running. See `server/CLAUDE.md` for design details.
 

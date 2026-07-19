@@ -15,6 +15,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import nbformat
 import os
 import re
 import shutil
@@ -158,6 +159,69 @@ def _check_components_env() -> None:
         )
 
 
+# ---------------------------------------------------------------------------
+# Jupyter server lifecycle
+# ---------------------------------------------------------------------------
+
+JUPYTER_PORT = int(os.environ.get("OEDISI_JUPYTER_PORT", "8888"))
+
+
+async def _start_jupyter() -> asyncio.subprocess.Process | None:
+    """Start a JupyterLab server as a background subprocess.
+
+    Rooted at the RUNS_DIR so notebooks can access run data via relative paths.
+    Token-less in single-user (dev) mode; in multi-user mode a per-boot token
+    is generated (though nginx basic auth is the primary gatekeeper).
+    """
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+    multi_user = bool(os.environ.get("OEDISI_MULTI_USER"))
+    token = uuid.uuid4().hex if multi_user else ""
+
+    cmd = [
+        sys.executable,
+        "-m",
+        "jupyterlab",
+        f"--port={JUPYTER_PORT}",
+        "--ip=127.0.0.1",
+        "--no-browser",
+        f"--notebook-dir={RUNS_DIR}",
+        f"--IdentityProvider.token={token}",
+        "--ServerApp.allow_origin=*",
+        "--ServerApp.base_url=/jupyter/",
+        "--ServerApp.disable_check_xsrf=True",
+    ]
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        print(
+            f"[jupyter] started on port {JUPYTER_PORT} "
+            f"(pid={proc.pid}, root={RUNS_DIR})",
+            file=sys.stderr,
+        )
+        return proc
+    except Exception as exc:  # noqa: BLE001
+        print(
+            f"[jupyter] failed to start JupyterLab: {exc}\n"
+            "Notebook features will be unavailable.",
+            file=sys.stderr,
+        )
+        return None
+
+
+async def _stop_jupyter(proc: asyncio.subprocess.Process | None) -> None:
+    if proc is None:
+        return
+    try:
+        proc.terminate()
+        await asyncio.wait_for(proc.wait(), timeout=5)
+    except (ProcessLookupError, asyncio.TimeoutError):
+        proc.kill()
+    print("[jupyter] stopped", file=sys.stderr)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
@@ -168,7 +232,11 @@ async def lifespan(app: FastAPI):
         print(f"\n[startup error] {exc}\n", file=sys.stderr)
         raise
     _restore_runs()
-    yield
+    jupyter_proc = await _start_jupyter()
+    try:
+        yield
+    finally:
+        await _stop_jupyter(jupyter_proc)
 
 
 # ---------------------------------------------------------------------------
@@ -843,6 +911,81 @@ def get_topology(run_id: RunId, user: CurrentUser) -> dict[str, Any] | None:
     topo = json.loads(topo_files[0].read_text())
     topo.pop("admittance", None)
     return topo
+
+
+# ---------------------------------------------------------------------------
+# Notebook CRUD
+# ---------------------------------------------------------------------------
+
+NOTEBOOK_FILENAME = "notebook.ipynb"
+
+
+def _notebook_path(user: str, run_id: str) -> Path:
+    return _user_runs_dir(user) / run_id / NOTEBOOK_FILENAME
+
+
+def _make_blank_notebook(run_dir: Path) -> nbformat.NotebookNode:
+    """Create a minimal .ipynb pre-populated with the run's data path."""
+    nb = nbformat.v4.new_notebook()
+    nb.cells = [
+        nbformat.v4.new_markdown_cell(f"# Analysis for run\n\nData directory: `{run_dir}`"),
+        nbformat.v4.new_code_cell(
+            "import pyarrow.feather as pf\n"
+            "import pandas as pd\n"
+            "import matplotlib.pyplot as plt\n\n"
+            f'DATA_DIR = r"{run_dir}"\n'
+        ),
+    ]
+    return nb
+
+
+def _jupyter_notebook_url(user: str, run_id: str) -> str:
+    """Return the JupyterLab URL path for a run's notebook."""
+    return f"/jupyter/lab/tree/{user}/{run_id}/{NOTEBOOK_FILENAME}"
+
+
+@app.post("/api/runs/{run_id}/notebook")
+def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    """Create a blank analysis notebook for the run."""
+    _get_owned_run(run_id, user)  # verify run exists and belongs to user
+    path = _notebook_path(user, run_id)
+    if path.exists():
+        return {
+            "exists": True,
+            "created": False,
+            "jupyter_url": _jupyter_notebook_url(user, run_id),
+        }
+    run_dir = _user_runs_dir(user) / run_id
+    nb = _make_blank_notebook(run_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(path))
+    return {
+        "exists": True,
+        "created": True,
+        "jupyter_url": _jupyter_notebook_url(user, run_id),
+    }
+
+
+@app.get("/api/runs/{run_id}/notebook")
+def get_notebook_status(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    """Check whether a notebook exists for this run."""
+    _get_owned_run(run_id, user)
+    path = _notebook_path(user, run_id)
+    return {
+        "exists": path.exists(),
+        "jupyter_url": _jupyter_notebook_url(user, run_id),
+    }
+
+
+@app.delete("/api/runs/{run_id}/notebook")
+def delete_notebook(run_id: RunId, user: CurrentUser) -> dict[str, bool]:
+    """Delete the notebook file for this run."""
+    _get_owned_run(run_id, user)
+    path = _notebook_path(user, run_id)
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Notebook not found")
+    path.unlink()
+    return {"success": True}
 
 
 @app.delete("/api/runs/{run_id}")
