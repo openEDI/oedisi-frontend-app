@@ -71,9 +71,9 @@ pnpm install
 # Backend (Python core dependencies)
 uv --directory server sync
 
-# Sync co-simulation components (requires setting OEDISI_COMPONENTS environment variable)
+# Sync and install co-simulation components (requires setting OEDISI_COMPONENTS environment variable)
 export OEDISI_COMPONENTS="$HOME/dev/oedisi-components/Components"
-npm run setup:components
+uv --directory server run python install_components.py
 ```
 
 3. Start the development servers:

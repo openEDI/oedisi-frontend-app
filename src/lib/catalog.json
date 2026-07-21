@@ -1207,6 +1207,10 @@
         {
           "type": "",
           "port_id": "sdn_tol"
+        },
+        {
+          "type": "",
+          "port_id": "number_of_timesteps"
         }
       ],
       "dynamic_inputs": [
@@ -1457,7 +1461,12 @@
     "definition": {
       "directory": "hub_control",
       "execute_function": "python -m src.pnnl-hub-control.hub_federate",
-      "static_inputs": [],
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "number_of_timesteps"
+        }
+      ],
       "dynamic_inputs": [
         {
           "type": "CommandList",
@@ -1523,6 +1532,10 @@
         {
           "type": "",
           "port_id": "max_itr"
+        },
+        {
+          "type": "",
+          "port_id": "number_of_timesteps"
         }
       ],
       "dynamic_inputs": [
@@ -1661,6 +1674,10 @@
         {
           "type": "",
           "port_id": "max_itr"
+        },
+        {
+          "type": "",
+          "port_id": "number_of_timesteps"
         }
       ],
       "dynamic_inputs": [
