@@ -1372,6 +1372,13 @@
           "minimum": 0.0,
           "title": "Sdn Tol",
           "type": "number"
+        },
+        "number_of_timesteps": {
+          "default": 0,
+          "description": "Total number of simulation timesteps. When > 0, the federate exits after this many steps.",
+          "minimum": 0,
+          "title": "Number of Timesteps",
+          "type": "integer"
         }
       },
       "required": [
@@ -1464,6 +1471,10 @@
       "static_inputs": [
         {
           "type": "",
+          "port_id": "max_itr"
+        },
+        {
+          "type": "",
           "port_id": "number_of_timesteps"
         }
       ],
@@ -1510,11 +1521,16 @@
         "max_itr": {
           "title": "Max Itr",
           "type": "integer"
+        },
+        "number_of_timesteps": {
+          "title": "Number Of Timesteps",
+          "type": "integer"
         }
       },
       "required": [
         "name",
-        "max_itr"
+        "max_itr",
+        "number_of_timesteps"
       ],
       "title": "ComponentParameters",
       "type": "object"
@@ -1644,8 +1660,6 @@
       ]
     },
     "inputSchema": {
-      "title": "ComponentParameters",
-      "type": "object",
       "properties": {
         "name": {
           "title": "Name",
@@ -1654,12 +1668,19 @@
         "max_itr": {
           "title": "Max Itr",
           "type": "integer"
+        },
+        "number_of_timesteps": {
+          "title": "Number Of Timesteps",
+          "type": "integer"
         }
       },
       "required": [
         "name",
-        "max_itr"
-      ]
+        "max_itr",
+        "number_of_timesteps"
+      ],
+      "title": "ComponentParameters",
+      "type": "object"
     }
   },
   {
@@ -1736,8 +1757,6 @@
       ]
     },
     "inputSchema": {
-      "title": "ComponentParameters",
-      "type": "object",
       "properties": {
         "name": {
           "title": "Name",
@@ -1746,12 +1765,19 @@
         "max_itr": {
           "title": "Max Itr",
           "type": "integer"
+        },
+        "number_of_timesteps": {
+          "title": "Number Of Timesteps",
+          "type": "integer"
         }
       },
       "required": [
         "name",
-        "max_itr"
-      ]
+        "max_itr",
+        "number_of_timesteps"
+      ],
+      "title": "ComponentParameters",
+      "type": "object"
     }
   },
   {

@@ -4,6 +4,10 @@
     "static_inputs": [
         {
             "type": "",
+            "port_id": "max_itr"
+        },
+        {
+            "type": "",
             "port_id": "number_of_timesteps"
         }
     ],

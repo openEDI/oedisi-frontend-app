@@ -1122,8 +1122,8 @@ wheels = [
 
 [[package]]
 name = "oedisi"
-version = "3.0.1"
-source = { registry = "https://pypi.org/simple" }
+version = "3.0.2"
+source = { git = "https://github.com/Tylores/oedisi.git?branch=bugfix%2Fignore-dotfiles-copy#539d49ffd8567309e285ce0736c1ed7e197189ee" }
 dependencies = [
     { name = "click" },
     { name = "helics" },
@@ -1131,10 +1131,6 @@ dependencies = [
     { name = "psutil" },
     { name = "pydantic" },
     { name = "pyyaml" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/64/5c/eee216036dc10cb1cfd9885dc9b20bb03a2cfbe716161ab419b72b831bf2/oedisi-3.0.1.tar.gz", hash = "sha256:9f27702c2d2c3d71cf5097240727a840a82ad8a3677c676627133b9fe3098408", size = 28095, upload-time = "2026-01-06T19:19:30.204Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1d/24/3ad46ef67283f34a67c9d251e845e941d20452c7a69dbafdc3e171609d00/oedisi-3.0.1-py3-none-any.whl", hash = "sha256:0e2d296756ae40dacc0dfc015c1f741ffe599266f4372b31d0a3d2c7d3122288", size = 46227, upload-time = "2026-01-06T19:19:28.465Z" },
 ]
 
 [[package]]
@@ -1915,7 +1911,7 @@ requires-dist = [
     { name = "nbformat", specifier = ">=5.10.4" },
     { name = "networkx", specifier = ">=3.2" },
     { name = "numpy", specifier = ">=1.26.0" },
-    { name = "oedisi", specifier = ">=3.0.1" },
+    { name = "oedisi", git = "https://github.com/Tylores/oedisi.git?branch=bugfix%2Fignore-dotfiles-copy" },
     { name = "opendssdirect-py", extras = ["extras"], specifier = "==0.7.0" },
     { name = "pandas", specifier = ">=2.2.0" },
     { name = "psutil", specifier = ">=7.2.2" },

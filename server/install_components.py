@@ -385,10 +385,13 @@ def install_components(components_root: Path) -> None:
             print(f"Warning: Failed to install component {comp_dir.name} ({exc}). Skipping.", file=sys.stderr)
             failed_components.append(comp_dir.name)
 
+    subprocess.run(["uv", "pip", "install", "git+https://github.com/Tylores/oedisi.git@bugfix/ignore-dotfiles-copy"], cwd=SERVER_DIR, check=True)
+
     if failed_components:
         print(f"\nCompleted with warnings. The following components failed to install: {', '.join(failed_components)}")
     else:
         print("\nAll components installed successfully!")
+
 
 
 def main() -> None:

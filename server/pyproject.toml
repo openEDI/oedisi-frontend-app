@@ -30,3 +30,7 @@ dependencies = [
 dev = [
     "httpx>=0.28.1",
 ]
+
+[tool.uv.sources]
+oedisi = { git = "https://github.com/Tylores/oedisi.git", branch = "bugfix/ignore-dotfiles-copy" }
+
