@@ -87,19 +87,38 @@ def detect_usecase(run_dir: Path) -> str:
     )
 
 
+def _ensure_outputs(run_dir: Path) -> None:
+    """Gather recorder feather/csv files found in build/ into outputs/ if not already present."""
+    outputs_dir = run_dir / "outputs"
+    outputs_dir.mkdir(exist_ok=True)
+    import shutil
+    for ext in ("*.feather", "*.csv"):
+        for path in run_dir.rglob(ext):
+            if path.parent != outputs_dir:
+                dest = outputs_dir / path.name
+                if not dest.exists():
+                    try:
+                        shutil.copy(path, dest)
+                    except Exception:
+                        pass
+
+
 def _require_outputs(usecase: str, run_dir: Path) -> None:
+    _ensure_outputs(run_dir)
     out = run_dir / "outputs"
     if usecase == "ev":
         needed = ["voltage_real.feather", "voltage_imag.feather", "topology.json"]
     elif usecase == "od":
         needed = ["events.feather"]
     elif usecase == "admm":
-        needed = ["topology.json"]
+        if not (out / "topology.json").exists() and not any(run_dir.rglob("topology.json")):
+            raise OutputsMissing("Run outputs not found (topology.json). Wait for the run to finish, then try again.")
+        return
     elif usecase == "swod":
         needed = ["swod_oscillation_frequency.feather"]
     else:
         needed = []
-        
+
     missing = [f for f in needed if not (out / f).exists()]
     if missing:
         raise OutputsMissing(

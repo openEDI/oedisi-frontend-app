@@ -8,6 +8,7 @@ from oedisi.types.data_types import Topology
 from admm_federate.adapter import area_disconnects, disconnect_areas, generate_graph
 from admm_federate.plotting import (
     load_scenario_parameters,
+    load_coordinates,
     get_der_mapping,
     load_recorder_data,
     process_voltages,
@@ -43,10 +44,14 @@ def build_sections(run_dir: Path) -> tuple[str, list[tuple[str, str]]]:
     outputs_dir = run_dir / "outputs"
     topology_path = outputs_dir / "topology.json"
     if not topology_path.exists():
-        sections.append(
-            ("ADMM Post-process Report", "<p>Required topology.json was not found in simulation outputs.</p>")
-        )
-        return "Distribution OPF (ADMM) — Report", sections
+        matches = list(run_dir.rglob("topology.json"))
+        if matches:
+            topology_path = matches[0]
+        else:
+            sections.append(
+                ("ADMM Post-process Report", "<p>Required topology.json was not found in simulation outputs.</p>")
+            )
+            return "Distribution OPF (ADMM) — Report", sections
         
     try:
         topology = Topology.model_validate_json(topology_path.read_text(encoding="utf-8"))
@@ -85,15 +90,31 @@ def build_sections(run_dir: Path) -> tuple[str, list[tuple[str, str]]]:
     adequacy_df = process_generation_adequacy(topology, area_ids, area_buses)
     convergence_data = process_convergence(data, area_ids)
 
-    # 5. Find coordinate files in build directory recursively
-    coords_dir = run_dir / "build"
-    for p in (run_dir / "build").rglob("Buscoords.dss"):
-        coords_dir = p.parent
-        break
+    # 5. Resolve coordinate directory directly from feeder model configuration
+    scenario_model = None
+    for comp in wiring.get("components", []):
+        if comp.get("type") in ["Feeder", "LocalFeeder"]:
+            params = comp.get("parameters") or {}
+            loc = str(params.get("opendss_location") or params.get("profile_location") or "")
+            if "ieee123" in loc.lower():
+                scenario_model = "ieee123"
+                break
+            elif "sfo" in loc.lower():
+                scenario_model = "sfo-p1u-extreme"
+                break
+
+    oedisi_components_scenarios = Path("/home/tslay/dev/oedisi-components/Components/pnnl-dopf-admm/scenarios")
+    if scenario_model and (oedisi_components_scenarios / scenario_model / "Buscoords.dss").exists():
+        coords_dir = oedisi_components_scenarios / scenario_model
     else:
-        for p in (run_dir / "build").rglob("Buscoords.dat"):
+        coords_dir = run_dir / "build"
+        for p in run_dir.rglob("Buscoords.dss"):
             coords_dir = p.parent
             break
+        else:
+            for p in run_dir.rglob("Buscoords.dat"):
+                coords_dir = p.parent
+                break
 
     # 6. Generate Figures and build sections
     fig_partition = plot_network_partition(G, boundaries, areas_clean, slack_bus, coords_dir)
@@ -106,7 +127,17 @@ def build_sections(run_dir: Path) -> tuple[str, list[tuple[str, str]]]:
 
     fig_flow = plot_power_flow_comparison(flow_data)
     if fig_flow:
-        sections.append(("Boundary Power Flow Comparison: ADMM vs. Feeder Reference", C.img_html(fig_flow)))
+        note_html = (
+            "<p class='note'><strong>Understanding Boundary Power Flow Comparisons:</strong><br/>"
+            "• <strong>Control Exchange &lt; Reference Exchange:</strong> ADMM active control has dispatched local DER generation or curtailed demand within the control area, reducing net power draw across the boundary line from the upstream grid.<br/>"
+            "• <strong>Control Exchange &gt; Reference Exchange:</strong> ADMM control has curtailed local DER generation (e.g., to mitigate localized over-voltage or thermal line limits) or increased controllable load, resulting in higher net power draw across the boundary.<br/>"
+            "• <strong>Matching Exchange:</strong> Minimal control action was required, as the unmanaged feeder reference operated within allowable voltage and power bounds."
+            "</p>"
+        )
+        sections.append((
+            "Boundary Power Flow Comparison: ADMM vs. Feeder Reference",
+            f"{C.img_html(fig_flow)}{note_html}",
+        ))
 
     fig_adeq = plot_generation_adequacy(adequacy_df)
     if fig_adeq:
