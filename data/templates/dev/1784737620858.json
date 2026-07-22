@@ -1,0 +1,2117 @@
+{
+  "id": "1784737620858",
+  "name": "pnnl-emt-swod",
+  "description": "sliding wave oscillation detection",
+  "nodes": [
+    {
+      "id": "PlayerComponent-1784733779795",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 180.27483931251498,
+        "y": 306.50122651102635,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PlayerComponent-1784733779795",
+            "position": "right",
+            "x": 112.99994004643831,
+            "y": 26.99999867040144,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PlayerComponent-1784733779795",
+            "position": "left",
+            "x": -2.999997452754526,
+            "y": 26.99999867040144,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 180.27483931251498,
+        "y": 306.50122651102635
+      },
+      "data": {
+        "label": "Player",
+        "componentType": "PlayerComponent",
+        "config": {
+          "run_freq_time_step": 900,
+          "name": "i_abc",
+          "filename": "~/dev/swod_data/i_abc_1khz.csv",
+          "data_type": "CurrentsMagnitude",
+          "number_of_timesteps": 60000,
+          "start_time_index": 0
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "PlayerComponent-1784733782702",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 178.87116907893804,
+        "y": 478.6604187329347,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PlayerComponent-1784733782702",
+            "position": "right",
+            "x": 112.99994004643831,
+            "y": 27.000041861622858,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PlayerComponent-1784733782702",
+            "position": "left",
+            "x": -2.999997452754526,
+            "y": 27.000041861622858,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 178.87116907893804,
+        "y": 478.6604187329347
+      },
+      "data": {
+        "label": "Player",
+        "componentType": "PlayerComponent",
+        "config": {
+          "run_freq_time_step": 900,
+          "name": "v_abc",
+          "filename": "~/dev/swod_data/v_abc_1khz.csv",
+          "data_type": "VoltagesMagnitude",
+          "number_of_timesteps": 60000,
+          "start_time_index": 0
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "PnnlEmtSwodComponent-1784733787181",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 334.60954852127395,
+        "y": 418.4475673694267,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PnnlEmtSwodComponent-1784733787181",
+            "position": "right",
+            "x": 112.99994004643831,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PnnlEmtSwodComponent-1784733787181",
+            "position": "left",
+            "x": -3.000019048365234,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 334.60954852127395,
+        "y": 418.4475673694267
+      },
+      "data": {
+        "label": "PNNL EMT SWOD",
+        "componentType": "PnnlEmtSwodComponent",
+        "config": {
+          "overlap_length": 1000,
+          "fs": 25000,
+          "f0_nom": 50,
+          "peak_thresh": 0.003,
+          "freq_max": 150,
+          "sideband_tol": 0.1,
+          "freq_match_tol": 0.05,
+          "deltat": 1,
+          "name": "swod",
+          "window_length": 2000
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733792997",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 644.6120491998327,
+        "y": 271.1845987212264,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733792997",
+            "position": "right",
+            "x": 112.9998968552169,
+            "y": 26.99999867040144,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733792997",
+            "position": "left",
+            "x": -3.0000622395866503,
+            "y": 26.99999867040144,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 644.6120491998327,
+        "y": 271.1845987212264
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "osc_freq",
+          "csv_filename": "swod_oscillation_frequency.csv",
+          "feather_filename": "swod_oscillation_frequency.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733795037",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 645.7994610340679,
+        "y": 340.8866707235996,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733795037",
+            "position": "right",
+            "x": 112.99998323765973,
+            "y": 26.99999867040144,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733795037",
+            "position": "left",
+            "x": -2.9999758571438173,
+            "y": 26.99999867040144,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 645.7994610340679,
+        "y": 340.8866707235996
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "osc_amp",
+          "csv_filename": "swod_oscillation_amplitude.csv",
+          "feather_filename": "swod_oscillation_amplitude.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733797168",
+      "type": "custom",
+      "dimensions": {
+        "width": 127,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 642.2666234806725,
+        "y": 409.87129402726185,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733797168",
+            "position": "right",
+            "x": 120.38274509681645,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733797168",
+            "position": "left",
+            "x": -3.0000622395866503,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 642.2666234806725,
+        "y": 409.87129402726185
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "harmonic_freq",
+          "csv_filename": "swod_harmonic_frequency.csv",
+          "feather_filename": "swod_harmonic_frequency.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733801038",
+      "type": "custom",
+      "dimensions": {
+        "width": 130,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 643.354063151316,
+        "y": 479.82035185969823,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733801038",
+            "position": "right",
+            "x": 122.76551839991919,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733801038",
+            "position": "left",
+            "x": -3.0000622395866503,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 643.354063151316,
+        "y": 479.82035185969823
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "harmonic_amp",
+          "csv_filename": "swod_harmonic_amplitude.csv",
+          "feather_filename": "swod_harmonic_amplitude.csv"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733803129",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 644.7899360950624,
+        "y": 549.5224238620714,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733803129",
+            "position": "right",
+            "x": 112.9998968552169,
+            "y": 27.000041861622858,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733803129",
+            "position": "left",
+            "x": -3.0000622395866503,
+            "y": 27.000041861622858,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 644.7899360950624,
+        "y": 549.5224238620714
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "ssp_real",
+          "csv_filename": "swod_real_ssp.csv",
+          "feather_filename": "swod_real_ssp.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784736908821",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 644.8440415373846,
+        "y": 618.8413141529834,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784736908821",
+            "position": "right",
+            "x": 112.99998323765973,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784736908821",
+            "position": "left",
+            "x": -2.9999758571438173,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 644.8440415373846,
+        "y": 618.8413141529834
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "ssp_imag",
+          "csv_filename": "swod_reactive_ssp.csv",
+          "feather_filename": "swod_reactive_ssp.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784736912051",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 647.1438890731514,
+        "y": 689.6058537150352,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784736912051",
+            "position": "right",
+            "x": 112.99998323765973,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784736912051",
+            "position": "left",
+            "x": -2.9999758571438173,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 647.1438890731514,
+        "y": 689.6058537150352
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "rms_real",
+          "csv_filename": "swod_watts_rms.csv",
+          "feather_filename": "swod_watts_rms.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784736913611",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 647.6746231198669,
+        "y": 764.6162656508101,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784736913611",
+            "position": "right",
+            "x": 112.99998323765973,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784736913611",
+            "position": "left",
+            "x": -2.9999758571438173,
+            "y": 26.999955479180024,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 647.6746231198669,
+        "y": 764.6162656508101
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "rms_imag",
+          "csv_filename": "swod_vars_rms.csv",
+          "feather_filename": "swod_vars_rms.feather"
+        }
+      },
+      "events": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-PlayerComponent-1784733779795-PnnlEmtSwodComponent-1784733787181-1784736612848",
+      "type": "wiring",
+      "source": "PlayerComponent-1784733779795",
+      "target": "PnnlEmtSwodComponent-1784733787181",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "currents_abs"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PlayerComponent-1784733779795",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 180.27483931251498,
+          "y": 306.50122651102635,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PlayerComponent-1784733779795",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.99999867040144,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PlayerComponent-1784733779795",
+              "position": "left",
+              "x": -2.999997452754526,
+              "y": 26.99999867040144,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 180.27483931251498,
+          "y": 306.50122651102635
+        },
+        "data": {
+          "label": "Player",
+          "componentType": "PlayerComponent",
+          "config": {
+            "run_freq_time_step": 900,
+            "name": "i_abc",
+            "filename": "~/dev/swod_data/i_abc_1khz.csv",
+            "data_type": "CurrentsMagnitude",
+            "number_of_timesteps": 60000,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 303.2747793589533,
+      "sourceY": 338.5012251814278,
+      "targetX": 331.6095294729087,
+      "targetY": 450.4475228486067,
+      "selected": false
+    },
+    {
+      "id": "edge-PlayerComponent-1784733782702-PnnlEmtSwodComponent-1784733787181-1784736628819",
+      "type": "wiring",
+      "source": "PlayerComponent-1784733782702",
+      "target": "PnnlEmtSwodComponent-1784733787181",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "voltages_abs"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PlayerComponent-1784733782702",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 178.87116907893804,
+          "y": 478.6604187329347,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PlayerComponent-1784733782702",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 27.000041861622858,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PlayerComponent-1784733782702",
+              "position": "left",
+              "x": -2.999997452754526,
+              "y": 27.000041861622858,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 178.87116907893804,
+          "y": 478.6604187329347
+        },
+        "data": {
+          "label": "Player",
+          "componentType": "PlayerComponent",
+          "config": {
+            "run_freq_time_step": 900,
+            "name": "v_abc",
+            "filename": "~/dev/swod_data/v_abc_1khz.csv",
+            "data_type": "VoltagesMagnitude",
+            "number_of_timesteps": 60000,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 301.87110912537634,
+      "sourceY": 510.66046059455755,
+      "targetX": 331.6095294729087,
+      "targetY": 450.4475228486067,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784733792997-1784736671471",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784733792997",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "oscillation_frequency",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784733792997",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 644.6120491998327,
+          "y": 271.1845987212264,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784733792997",
+              "position": "right",
+              "x": 112.9998968552169,
+              "y": 26.99999867040144,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784733792997",
+              "position": "left",
+              "x": -3.0000622395866503,
+              "y": 26.99999867040144,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 644.6120491998327,
+          "y": 271.1845987212264
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "osc_freq",
+            "csv_filename": "swod_oscillation_frequency.csv",
+            "feather_filename": "swod_oscillation_frequency.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 641.611986960246,
+      "targetY": 303.18459739162785,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784733795037-1784736721712",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784733795037",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "oscillation_amplitude",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784733795037",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 645.7994610340679,
+          "y": 340.8866707235996,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784733795037",
+              "position": "right",
+              "x": 112.99998323765973,
+              "y": 26.99999867040144,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784733795037",
+              "position": "left",
+              "x": -2.9999758571438173,
+              "y": 26.99999867040144,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 645.7994610340679,
+          "y": 340.8866707235996
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "osc_amp",
+            "csv_filename": "swod_oscillation_amplitude.csv",
+            "feather_filename": "swod_oscillation_amplitude.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 642.7994851769241,
+      "targetY": 372.88666939400105,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784733797168-1784736777610",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784733797168",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "harmonic_frequency",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784733797168",
+        "type": "custom",
+        "dimensions": {
+          "width": 127,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 642.2666234806725,
+          "y": 409.87129402726185,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784733797168",
+              "position": "right",
+              "x": 120.38274509681645,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784733797168",
+              "position": "left",
+              "x": -3.0000622395866503,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 642.2666234806725,
+          "y": 409.87129402726185
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "harmonic_freq",
+            "csv_filename": "swod_harmonic_frequency.csv",
+            "feather_filename": "swod_harmonic_frequency.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 639.2665612410858,
+      "targetY": 441.87124950644187,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784733801038-1784736861198",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784733801038",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "harmonic_amplitude",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784733801038",
+        "type": "custom",
+        "dimensions": {
+          "width": 130,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 643.354063151316,
+          "y": 479.82035185969823,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784733801038",
+              "position": "right",
+              "x": 122.76551839991919,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784733801038",
+              "position": "left",
+              "x": -3.0000622395866503,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 643.354063151316,
+          "y": 479.82035185969823
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "harmonic_amp",
+            "csv_filename": "swod_harmonic_amplitude.csv",
+            "feather_filename": "swod_harmonic_amplitude.csv"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 640.3540009117294,
+      "targetY": 511.82030733887825,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784733803129-1784736869251",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784733803129",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "real_ssp",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784733803129",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 644.7899360950624,
+          "y": 549.5224238620714,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784733803129",
+              "position": "right",
+              "x": 112.9998968552169,
+              "y": 27.000041861622858,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784733803129",
+              "position": "left",
+              "x": -3.0000622395866503,
+              "y": 27.000041861622858,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 644.7899360950624,
+          "y": 549.5224238620714
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "ssp_real",
+            "csv_filename": "swod_real_ssp.csv",
+            "feather_filename": "swod_real_ssp.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 641.7898738554758,
+      "targetY": 581.5224657236943,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784736908821-1784736929658",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784736908821",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "reactive_ssp",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784736908821",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 644.8440415373846,
+          "y": 618.8413141529834,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784736908821",
+              "position": "right",
+              "x": 112.99998323765973,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784736908821",
+              "position": "left",
+              "x": -2.9999758571438173,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 644.8440415373846,
+          "y": 618.8413141529834
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "ssp_imag",
+            "csv_filename": "swod_reactive_ssp.csv",
+            "feather_filename": "swod_reactive_ssp.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 641.8440656802408,
+      "targetY": 650.8412696321634,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784736912051-1784736998874",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784736912051",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "watts_rms",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersReal",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784736912051",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 647.1438890731514,
+          "y": 689.6058537150352,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784736912051",
+              "position": "right",
+              "x": 112.99998323765973,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784736912051",
+              "position": "left",
+              "x": -2.9999758571438173,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 647.1438890731514,
+          "y": 689.6058537150352
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "rms_real",
+            "csv_filename": "swod_watts_rms.csv",
+            "feather_filename": "swod_watts_rms.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 644.1439132160076,
+      "targetY": 721.6058091942152,
+      "selected": false
+    },
+    {
+      "id": "edge-PnnlEmtSwodComponent-1784733787181-Recorder-1784736913611-1784737009408",
+      "type": "wiring",
+      "source": "PnnlEmtSwodComponent-1784733787181",
+      "target": "Recorder-1784736913611",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "vars_rms",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersImaginary",
+      "sourceNode": {
+        "id": "PnnlEmtSwodComponent-1784733787181",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "right",
+              "x": 112.99994004643831,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PnnlEmtSwodComponent-1784733787181",
+              "position": "left",
+              "x": -3.000019048365234,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 334.60954852127395,
+          "y": 418.4475673694267
+        },
+        "data": {
+          "label": "PNNL EMT SWOD",
+          "componentType": "PnnlEmtSwodComponent",
+          "config": {
+            "overlap_length": 1000,
+            "fs": 25000,
+            "f0_nom": 50,
+            "peak_thresh": 0.003,
+            "freq_max": 150,
+            "sideband_tol": 0.1,
+            "freq_match_tol": 0.05,
+            "deltat": 1,
+            "name": "swod",
+            "window_length": 2000
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1784736913611",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 647.6746231198669,
+          "y": 764.6162656508101,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1784736913611",
+              "position": "right",
+              "x": 112.99998323765973,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1784736913611",
+              "position": "left",
+              "x": -2.9999758571438173,
+              "y": 26.999955479180024,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 647.6746231198669,
+          "y": 764.6162656508101
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "rms_imag",
+            "csv_filename": "swod_vars_rms.csv",
+            "feather_filename": "swod_vars_rms.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 457.6094885677123,
+      "sourceY": 450.4475228486067,
+      "targetX": 644.674647262723,
+      "targetY": 796.6162211299901,
+      "selected": false
+    }
+  ],
+  "createdAt": "2026-07-22T16:27:00.858Z"
+}

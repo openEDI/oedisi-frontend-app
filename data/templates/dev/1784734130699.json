@@ -1,0 +1,444 @@
+{
+  "id": "1784734130699",
+  "name": "Flow 7/22/2026, 8:28:50 AM",
+  "description": "",
+  "nodes": [
+    {
+      "id": "PlayerComponent-1784733779795",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 178.85954852127395,
+        "y": 361.6975673694267,
+        "z": 1000
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PlayerComponent-1784733779795",
+            "position": "right",
+            "x": 112.99995393766778,
+            "y": 26.999971621331635,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PlayerComponent-1784733779795",
+            "position": "left",
+            "x": -3.000012427025384,
+            "y": 26.999971621331635,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": true,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 178.85954852127395,
+        "y": 361.6975673694267
+      },
+      "data": {
+        "label": "Player",
+        "componentType": "PlayerComponent",
+        "config": {
+          "run_freq_time_step": 900,
+          "name": "i_abc",
+          "filename": "~/dev/swod_data/i_abc_1khz.csv",
+          "data_type": "CurrentMagnitude",
+          "number_of_timesteps": 2000
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "PlayerComponent-1784733782702",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 180.10954852127395,
+        "y": 440.4475673694267,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PlayerComponent-1784733782702",
+            "position": "right",
+            "x": 112.99995393766778,
+            "y": 26.999971621331635,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PlayerComponent-1784733782702",
+            "position": "left",
+            "x": -3.000012427025384,
+            "y": 26.999971621331635,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 180.10954852127395,
+        "y": 440.4475673694267
+      },
+      "data": {
+        "label": "Player",
+        "componentType": "PlayerComponent",
+        "config": {
+          "run_freq_time_step": 900,
+          "name": "v_abc"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "PnnlEmtSwodComponent-1784733787181",
+      "type": "custom",
+      "dimensions": {
+        "width": 150,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 334.60954852127395,
+        "y": 418.4475673694267,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PnnlEmtSwodComponent-1784733787181",
+            "position": "right",
+            "x": 142.8828125,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PnnlEmtSwodComponent-1784733787181",
+            "position": "left",
+            "x": -3,
+            "y": 19.5,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 334.60954852127395,
+        "y": 418.4475673694267
+      },
+      "data": {
+        "label": "PNNL EMT SWOD",
+        "componentType": "PnnlEmtSwodComponent"
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733792997",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 569.778548612963,
+        "y": 283.9222158423957,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733792997",
+            "position": "right",
+            "x": 112.99991888219358,
+            "y": 19.499993136979484,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733792997",
+            "position": "left",
+            "x": -2.9999773715511786,
+            "y": 19.499993136979484,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 569.778548612963,
+        "y": 283.9222158423957
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder"
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733795037",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 576.0963895654468,
+        "y": 367.7771957571793,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733795037",
+            "position": "right",
+            "x": 112.999988993142,
+            "y": 19.499993136979484,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733795037",
+            "position": "left",
+            "x": -2.9999773715511786,
+            "y": 19.499993136979484,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 576.0963895654468,
+        "y": 367.7771957571793
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder"
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733797168",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 581.409119457308,
+        "y": 460.82176251193914,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733797168",
+            "position": "right",
+            "x": 112.99991888219358,
+            "y": 19.499993136979484,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733797168",
+            "position": "left",
+            "x": -2.9999773715511786,
+            "y": 19.499993136979484,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 581.409119457308,
+        "y": 460.82176251193914
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder"
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733801038",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 588.1577222929157,
+        "y": 561.9072177516782,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733801038",
+            "position": "right",
+            "x": 112.99991888219358,
+            "y": 19.499958081505277,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733801038",
+            "position": "left",
+            "x": -3.0000474824995895,
+            "y": 19.499958081505277,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 588.1577222929157,
+        "y": 561.9072177516782
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder"
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1784733803129",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 589.5935952366619,
+        "y": 645.7621976664617,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1784733803129",
+            "position": "right",
+            "x": 112.99991888219358,
+            "y": 19.499958081505277,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1784733803129",
+            "position": "left",
+            "x": -2.9999773715511786,
+            "y": 19.499958081505277,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 589.5935952366619,
+        "y": 645.7621976664617
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder"
+      },
+      "events": {}
+    }
+  ],
+  "edges": [],
+  "createdAt": "2026-07-22T15:28:50.700Z"
+}
