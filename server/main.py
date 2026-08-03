@@ -170,12 +170,10 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
     """Start a JupyterLab server as a background subprocess.
 
     Rooted at the RUNS_DIR so notebooks can access run data via relative paths.
-    Token-less in single-user (dev) mode; in multi-user mode a per-boot token
-    is generated (though nginx basic auth is the primary gatekeeper).
+    Token-less mode is used because access is gated by localhost binding and
+    nginx authentication in multi-user deployments.
     """
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
-    multi_user = bool(os.environ.get("OEDISI_MULTI_USER"))
-    token = uuid.uuid4().hex if multi_user else ""
 
     cmd = [
         sys.executable,
@@ -185,7 +183,7 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
         "--ip=127.0.0.1",
         "--no-browser",
         f"--notebook-dir={RUNS_DIR}",
-        f"--IdentityProvider.token={token}",
+        "--IdentityProvider.token=",
         "--ServerApp.allow_origin=*",
         "--ServerApp.base_url=/jupyter/",
         "--ServerApp.disable_check_xsrf=True",
@@ -193,8 +191,8 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
     try:
         proc = await asyncio.create_subprocess_exec(
             *cmd,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
         )
         print(
             f"[jupyter] started on port {JUPYTER_PORT} "
@@ -373,6 +371,9 @@ def delete_template(template_id: str, user: CurrentUser) -> dict[str, Any]:
     if not path.exists():
         raise HTTPException(status_code=404, detail="Template not found")
     path.unlink()
+    template_notebook_dir = _template_notebook_path(user, template_id).parent
+    if template_notebook_dir.exists():
+        shutil.rmtree(template_notebook_dir)
     return {"success": True, "message": "Template deleted successfully"}
 
 
