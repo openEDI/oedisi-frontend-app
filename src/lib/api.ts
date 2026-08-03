@@ -302,4 +302,61 @@ export const api = {
       throw new Error(errorMessage)
     }
   },
+  async saveNotebookToTemplate(
+    run_id: string
+  ): Promise<{ success: boolean; template_id: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/notebook/save-to-template`,
+      { method: 'POST' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
+  async createTemplateNotebook(
+    templateId: string
+  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/templates/${templateId}/notebook`,
+      { method: 'POST' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
+  async getTemplateNotebookStatus(
+    templateId: string
+  ): Promise<{ exists: boolean; jupyter_url: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/templates/${templateId}/notebook`,
+      { method: 'GET' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
+  },
+  async deleteTemplateNotebook(templateId: string): Promise<void> {
+    const response = await fetch(
+      `${API_BASE_URL}/templates/${templateId}/notebook`,
+      { method: 'DELETE' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+  },
 }

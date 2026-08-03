@@ -1,15 +1,12 @@
 <template>
   <div class="flex flex-col h-screen">
     <div class="flex items-center gap-3 p-4 border-b">
-      <router-link :to="`/runs/${runId}/results`"
+      <router-link to="/configs"
         class="text-primary hover:text-primary/80">← Back to
-        Results</router-link>
-      <h1 class="text-xl font-bold flex-1">Notebook</h1>
-      <Button variant="secondary" size="sm" @click="handleSaveToTemplate"
-        :disabled="saving">
-        {{ saving ? 'Saving...' : '💾 Save to Template' }}
-      </Button>
-      <Button variant="destructive" size="sm" @click="handleDelete">
+        Templates</router-link>
+      <h1 class="text-xl font-bold flex-1">Template Notebook</h1>
+      <Button variant="destructive" size="sm" @click="handleDelete"
+        :disabled="!jupyterUrl">
         Delete Notebook
       </Button>
     </div>
@@ -32,7 +29,7 @@ import { Button } from '@/components/ui/button'
 
 const route = useRoute()
 const router = useRouter()
-const runId = computed<string>(() => String(route.params.runId))
+const templateId = computed<string>(() => String(route.params.templateId))
 
 const jupyterUrl = ref<string | null>(null)
 const loading = ref(true)
@@ -42,9 +39,9 @@ async function loadNotebook() {
   loading.value = true
   error.value = null
   try {
-    const status = await api.getNotebookStatus(runId.value)
+    const status = await api.getTemplateNotebookStatus(templateId.value)
     if (!status.exists) {
-      const result = await api.createNotebook(runId.value)
+      const result = await api.createTemplateNotebook(templateId.value)
       jupyterUrl.value = result.jupyter_url
     } else {
       jupyterUrl.value = status.jupyter_url
@@ -56,26 +53,11 @@ async function loadNotebook() {
   }
 }
 
-const saving = ref(false)
-
-async function handleSaveToTemplate() {
-  if (!confirm('Save this notebook back to the template? This will overwrite the template notebook.')) return
-  saving.value = true
-  try {
-    await api.saveNotebookToTemplate(runId.value)
-    alert('Notebook saved to template. Future runs will use this notebook.')
-  } catch (e) {
-    alert(`Failed to save to template: ${e instanceof Error ? e.message : String(e)}`)
-  } finally {
-    saving.value = false
-  }
-}
-
 async function handleDelete() {
-  if (!confirm('Delete this notebook? This cannot be undone.')) return
+  if (!confirm('Delete this template notebook? This cannot be undone.')) return
   try {
-    await api.deleteNotebook(runId.value)
-    router.push(`/runs/${runId.value}/results`)
+    await api.deleteTemplateNotebook(templateId.value)
+    router.push('/configs')
   } catch (e) {
     alert(`Failed to delete notebook: ${e instanceof Error ? e.message : String(e)}`)
   }

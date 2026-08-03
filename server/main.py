@@ -266,7 +266,21 @@ def _validate_template_id(template_id: str) -> None:
 
 def _template_path(user: str, template_id: str) -> Path:
     _validate_template_id(template_id)
-    return _user_templates_dir(user) / f"{template_id}.json"
+    # First try the canonical path (filename == id)
+    canonical = _user_templates_dir(user) / f"{template_id}.json"
+    if canonical.exists():
+        return canonical
+    # Fall back to searching by internal id (handles human-named files)
+    user_dir = _user_templates_dir(user)
+    if user_dir.is_dir():
+        for path in user_dir.glob("*.json"):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                if data.get("id") == template_id:
+                    return path
+            except (json.JSONDecodeError, OSError):
+                continue
+    return canonical  # return canonical path (will 404 naturally)
 
 
 def _validate_template_payload(template: dict[str, Any]) -> None:
@@ -636,6 +650,10 @@ async def start_run(
         wiring_diagram.model_dump_json(indent=2), encoding="utf-8"
     )
 
+    # Copy template notebook into the run if one exists.
+    if template_id:
+        _copy_template_notebook_to_run(user, template_id, run_dir)
+
     # Reserve the slot *before* awaiting the subprocess spawn. The await is the
     # first yield point in this handler, so a concurrent start_run could
     # otherwise slip past _assert_no_run_in_progress() here — no record exists
@@ -924,19 +942,47 @@ def _notebook_path(user: str, run_id: str) -> Path:
     return _user_runs_dir(user) / run_id / NOTEBOOK_FILENAME
 
 
-def _make_blank_notebook(run_dir: Path) -> nbformat.NotebookNode:
-    """Create a minimal .ipynb pre-populated with the run's data path."""
+def _template_notebook_path(user: str, template_id: str) -> Path:
+    _validate_template_id(template_id)
+    return _user_runs_dir(user) / "_notebooks" / template_id / NOTEBOOK_FILENAME
+
+
+def _make_blank_notebook(data_dir: Path) -> nbformat.NotebookNode:
+    """Create a minimal .ipynb pre-populated with a data path."""
     nb = nbformat.v4.new_notebook()
     nb.cells = [
-        nbformat.v4.new_markdown_cell(f"# Analysis for run\n\nData directory: `{run_dir}`"),
+        nbformat.v4.new_markdown_cell(f"# Analysis\n\nData directory: `{data_dir}`"),
         nbformat.v4.new_code_cell(
             "import pyarrow.feather as pf\n"
             "import pandas as pd\n"
             "import matplotlib.pyplot as plt\n\n"
-            f'DATA_DIR = r"{run_dir}"\n'
+            f'DATA_DIR = r"{data_dir}"\n'
         ),
     ]
     return nb
+
+
+def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -> bool:
+    """Copy the template notebook into a run directory, updating DATA_DIR.
+
+    Returns True if a template notebook was found and copied.
+    """
+    src = _template_notebook_path(user, template_id)
+    if not src.exists():
+        return False
+    dest = run_dir / NOTEBOOK_FILENAME
+    nb = nbformat.read(str(src), as_version=4)
+    build_dir = run_dir / "build"
+    for cell in nb.cells:
+        if cell.cell_type == "code" and "DATA_DIR" in cell.source:
+            cell.source = re.sub(
+                r'DATA_DIR\s*=\s*r?"[^"]*"',
+                f'DATA_DIR = r"{build_dir}"',
+                cell.source,
+            )
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(dest))
+    return True
 
 
 def _jupyter_notebook_url(user: str, run_id: str) -> str:
@@ -944,10 +990,18 @@ def _jupyter_notebook_url(user: str, run_id: str) -> str:
     return f"/jupyter/lab/tree/{user}/{run_id}/{NOTEBOOK_FILENAME}"
 
 
+def _jupyter_template_notebook_url(user: str, template_id: str) -> str:
+    """Return the JupyterLab URL path for a template's notebook."""
+    return f"/jupyter/lab/tree/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
+
+
 @app.post("/api/runs/{run_id}/notebook")
 def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
-    """Create a blank analysis notebook for the run."""
-    _get_owned_run(run_id, user)  # verify run exists and belongs to user
+    """Create an analysis notebook for the run.
+
+    Tries to copy from the originating template first; falls back to a blank notebook.
+    """
+    record = _get_owned_run(run_id, user)
     path = _notebook_path(user, run_id)
     if path.exists():
         return {
@@ -956,7 +1010,15 @@ def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
             "jupyter_url": _jupyter_notebook_url(user, run_id),
         }
     run_dir = _user_runs_dir(user) / run_id
-    nb = _make_blank_notebook(run_dir)
+    # Try copying from template notebook
+    if record.template_id and _copy_template_notebook_to_run(user, record.template_id, run_dir):
+        return {
+            "exists": True,
+            "created": True,
+            "jupyter_url": _jupyter_notebook_url(user, run_id),
+        }
+    # Fallback: create blank
+    nb = _make_blank_notebook(run_dir / "build")
     path.parent.mkdir(parents=True, exist_ok=True)
     nbformat.write(nb, str(path))
     return {
@@ -977,11 +1039,108 @@ def get_notebook_status(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
     }
 
 
+@app.post("/api/runs/{run_id}/notebook/save-to-template")
+def save_notebook_to_template(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    """Copy the run's notebook back to its originating template."""
+    record = _get_owned_run(run_id, user)
+    if not record.template_id:
+        raise HTTPException(status_code=400, detail="Run has no associated template")
+    src = _notebook_path(user, run_id)
+    if not src.exists():
+        raise HTTPException(status_code=404, detail="Run notebook not found")
+    if not _template_path(user, record.template_id).exists():
+        raise HTTPException(status_code=404, detail="Template no longer exists")
+    dest = _template_notebook_path(user, record.template_id)
+    nb = nbformat.read(str(src), as_version=4)
+    # Strip run-specific DATA_DIR so template stays generic
+    for cell in nb.cells:
+        if cell.cell_type == "code" and "DATA_DIR" in cell.source:
+            cell.source = re.sub(
+                r'DATA_DIR\s*=\s*r?"[^"]*"',
+                'DATA_DIR = r""',
+                cell.source,
+            )
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(dest))
+    return {"success": True, "template_id": record.template_id}
+
+
 @app.delete("/api/runs/{run_id}/notebook")
 def delete_notebook(run_id: RunId, user: CurrentUser) -> dict[str, bool]:
     """Delete the notebook file for this run."""
     _get_owned_run(run_id, user)
     path = _notebook_path(user, run_id)
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Notebook not found")
+    path.unlink()
+    return {"success": True}
+
+
+# ---------------------------------------------------------------------------
+# Template Notebook CRUD
+# ---------------------------------------------------------------------------
+
+
+@app.post("/api/templates/{template_id}/notebook")
+def create_template_notebook(
+    template_id: str, user: CurrentUser
+) -> dict[str, Any]:
+    """Create a blank notebook for a template."""
+    # Verify template exists
+    if not _template_path(user, template_id).exists():
+        raise HTTPException(status_code=404, detail="Template not found")
+    path = _template_notebook_path(user, template_id)
+    if path.exists():
+        return {
+            "exists": True,
+            "created": False,
+            "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+        }
+    nb = _make_blank_notebook(Path("<run data will appear here>"))
+    # Replace the placeholder with a generic comment for templates
+    nb.cells[0] = nbformat.v4.new_markdown_cell(
+        "# Analysis Notebook\n\n"
+        "This notebook is attached to a simulation template.\n"
+        "When a simulation runs, `DATA_DIR` will be updated to point to the run's output."
+    )
+    nb.cells[1] = nbformat.v4.new_code_cell(
+        "import pyarrow.feather as pf\n"
+        "import pandas as pd\n"
+        "import matplotlib.pyplot as plt\n\n"
+        '# DATA_DIR will be set automatically when copied to a run\n'
+        'DATA_DIR = r""\n'
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(path))
+    return {
+        "exists": True,
+        "created": True,
+        "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+    }
+
+
+@app.get("/api/templates/{template_id}/notebook")
+def get_template_notebook_status(
+    template_id: str, user: CurrentUser
+) -> dict[str, Any]:
+    """Check whether a notebook exists for this template."""
+    if not _template_path(user, template_id).exists():
+        raise HTTPException(status_code=404, detail="Template not found")
+    path = _template_notebook_path(user, template_id)
+    return {
+        "exists": path.exists(),
+        "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+    }
+
+
+@app.delete("/api/templates/{template_id}/notebook")
+def delete_template_notebook(
+    template_id: str, user: CurrentUser
+) -> dict[str, bool]:
+    """Delete the notebook file for this template."""
+    if not _template_path(user, template_id).exists():
+        raise HTTPException(status_code=404, detail="Template not found")
+    path = _template_notebook_path(user, template_id)
     if not path.exists():
         raise HTTPException(status_code=404, detail="Notebook not found")
     path.unlink()
