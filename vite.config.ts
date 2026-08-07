@@ -18,6 +18,20 @@ export default defineConfig({
         ws: true,
         changeOrigin: true,
       },
+      '/voila': {
+        target: 'http://127.0.0.1:8866',
+        ws: true,
+        changeOrigin: true,
+      },
+      '/api': {
+        target: 'http://127.0.0.1:3001',
+        changeOrigin: true,
+        // Local dev only: simulate nginx's X-Remote-User injection so the
+        // multi-user UI works in a plain browser. Override via OEDISI_DEV_USER.
+        headers: {
+          'X-Remote-User': process.env.OEDISI_DEV_USER || 'dev',
+        },
+      },
     },
   },
 })
