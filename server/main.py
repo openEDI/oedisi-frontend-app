@@ -398,20 +398,23 @@ def _write_run_finish(record: RunRecord) -> None:
     _atomic_write_json(_run_json_path(record.run_dir), data)
 
 
+DEFAULT_MAX_RUN_SECONDS = 7200.0  # 2 hours
+
+
 def _max_run_seconds() -> float | None:
-    """Watchdog cap for a run, in seconds, from OEDISI_MAX_TIME (default 7200 = 2h).
+    """Watchdog cap for a run, in seconds, from OEDISI_MAX_TIME.
 
     A backstop for a hung broker/federate, not a normal limit. Non-positive or
     unparseable disables it (returns None → the watchdog waits forever).
     """
     raw = os.environ.get("OEDISI_MAX_TIME")
     if raw is None:
-        return 7200.0
+        return DEFAULT_MAX_RUN_SECONDS
     try:
         seconds = float(raw)
     except ValueError:
         print(f"[config] ignoring invalid OEDISI_MAX_TIME={raw!r}", file=sys.stderr)
-        return 7200.0
+        return DEFAULT_MAX_RUN_SECONDS
     return seconds if seconds > 0 else None
 
 
