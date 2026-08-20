@@ -2566,5 +2566,6 @@
       "selected": false
     }
   ],
-  "createdAt": "2026-07-13T19:06:16.142Z"
+  "createdAt": "2026-07-13T19:06:16.142Z",
+  "config_version": "1"
 }

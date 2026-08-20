@@ -564,6 +564,7 @@ function getTemplate(name: string, description: string, nodes: Node[], edges: Ed
     nodes: nodes,
     edges: edges,
     createdAt: new Date().toISOString(),
+    config_version: "1",
   }
 }
 

@@ -22,6 +22,7 @@ import sys
 import tempfile
 import uuid
 from contextlib import asynccontextmanager
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -74,6 +75,11 @@ DATA_DIR = SERVER_DIR.parent / "data"
 TEMPLATES_DIR = DATA_DIR / "templates"
 RUNS_DIR = SERVER_DIR / "runs"
 COMPONENTS_JSON_PATH = SERVER_DIR / "components.json"
+CATALOG_JSON_PATH = SERVER_DIR.parent / "src" / "lib" / "catalog.json"
+
+# Templates without a config_version predate default-filling at node creation
+# and get missing defaults filled in at startup (_migrate_templates).
+CONFIG_VERSION = "1"
 
 TEMPLATE_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
 
@@ -165,6 +171,7 @@ async def lifespan(app: FastAPI):
         # error is the first thing the user sees in `npm run dev:server`.
         print(f"\n[startup error] {exc}\n", file=sys.stderr)
         raise
+    _migrate_templates()
     _restore_runs()
     yield
 
@@ -224,6 +231,58 @@ def _iso(dt: datetime) -> str:
 
 def _read_template(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _catalog_defaults() -> dict[str, dict[str, Any]]:
+    """Component id -> default config from its inputSchema.
+
+    Mirrors makeDefaults in ../src/lib/componentCatalog.ts: top-level
+    properties with an explicit `default`, nothing recursive.
+    """
+    catalog = json.loads(CATALOG_JSON_PATH.read_text(encoding="utf-8"))
+    return {
+        comp["id"]: {
+            key: prop["default"]
+            for key, prop in ((comp.get("inputSchema") or {}).get("properties") or {}).items()
+            if isinstance(prop, dict) and "default" in prop
+        }
+        for comp in catalog
+    }
+
+
+def _migrate_template(template: dict[str, Any], defaults: dict[str, dict[str, Any]]) -> bool:
+    """Stamp CONFIG_VERSION, filling missing defaulted config keys on the way.
+
+    Pre-version templates relied on Ajv useDefaults injecting these at render
+    time; the values were never persisted. Returns False if already stamped.
+    """
+    if template.get("config_version") is not None:
+        return False
+    for node in template.get("nodes", []):
+        data = node.get("data")
+        if not isinstance(data, dict):
+            continue
+        node_defaults = defaults.get(data.get("componentType"), {})
+        if node_defaults:
+            config = data.setdefault("config", {})
+            for key, value in node_defaults.items():
+                config.setdefault(key, deepcopy(value))
+    template["config_version"] = CONFIG_VERSION
+    return True
+
+
+def _migrate_templates() -> None:
+    """One-time per file, run at startup; stamped templates are never touched again."""
+    defaults = _catalog_defaults()
+    for path in sorted(TEMPLATES_DIR.rglob("*.json")) if TEMPLATES_DIR.exists() else []:
+        try:
+            template = _read_template(path)
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"[migrate] skipping unreadable template {path}: {exc}", file=sys.stderr)
+            continue
+        if isinstance(template, dict) and _migrate_template(template, defaults):
+            _atomic_write_json(path, template)
+            print(f"[migrate] filled defaults in {path}", file=sys.stderr)
 
 
 @app.get("/api/templates")

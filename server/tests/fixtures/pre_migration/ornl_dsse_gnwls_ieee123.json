@@ -64,9 +64,7 @@
           "number_of_timesteps": 96,
           "run_freq_sec": 900,
           "topology_output": "../../outputs/topology.json",
-          "name": "feeder",
-          "start_time_index": 0,
-          "use_sparse_admittance": false
+          "name": "feeder"
         }
       },
       "events": {}
@@ -125,8 +123,7 @@
           "additive_noise_stddev": 0.0,
           "multiplicative_noise_stddev": 0.0,
           "measurement_file": "../feeder/sensors/sensors.json",
-          "name": "sensor_voltage_magnitude",
-          "run_freq_time_step": 1.0
+          "name": "sensor_voltage_magnitude"
         }
       },
       "events": {}
@@ -185,8 +182,7 @@
           "additive_noise_stddev": 0.0,
           "multiplicative_noise_stddev": 0.0,
           "measurement_file": "../feeder/sensors/sensors.json",
-          "name": "sensor_power_real",
-          "run_freq_time_step": 1.0
+          "name": "sensor_power_real"
         }
       },
       "events": {}
@@ -245,8 +241,7 @@
           "additive_noise_stddev": 0.0,
           "multiplicative_noise_stddev": 0.0,
           "measurement_file": "../feeder/sensors/sensors.json",
-          "name": "sensor_power_imag",
-          "run_freq_time_step": 1.0
+          "name": "sensor_power_imag"
         }
       },
       "events": {}
@@ -1913,6 +1908,5 @@
       "targetY": 524.0,
       "selected": false
     }
-  ],
-  "config_version": "1"
+  ]
 }
