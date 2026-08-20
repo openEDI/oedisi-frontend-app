@@ -195,7 +195,7 @@ import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import { api, StartError } from '@/lib/api'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
-import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
+import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
@@ -261,15 +261,7 @@ const templateDescription = ref('')
 const selectedWireOption = ref('')
 const { screenToFlowCoordinate } = useVueFlow()
 
-function makeDefaults(inputSchema: Record<string, unknown>) {
-  const props = inputSchema.properties
-  if (typeof props === 'object' && props !== null) {
-    return Object.fromEntries(Object.entries(props).filter(([, value]) => value.default !== undefined)
-      .map(([key, value]) => [key, structuredClone(value.default)]))
-  } else {
-    return {}
-  }
-}
+
 
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
