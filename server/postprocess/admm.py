@@ -117,15 +117,15 @@ def build_sections(run_dir: Path) -> tuple[str, list[tuple[str, str]]]:
                 break
 
     # 6. Generate Figures and build sections
-    fig_partition = plot_network_partition(G, boundaries, areas_clean, slack_bus, coords_dir)
+    fig_partition = plot_network_partition(G, boundaries, areas_clean, slack_bus, coords_dir, target="notebook")
     if fig_partition:
         sections.append(("Distribution Grid Control Area Partition Map", C.img_html(fig_partition)))
         
-    fig_volt = plot_voltage_comparison(voltage_data)
+    fig_volt = plot_voltage_comparison(voltage_data, target="notebook")
     if fig_volt:
         sections.append(("Bus Voltage Profile Distribution per Area (ADMM vs Feeder)", C.img_html(fig_volt)))
 
-    fig_flow = plot_power_flow_comparison(flow_data)
+    fig_flow = plot_power_flow_comparison(flow_data, target="notebook")
     if fig_flow:
         note_html = (
             "<p class='note'><strong>Understanding Boundary Power Flow Comparisons:</strong><br/>"
@@ -139,11 +139,11 @@ def build_sections(run_dir: Path) -> tuple[str, list[tuple[str, str]]]:
             f"{C.img_html(fig_flow)}{note_html}",
         ))
 
-    fig_adeq = plot_generation_adequacy(adequacy_df)
+    fig_adeq = plot_generation_adequacy(adequacy_df, target="notebook")
     if fig_adeq:
         sections.append(("Generation Adequacy: Rated Capacity vs. Rated Load per Area", C.img_html(fig_adeq)))
 
-    fig_conv = plot_algorithmic_convergence(convergence_data)
+    fig_conv = plot_algorithmic_convergence(convergence_data, target="notebook")
     if fig_conv:
         sections.append(("Decentralized Algorithm Convergence Profile", C.img_html(fig_conv)))
         

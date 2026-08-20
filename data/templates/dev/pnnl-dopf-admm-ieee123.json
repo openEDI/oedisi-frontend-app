@@ -1,6 +1,6 @@
 {
-  "id": "1784753525394",
-  "name": "pnnl-dopf-admm-sfo-p1u-extreme",
+  "id": "pnnl-dopf-admm-ieee123",
+  "name": "pnnl-dopf-admm-ieee123",
   "description": "Microgrid DOPF using relaxed EnAPP version of ADMM",
   "nodes": [
     {
@@ -22,8 +22,8 @@
             "type": "source",
             "nodeId": "Feeder-1781715779030",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27.000015258789062,
             "width": 10,
             "height": 10
           }
@@ -34,8 +34,8 @@
             "type": "target",
             "nodeId": "Feeder-1781715779030",
             "position": "left",
-            "x": -2.999934414582811,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.000015258789062,
             "width": 10,
             "height": 10
           }
@@ -54,18 +54,18 @@
         "label": "Feeder",
         "componentType": "Feeder",
         "config": {
-          "use_smartds": true,
+          "use_smartds": false,
           "user_uploads_model": false,
-          "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-          "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+          "profile_location": "gadal_ieee123/profiles",
+          "opendss_location": "gadal_ieee123/qsts",
+          "sensor_location": "gadal_ieee123/sensors.json",
           "start_date": "2017-01-01 08:00:00",
           "number_of_timesteps": 8,
           "run_freq_sec": 3600,
           "start_time_index": 0,
           "topology_output": "topology.json",
           "use_sparse_admittance": true,
-          "name": "control",
-          "sensor_location": "\"\""
+          "name": "control"
         }
       },
       "events": {}
@@ -89,8 +89,8 @@
             "type": "source",
             "nodeId": "PnnlHubControlComponent-1781715791041",
             "position": "right",
-            "x": 112.99991365493233,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27.000015258789062,
             "width": 10,
             "height": 10
           }
@@ -101,8 +101,8 @@
             "type": "target",
             "nodeId": "PnnlHubControlComponent-1781715791041",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.000015258789062,
             "width": 10,
             "height": 10
           }
@@ -147,8 +147,8 @@
             "type": "source",
             "nodeId": "PnnlDopfAdmmComponent-1781715793462",
             "position": "right",
-            "x": 112.99991365493233,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27.000000715255737,
             "width": 10,
             "height": 10
           }
@@ -159,8 +159,8 @@
             "type": "target",
             "nodeId": "PnnlDopfAdmmComponent-1781715793462",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.000000715255737,
             "width": 10,
             "height": 10
           }
@@ -182,10 +182,11 @@
           "max_itr": 10,
           "control_type": "reactive",
           "switches": [
-            "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+            "sw2",
+            "sw3"
           ],
-          "source_bus": "P1UDT1431-P1UDT895X",
-          "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+          "source_bus": "150",
+          "source_line": "150",
           "rho_sup": 0,
           "rho_vup": 1000,
           "rho_sdn": 1000,
@@ -219,8 +220,8 @@
             "type": "source",
             "nodeId": "PnnlDopfAdmmComponent-1781715795518",
             "position": "right",
-            "x": 112.99991365493233,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -231,8 +232,8 @@
             "type": "target",
             "nodeId": "PnnlDopfAdmmComponent-1781715795518",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -254,11 +255,10 @@
           "max_itr": 10,
           "control_type": "reactive",
           "switches": [
-            "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-            "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+            "sw3"
           ],
-          "source_bus": "P1UDT894",
-          "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+          "source_bus": "sw3",
+          "source_line": "sw3",
           "rho_sup": 0,
           "rho_vup": 1000,
           "rho_sdn": 1000,
@@ -292,8 +292,8 @@
             "type": "source",
             "nodeId": "PnnlDopfAdmmComponent-1781715798479",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -304,8 +304,8 @@
             "type": "target",
             "nodeId": "PnnlDopfAdmmComponent-1781715798479",
             "position": "left",
-            "x": -2.999934414582811,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -327,11 +327,11 @@
           "max_itr": 10,
           "control_type": "reactive",
           "switches": [
-            "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-            "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+            "sw2",
+            "sw4"
           ],
-          "source_bus": "P1UDT1431-P1UDT895X",
-          "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+          "source_bus": "sw2",
+          "source_line": "sw2",
           "rho_sup": 0,
           "rho_vup": 1000,
           "rho_sdn": 1000,
@@ -365,8 +365,8 @@
             "type": "source",
             "nodeId": "PnnlDopfAdmmComponent-1781715801818",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -377,8 +377,8 @@
             "type": "target",
             "nodeId": "PnnlDopfAdmmComponent-1781715801818",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -400,10 +400,11 @@
           "max_itr": 10,
           "control_type": "reactive",
           "switches": [
-            "fuse(r:p1udt896-p1udt938)p1u_12096"
+            "sw4",
+            "sw5"
           ],
-          "source_bus": "P1UDT896-P1UDT938X",
-          "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+          "source_bus": "sw4",
+          "source_line": "sw4",
           "rho_sup": 0,
           "rho_vup": 1000,
           "rho_sdn": 1000,
@@ -437,8 +438,8 @@
             "type": "source",
             "nodeId": "PnnlDopfAdmmComponent-1781715817754",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -449,8 +450,8 @@
             "type": "target",
             "nodeId": "PnnlDopfAdmmComponent-1781715817754",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -472,11 +473,10 @@
           "max_itr": 10,
           "control_type": "reactive",
           "switches": [
-            "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-            "fuse(r:p1udt896-p1udt938)p1u_12096"
+            "sw5"
           ],
-          "source_bus": "P1UDT942-P1UHS0_1247X",
-          "source_line": "\"\"",
+          "source_bus": "sw5",
+          "source_line": "sw5",
           "rho_sup": 0,
           "rho_vup": 1000,
           "rho_sdn": 1000,
@@ -510,8 +510,8 @@
             "type": "source",
             "nodeId": "PnnlHubVoltageComponent-1782855584640",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 27.00008287166312,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -522,8 +522,8 @@
             "type": "target",
             "nodeId": "PnnlHubVoltageComponent-1782855584640",
             "position": "left",
-            "x": -2.999934414582811,
-            "y": 27.00008287166312,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -568,8 +568,8 @@
             "type": "source",
             "nodeId": "PnnlHubPowerComponent-1782855812303",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 26.999977693472836,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -580,8 +580,8 @@
             "type": "target",
             "nodeId": "PnnlHubPowerComponent-1782855812303",
             "position": "left",
-            "x": -2.999934414582811,
-            "y": 26.999977693472836,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -626,8 +626,8 @@
             "type": "source",
             "nodeId": "Recorder-1782856513204",
             "position": "right",
-            "x": 113.00008194003678,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -638,8 +638,8 @@
             "type": "target",
             "nodeId": "Recorder-1782856513204",
             "position": "left",
-            "x": -2.999934414582811,
-            "y": 26.999998729110892,
+            "x": -3.000030517578125,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -684,8 +684,8 @@
             "type": "source",
             "nodeId": "Recorder-1782856539915",
             "position": "right",
-            "x": 113.00008194003678,
-            "y": 26.999914586558663,
+            "x": 113,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -696,8 +696,8 @@
             "type": "target",
             "nodeId": "Recorder-1782856539915",
             "position": "left",
-            "x": -2.999934414582811,
-            "y": 26.999914586558663,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -742,8 +742,8 @@
             "type": "source",
             "nodeId": "Recorder-1782856579522",
             "position": "right",
-            "x": 112.99991365493233,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27.000001192092896,
             "width": 10,
             "height": 10
           }
@@ -754,8 +754,8 @@
             "type": "target",
             "nodeId": "Recorder-1782856579522",
             "position": "left",
-            "x": -3.000102699687267,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.000001192092896,
             "width": 10,
             "height": 10
           }
@@ -800,8 +800,8 @@
             "type": "source",
             "nodeId": "Recorder-1782856624781",
             "position": "right",
-            "x": 112.99991365493233,
-            "y": 26.999998729110892,
+            "x": 113,
+            "y": 27.00006103515625,
             "width": 10,
             "height": 10
           }
@@ -812,8 +812,8 @@
             "type": "target",
             "nodeId": "Recorder-1782856624781",
             "position": "left",
-            "x": -3.000102699687267,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.00006103515625,
             "width": 10,
             "height": 10
           }
@@ -858,8 +858,8 @@
             "type": "source",
             "nodeId": "Recorder-1782856699704",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 26.999914586558663,
+            "x": 113.00003051757812,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -870,8 +870,8 @@
             "type": "target",
             "nodeId": "Recorder-1782856699704",
             "position": "left",
-            "x": -3.000102699687267,
-            "y": 26.999914586558663,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -916,8 +916,8 @@
             "type": "source",
             "nodeId": "Feeder-1784653880439",
             "position": "right",
-            "x": 112.99995572620844,
-            "y": 26.999998729110892,
+            "x": 113.00000512599945,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -928,8 +928,8 @@
             "type": "target",
             "nodeId": "Feeder-1784653880439",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3.0000001192092896,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -948,18 +948,18 @@
         "label": "Feeder",
         "componentType": "Feeder",
         "config": {
-          "use_smartds": true,
+          "use_smartds": false,
           "user_uploads_model": false,
-          "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-          "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+          "profile_location": "gadal_ieee123/profiles",
+          "opendss_location": "gadal_ieee123/qsts",
+          "sensor_location": "gadal_ieee123/sensors.json",
           "start_date": "2017-01-01 08:00:00",
           "number_of_timesteps": 8,
           "run_freq_sec": 3600,
           "start_time_index": 0,
           "topology_output": "topology.json",
-          "use_sparse_admittance": true,
-          "name": "reference",
-          "sensor_location": "\"\""
+          "use_sparse_admittance": false,
+          "name": "reference"
         }
       },
       "events": {}
@@ -983,8 +983,8 @@
             "type": "source",
             "nodeId": "Recorder-1784653957890",
             "position": "right",
-            "x": 126.15619069363663,
-            "y": 27.00008287166312,
+            "x": 126.15625,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -995,8 +995,8 @@
             "type": "target",
             "nodeId": "Recorder-1784653957890",
             "position": "left",
-            "x": -2.999976485858925,
-            "y": 27.00008287166312,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1041,8 +1041,8 @@
             "type": "source",
             "nodeId": "Recorder-1784653987119",
             "position": "right",
-            "x": 134.49997652893992,
-            "y": 26.999914586558663,
+            "x": 134.50000953674316,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1053,8 +1053,8 @@
             "type": "target",
             "nodeId": "Recorder-1784653987119",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999914586558663,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1099,8 +1099,8 @@
             "type": "source",
             "nodeId": "Recorder-1784654004005",
             "position": "right",
-            "x": 124.82286781103267,
-            "y": 26.999914586558663,
+            "x": 124.82291603088379,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1111,8 +1111,8 @@
             "type": "target",
             "nodeId": "Recorder-1784654004005",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999914586558663,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1157,8 +1157,8 @@
             "type": "source",
             "nodeId": "Recorder-1784654010372",
             "position": "right",
-            "x": 133.16661157505985,
-            "y": 27.000167014215346,
+            "x": 133.1666717529297,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1169,8 +1169,8 @@
             "type": "target",
             "nodeId": "Recorder-1784654010372",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 27.000167014215346,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1215,8 +1215,8 @@
             "type": "source",
             "nodeId": "Recorder-1784654060575",
             "position": "right",
-            "x": 112.99995572620844,
-            "y": 26.999998729110892,
+            "x": 113.00000953674316,
+            "y": 27.000003814697266,
             "width": 10,
             "height": 10
           }
@@ -1227,8 +1227,8 @@
             "type": "target",
             "nodeId": "Recorder-1784654060575",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.000003814697266,
             "width": 10,
             "height": 10
           }
@@ -1273,8 +1273,8 @@
             "type": "source",
             "nodeId": "Recorder-1784654062173",
             "position": "right",
-            "x": 120.3020567649298,
-            "y": 26.999998729110892,
+            "x": 120.30208778381348,
+            "y": 27.000001430511475,
             "width": 10,
             "height": 10
           }
@@ -1285,8 +1285,8 @@
             "type": "target",
             "nodeId": "Recorder-1784654062173",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.000001430511475,
             "width": 10,
             "height": 10
           }
@@ -1331,8 +1331,8 @@
             "type": "source",
             "nodeId": "Recorder-1784654063584",
             "position": "right",
-            "x": 112.99999779748455,
-            "y": 26.999998729110892,
+            "x": 113.00000953674316,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1343,8 +1343,8 @@
             "type": "target",
             "nodeId": "Recorder-1784654063584",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27,
             "width": 10,
             "height": 10
           }
@@ -1389,8 +1389,8 @@
             "type": "source",
             "nodeId": "Recorder-1784654065192",
             "position": "right",
-            "x": 118.96869181104972,
-            "y": 26.999998729110892,
+            "x": 118.96875,
+            "y": 27.000001430511475,
             "width": 10,
             "height": 10
           }
@@ -1401,8 +1401,8 @@
             "type": "target",
             "nodeId": "Recorder-1784654065192",
             "position": "left",
-            "x": -3.000018557135039,
-            "y": 26.999998729110892,
+            "x": -3,
+            "y": 27.000001430511475,
             "width": 10,
             "height": 10
           }
@@ -1480,8 +1480,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -1492,8 +1492,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -1512,18 +1512,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -1547,8 +1547,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -1559,8 +1559,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -1582,10 +1582,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw3"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "150",
+            "source_line": "150",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -1600,10 +1601,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": 66.49998144286496,
-      "targetY": -52.25000127088911,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": 66.5,
+      "targetY": -52.24999928474426,
       "selected": false
     },
     {
@@ -1656,8 +1657,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -1668,8 +1669,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -1688,18 +1689,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -1723,8 +1724,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -1735,8 +1736,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -1758,11 +1759,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+              "sw3"
             ],
-            "source_bus": "P1UDT894",
-            "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+            "source_bus": "sw3",
+            "source_line": "sw3",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -1777,10 +1777,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": 72.49998144286496,
-      "targetY": 106.7499987291109,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": 72.5,
+      "targetY": 106.75,
       "selected": false
     },
     {
@@ -1833,8 +1833,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -1845,8 +1845,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -1865,18 +1865,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -1900,8 +1900,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -1912,8 +1912,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -1935,11 +1935,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw4"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "sw2",
+            "source_line": "sw2",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -1954,10 +1954,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": 81.00006558541719,
-      "targetY": 266.24999872911087,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": 81,
+      "targetY": 266.25,
       "selected": false
     },
     {
@@ -2010,8 +2010,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2022,8 +2022,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2042,18 +2042,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -2077,8 +2077,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2089,8 +2089,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2112,10 +2112,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw4",
+              "sw5"
             ],
-            "source_bus": "P1UDT896-P1UDT938X",
-            "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+            "source_bus": "sw4",
+            "source_line": "sw4",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -2130,10 +2131,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": 74.19751993579314,
-      "targetY": 439.60047702749694,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": 74.19753849292817,
+      "targetY": 439.60047829838607,
       "selected": false
     },
     {
@@ -2186,8 +2187,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2198,8 +2199,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2218,18 +2219,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -2253,8 +2254,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2265,8 +2266,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2288,11 +2289,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw5"
             ],
-            "source_bus": "P1UDT942-P1UHS0_1247X",
-            "source_line": "\"\"",
+            "source_bus": "sw5",
+            "source_line": "sw5",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -2307,10 +2307,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": 67.44277258522925,
-      "targetY": 602.9641608736308,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": 67.44279114236429,
+      "targetY": 602.96416214452,
       "selected": false
     },
     {
@@ -2348,8 +2348,8 @@
               "type": "source",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2360,8 +2360,8 @@
               "type": "target",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2406,8 +2406,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2418,8 +2418,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2438,26 +2438,26 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
       },
-      "sourceX": 512.7499136549324,
-      "sourceY": 220.2499987291109,
-      "targetX": -261.4999344145828,
-      "targetY": 222.99999872911087,
+      "sourceX": 512.75,
+      "sourceY": 220.25001525878906,
+      "targetX": -261.5,
+      "targetY": 223.00001525878903,
       "selected": false
     },
     {
@@ -2495,8 +2495,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -2507,8 +2507,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -2530,10 +2530,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw3"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "150",
+            "source_line": "150",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -2567,8 +2568,8 @@
               "type": "source",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2579,8 +2580,8 @@
               "type": "target",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2606,10 +2607,10 @@
         },
         "events": {}
       },
-      "sourceX": 192.49991365493233,
-      "sourceY": -52.25000127088911,
-      "targetX": 386.74998144286496,
-      "targetY": 220.2499987291109,
+      "sourceX": 192.5,
+      "sourceY": -52.24999928474426,
+      "targetX": 386.75,
+      "targetY": 220.25001525878906,
       "selected": false
     },
     {
@@ -2647,8 +2648,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2659,8 +2660,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2682,11 +2683,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+              "sw3"
             ],
-            "source_bus": "P1UDT894",
-            "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+            "source_bus": "sw3",
+            "source_line": "sw3",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -2720,8 +2720,8 @@
               "type": "source",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2732,8 +2732,8 @@
               "type": "target",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2759,10 +2759,10 @@
         },
         "events": {}
       },
-      "sourceX": 198.49991365493233,
-      "sourceY": 106.7499987291109,
-      "targetX": 386.74998144286496,
-      "targetY": 220.2499987291109,
+      "sourceX": 198.5,
+      "sourceY": 106.75,
+      "targetX": 386.75,
+      "targetY": 220.25001525878906,
       "selected": false
     },
     {
@@ -2800,8 +2800,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2812,8 +2812,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2835,11 +2835,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw4"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "sw2",
+            "source_line": "sw2",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -2873,8 +2873,8 @@
               "type": "source",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2885,8 +2885,8 @@
               "type": "target",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -2912,10 +2912,10 @@
         },
         "events": {}
       },
-      "sourceX": 206.99999779748455,
-      "sourceY": 266.24999872911087,
-      "targetX": 386.74998144286496,
-      "targetY": 220.2499987291109,
+      "sourceX": 207,
+      "sourceY": 266.25,
+      "targetX": 386.75,
+      "targetY": 220.25001525878906,
       "selected": false
     },
     {
@@ -2953,8 +2953,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2965,8 +2965,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -2988,10 +2988,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw4",
+              "sw5"
             ],
-            "source_bus": "P1UDT896-P1UDT938X",
-            "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+            "source_bus": "sw4",
+            "source_line": "sw4",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -3025,8 +3026,8 @@
               "type": "source",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -3037,8 +3038,8 @@
               "type": "target",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -3064,10 +3065,10 @@
         },
         "events": {}
       },
-      "sourceX": 200.19753629041273,
-      "sourceY": 439.60047702749694,
-      "targetX": 386.74998144286496,
-      "targetY": 220.2499987291109,
+      "sourceX": 200.19753849292817,
+      "sourceY": 439.60047829838607,
+      "targetX": 386.75,
+      "targetY": 220.25001525878906,
       "selected": false
     },
     {
@@ -3105,8 +3106,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3117,8 +3118,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3140,11 +3141,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw5"
             ],
-            "source_bus": "P1UDT942-P1UHS0_1247X",
-            "source_line": "\"\"",
+            "source_bus": "sw5",
+            "source_line": "sw5",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -3178,8 +3178,8 @@
               "type": "source",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -3190,8 +3190,8 @@
               "type": "target",
               "nodeId": "PnnlHubControlComponent-1781715791041",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -3217,10 +3217,10 @@
         },
         "events": {}
       },
-      "sourceX": 193.44278893984884,
-      "sourceY": 602.9641608736308,
-      "targetX": 386.74998144286496,
-      "targetY": 220.2499987291109,
+      "sourceX": 193.44279114236429,
+      "sourceY": 602.96416214452,
+      "targetX": 386.75,
+      "targetY": 220.25001525878906,
       "selected": false
     },
     {
@@ -3258,8 +3258,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3270,8 +3270,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3293,11 +3293,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw5"
             ],
-            "source_bus": "P1UDT942-P1UHS0_1247X",
-            "source_line": "\"\"",
+            "source_bus": "sw5",
+            "source_line": "sw5",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -3331,8 +3330,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3343,8 +3342,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3370,10 +3369,10 @@
         },
         "events": {}
       },
-      "sourceX": 193.44278893984884,
-      "sourceY": 602.9641608736308,
-      "targetX": -81.99993441458281,
-      "targetY": 715.1071639439231,
+      "sourceX": 193.44279114236429,
+      "sourceY": 602.96416214452,
+      "targetX": -82,
+      "targetY": 715.1070810722599,
       "selected": false
     },
     {
@@ -3411,8 +3410,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3423,8 +3422,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3446,10 +3445,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw4",
+              "sw5"
             ],
-            "source_bus": "P1UDT896-P1UDT938X",
-            "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+            "source_bus": "sw4",
+            "source_line": "sw4",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -3483,8 +3483,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3495,8 +3495,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3522,10 +3522,10 @@
         },
         "events": {}
       },
-      "sourceX": 200.19753629041273,
-      "sourceY": 439.60047702749694,
-      "targetX": -81.99993441458281,
-      "targetY": 715.1071639439231,
+      "sourceX": 200.19753849292817,
+      "sourceY": 439.60047829838607,
+      "targetX": -82,
+      "targetY": 715.1070810722599,
       "selected": false
     },
     {
@@ -3563,8 +3563,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3575,8 +3575,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3598,11 +3598,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw4"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "sw2",
+            "source_line": "sw2",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -3636,8 +3636,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3648,8 +3648,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3675,10 +3675,10 @@
         },
         "events": {}
       },
-      "sourceX": 206.99999779748455,
-      "sourceY": 266.24999872911087,
-      "targetX": -81.99993441458281,
-      "targetY": 715.1071639439231,
+      "sourceX": 207,
+      "sourceY": 266.25,
+      "targetX": -82,
+      "targetY": 715.1070810722599,
       "selected": false
     },
     {
@@ -3716,8 +3716,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3728,8 +3728,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3751,11 +3751,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+              "sw3"
             ],
-            "source_bus": "P1UDT894",
-            "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+            "source_bus": "sw3",
+            "source_line": "sw3",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -3789,8 +3788,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3801,8 +3800,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3828,10 +3827,10 @@
         },
         "events": {}
       },
-      "sourceX": 198.49991365493233,
-      "sourceY": 106.7499987291109,
-      "targetX": -81.99993441458281,
-      "targetY": 715.1071639439231,
+      "sourceX": 198.5,
+      "sourceY": 106.75,
+      "targetX": -82,
+      "targetY": 715.1070810722599,
       "selected": false
     },
     {
@@ -3869,8 +3868,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -3881,8 +3880,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -3904,10 +3903,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw3"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "150",
+            "source_line": "150",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -3941,8 +3941,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3953,8 +3953,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -3980,10 +3980,10 @@
         },
         "events": {}
       },
-      "sourceX": 192.49991365493233,
-      "sourceY": -52.25000127088911,
-      "targetX": -81.99993441458281,
-      "targetY": 715.1071639439231,
+      "sourceX": 192.5,
+      "sourceY": -52.24999928474426,
+      "targetX": -82,
+      "targetY": 715.1070810722599,
       "selected": false
     },
     {
@@ -4026,8 +4026,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -4038,8 +4038,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -4061,10 +4061,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw3"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "150",
+            "source_line": "150",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -4098,8 +4099,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4110,8 +4111,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4137,10 +4138,10 @@
         },
         "events": {}
       },
-      "sourceX": 192.49991365493233,
-      "sourceY": -52.25000127088911,
-      "targetX": -100.74993441458281,
-      "targetY": -214.89294123426725,
+      "sourceX": 192.5,
+      "sourceY": -52.24999928474426,
+      "targetX": -100.75,
+      "targetY": -214.89291892774008,
       "selected": false
     },
     {
@@ -4178,8 +4179,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4190,8 +4191,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4236,8 +4237,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4248,8 +4249,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4271,11 +4272,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw5"
             ],
-            "source_bus": "P1UDT942-P1UHS0_1247X",
-            "source_line": "\"\"",
+            "source_bus": "sw5",
+            "source_line": "sw5",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -4290,10 +4290,10 @@
         },
         "events": {}
       },
-      "sourceX": 43.99999779748455,
-      "sourceY": 715.1071639439231,
-      "targetX": 67.44277258522925,
-      "targetY": 602.9641608736308,
+      "sourceX": 44,
+      "sourceY": 715.1070810722599,
+      "targetX": 67.44279114236429,
+      "targetY": 602.96416214452,
       "selected": false
     },
     {
@@ -4331,8 +4331,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4343,8 +4343,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4389,8 +4389,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4401,8 +4401,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4424,10 +4424,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw4",
+              "sw5"
             ],
-            "source_bus": "P1UDT896-P1UDT938X",
-            "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+            "source_bus": "sw4",
+            "source_line": "sw4",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -4442,10 +4443,10 @@
         },
         "events": {}
       },
-      "sourceX": 43.99999779748455,
-      "sourceY": 715.1071639439231,
-      "targetX": 74.19751993579314,
-      "targetY": 439.60047702749694,
+      "sourceX": 44,
+      "sourceY": 715.1070810722599,
+      "targetX": 74.19753849292817,
+      "targetY": 439.60047829838607,
       "selected": false
     },
     {
@@ -4483,8 +4484,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4495,8 +4496,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4541,8 +4542,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4553,8 +4554,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4576,11 +4577,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw4"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "sw2",
+            "source_line": "sw2",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -4595,10 +4596,10 @@
         },
         "events": {}
       },
-      "sourceX": 43.99999779748455,
-      "sourceY": 715.1071639439231,
-      "targetX": 81.00006558541719,
-      "targetY": 266.24999872911087,
+      "sourceX": 44,
+      "sourceY": 715.1070810722599,
+      "targetX": 81,
+      "targetY": 266.25,
       "selected": false
     },
     {
@@ -4636,8 +4637,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4648,8 +4649,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4694,8 +4695,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4706,8 +4707,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4729,11 +4730,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+              "sw3"
             ],
-            "source_bus": "P1UDT894",
-            "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+            "source_bus": "sw3",
+            "source_line": "sw3",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -4748,10 +4748,10 @@
         },
         "events": {}
       },
-      "sourceX": 43.99999779748455,
-      "sourceY": 715.1071639439231,
-      "targetX": 72.49998144286496,
-      "targetY": 106.7499987291109,
+      "sourceX": 44,
+      "sourceY": 715.1070810722599,
+      "targetX": 72.5,
+      "targetY": 106.75,
       "selected": false
     },
     {
@@ -4789,8 +4789,8 @@
               "type": "source",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 27.00008287166312,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4801,8 +4801,8 @@
               "type": "target",
               "nodeId": "PnnlHubVoltageComponent-1782855584640",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4847,8 +4847,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -4859,8 +4859,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -4882,10 +4882,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw3"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "150",
+            "source_line": "150",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -4900,10 +4901,10 @@
         },
         "events": {}
       },
-      "sourceX": 43.99999779748455,
-      "sourceY": 715.1071639439231,
-      "targetX": 66.49998144286496,
-      "targetY": -52.25000127088911,
+      "sourceX": 44,
+      "sourceY": 715.1070810722599,
+      "targetX": 66.5,
+      "targetY": -52.24999928474426,
       "selected": false
     },
     {
@@ -4946,8 +4947,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -4958,8 +4959,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5004,8 +5005,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -5016,8 +5017,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -5039,10 +5040,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw3"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "150",
+            "source_line": "150",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -5057,10 +5059,10 @@
         },
         "events": {}
       },
-      "sourceX": 25.249997797484554,
-      "sourceY": -214.89294123426725,
-      "targetX": 66.49998144286496,
-      "targetY": -52.25000127088911,
+      "sourceX": 25.25,
+      "sourceY": -214.89291892774008,
+      "targetX": 66.5,
+      "targetY": -52.24999928474426,
       "selected": false
     },
     {
@@ -5103,8 +5105,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5115,8 +5117,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5161,8 +5163,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5173,8 +5175,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5196,11 +5198,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+              "sw3"
             ],
-            "source_bus": "P1UDT894",
-            "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+            "source_bus": "sw3",
+            "source_line": "sw3",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -5215,10 +5216,10 @@
         },
         "events": {}
       },
-      "sourceX": 25.249997797484554,
-      "sourceY": -214.89294123426725,
-      "targetX": 72.49998144286496,
-      "targetY": 106.7499987291109,
+      "sourceX": 25.25,
+      "sourceY": -214.89291892774008,
+      "targetX": 72.5,
+      "targetY": 106.75,
       "selected": false
     },
     {
@@ -5261,8 +5262,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5273,8 +5274,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5296,11 +5297,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+              "sw3"
             ],
-            "source_bus": "P1UDT894",
-            "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+            "source_bus": "sw3",
+            "source_line": "sw3",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -5334,8 +5334,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5346,8 +5346,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5373,10 +5373,10 @@
         },
         "events": {}
       },
-      "sourceX": 198.49991365493233,
-      "sourceY": 106.7499987291109,
-      "targetX": -100.74993441458281,
-      "targetY": -214.89294123426725,
+      "sourceX": 198.5,
+      "sourceY": 106.75,
+      "targetX": -100.75,
+      "targetY": -214.89291892774008,
       "selected": false
     },
     {
@@ -5419,8 +5419,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5431,8 +5431,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5454,11 +5454,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw4"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "sw2",
+            "source_line": "sw2",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -5492,8 +5492,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5504,8 +5504,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5531,10 +5531,10 @@
         },
         "events": {}
       },
-      "sourceX": 206.99999779748455,
-      "sourceY": 266.24999872911087,
-      "targetX": -100.74993441458281,
-      "targetY": -214.89294123426725,
+      "sourceX": 207,
+      "sourceY": 266.25,
+      "targetX": -100.75,
+      "targetY": -214.89291892774008,
       "selected": false
     },
     {
@@ -5577,8 +5577,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5589,8 +5589,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5635,8 +5635,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5647,8 +5647,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5670,11 +5670,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw4"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "sw2",
+            "source_line": "sw2",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -5689,10 +5689,10 @@
         },
         "events": {}
       },
-      "sourceX": 25.249997797484554,
-      "sourceY": -214.89294123426725,
-      "targetX": 81.00006558541719,
-      "targetY": 266.24999872911087,
+      "sourceX": 25.25,
+      "sourceY": -214.89291892774008,
+      "targetX": 81,
+      "targetY": 266.25,
       "selected": false
     },
     {
@@ -5735,8 +5735,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5747,8 +5747,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5793,8 +5793,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5805,8 +5805,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5828,10 +5828,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw4",
+              "sw5"
             ],
-            "source_bus": "P1UDT896-P1UDT938X",
-            "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+            "source_bus": "sw4",
+            "source_line": "sw4",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -5846,10 +5847,10 @@
         },
         "events": {}
       },
-      "sourceX": 25.249997797484554,
-      "sourceY": -214.89294123426725,
-      "targetX": 74.19751993579314,
-      "targetY": 439.60047702749694,
+      "sourceX": 25.25,
+      "sourceY": -214.89291892774008,
+      "targetX": 74.19753849292817,
+      "targetY": 439.60047829838607,
       "selected": false
     },
     {
@@ -5892,8 +5893,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5904,8 +5905,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5927,10 +5928,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw4",
+              "sw5"
             ],
-            "source_bus": "P1UDT896-P1UDT938X",
-            "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+            "source_bus": "sw4",
+            "source_line": "sw4",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -5964,8 +5966,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -5976,8 +5978,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6003,10 +6005,10 @@
         },
         "events": {}
       },
-      "sourceX": 200.19753629041273,
-      "sourceY": 439.60047702749694,
-      "targetX": -100.74993441458281,
-      "targetY": -214.89294123426725,
+      "sourceX": 200.19753849292817,
+      "sourceY": 439.60047829838607,
+      "targetX": -100.75,
+      "targetY": -214.89291892774008,
       "selected": false
     },
     {
@@ -6049,8 +6051,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6061,8 +6063,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6084,11 +6086,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw5"
             ],
-            "source_bus": "P1UDT942-P1UHS0_1247X",
-            "source_line": "\"\"",
+            "source_bus": "sw5",
+            "source_line": "sw5",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -6122,8 +6123,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6134,8 +6135,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6161,10 +6162,10 @@
         },
         "events": {}
       },
-      "sourceX": 193.44278893984884,
-      "sourceY": 602.9641608736308,
-      "targetX": -100.74993441458281,
-      "targetY": -214.89294123426725,
+      "sourceX": 193.44279114236429,
+      "sourceY": 602.96416214452,
+      "targetX": -100.75,
+      "targetY": -214.89291892774008,
       "selected": false
     },
     {
@@ -6207,8 +6208,8 @@
               "type": "source",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999977693472836,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6219,8 +6220,8 @@
               "type": "target",
               "nodeId": "PnnlHubPowerComponent-1782855812303",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999977693472836,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6265,8 +6266,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6277,8 +6278,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6300,11 +6301,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw5"
             ],
-            "source_bus": "P1UDT942-P1UHS0_1247X",
-            "source_line": "\"\"",
+            "source_bus": "sw5",
+            "source_line": "sw5",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -6319,10 +6319,10 @@
         },
         "events": {}
       },
-      "sourceX": 25.249997797484554,
-      "sourceY": -214.89294123426725,
-      "targetX": 67.44277258522925,
-      "targetY": 602.9641608736308,
+      "sourceX": 25.25,
+      "sourceY": -214.89291892774008,
+      "targetX": 67.44279114236429,
+      "targetY": 602.96416214452,
       "selected": false
     },
     {
@@ -6360,8 +6360,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -6372,8 +6372,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715793462",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000000715255737,
               "width": 10,
               "height": 10
             }
@@ -6395,10 +6395,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw3"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "150",
+            "source_line": "150",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -6432,8 +6433,8 @@
               "type": "source",
               "nodeId": "Recorder-1782856513204",
               "position": "right",
-              "x": 113.00008194003678,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6444,8 +6445,8 @@
               "type": "target",
               "nodeId": "Recorder-1782856513204",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3.000030517578125,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6471,10 +6472,10 @@
         },
         "events": {}
       },
-      "sourceX": 192.49991365493233,
-      "sourceY": -52.25000127088911,
-      "targetX": 255.56521733121633,
-      "targetY": -120.69444574310157,
+      "sourceX": 192.5,
+      "sourceY": -52.24999928474426,
+      "targetX": 255.56512122822102,
+      "targetY": -120.69444447221247,
       "selected": false
     },
     {
@@ -6512,8 +6513,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6524,8 +6525,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715795518",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6547,11 +6548,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266"
+              "sw3"
             ],
-            "source_bus": "P1UDT894",
-            "source_line": "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
+            "source_bus": "sw3",
+            "source_line": "sw3",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -6585,8 +6585,8 @@
               "type": "source",
               "nodeId": "Recorder-1782856579522",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000001192092896,
               "width": 10,
               "height": 10
             }
@@ -6597,8 +6597,8 @@
               "type": "target",
               "nodeId": "Recorder-1782856579522",
               "position": "left",
-              "x": -3.000102699687267,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000001192092896,
               "width": 10,
               "height": 10
             }
@@ -6624,10 +6624,10 @@
         },
         "events": {}
       },
-      "sourceX": 198.49991365493233,
-      "sourceY": 106.7499987291109,
-      "targetX": 254.11219874564318,
-      "targetY": -26.930727203180943,
+      "sourceX": 198.5,
+      "sourceY": 106.75,
+      "targetX": 254.11230144533044,
+      "targetY": -26.93072474019894,
       "selected": false
     },
     {
@@ -6665,8 +6665,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6677,8 +6677,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715798479",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6700,11 +6700,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "goab_disswitch(r:p1udt894-p1udt895)p1u_12238",
-              "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316"
+              "sw2",
+              "sw4"
             ],
-            "source_bus": "P1UDT1431-P1UDT895X",
-            "source_line": "goab_disswitch(r:p1udt1431-p1udt895)p1u_12316",
+            "source_bus": "sw2",
+            "source_line": "sw2",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -6738,8 +6738,8 @@
               "type": "source",
               "nodeId": "Recorder-1782856539915",
               "position": "right",
-              "x": 113.00008194003678,
-              "y": 26.999914586558663,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6750,8 +6750,8 @@
               "type": "target",
               "nodeId": "Recorder-1782856539915",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999914586558663,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6777,10 +6777,10 @@
         },
         "events": {}
       },
-      "sourceX": 206.99999779748455,
-      "sourceY": 266.24999872911087,
-      "targetX": 253.35104565673652,
-      "targetY": 54.68506487650505,
+      "sourceX": 207,
+      "sourceY": 266.25,
+      "targetX": 253.35098007131933,
+      "targetY": 54.68515028994639,
       "selected": false
     },
     {
@@ -6818,8 +6818,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6830,8 +6830,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715801818",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6853,10 +6853,11 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw4",
+              "sw5"
             ],
-            "source_bus": "P1UDT896-P1UDT938X",
-            "source_line": "fuse(r:p1udt896-p1udt938)p1u_12096",
+            "source_bus": "sw4",
+            "source_line": "sw4",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -6890,8 +6891,8 @@
               "type": "source",
               "nodeId": "Recorder-1782856624781",
               "position": "right",
-              "x": 112.99991365493233,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.00006103515625,
               "width": 10,
               "height": 10
             }
@@ -6902,8 +6903,8 @@
               "type": "target",
               "nodeId": "Recorder-1782856624781",
               "position": "left",
-              "x": -3.000102699687267,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.00006103515625,
               "width": 10,
               "height": 10
             }
@@ -6929,10 +6930,10 @@
         },
         "events": {}
       },
-      "sourceX": 200.19753629041273,
-      "sourceY": 439.60047702749694,
-      "targetX": 241.2437915343919,
-      "targetY": 634.0201239057022,
+      "sourceX": 200.19753849292817,
+      "sourceY": 439.60047829838607,
+      "targetX": 241.24389423407916,
+      "targetY": 634.0201862117476,
       "selected": false
     },
     {
@@ -6970,8 +6971,8 @@
               "type": "source",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -6982,8 +6983,8 @@
               "type": "target",
               "nodeId": "PnnlDopfAdmmComponent-1781715817754",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7005,11 +7006,10 @@
             "max_itr": 10,
             "control_type": "reactive",
             "switches": [
-              "recloser_disswitch(r:p1udt894-p1udt942)p1u_12266",
-              "fuse(r:p1udt896-p1udt938)p1u_12096"
+              "sw5"
             ],
-            "source_bus": "P1UDT942-P1UHS0_1247X",
-            "source_line": "\"\"",
+            "source_bus": "sw5",
+            "source_line": "sw5",
             "rho_sup": 0,
             "rho_vup": 1000,
             "rho_sdn": 1000,
@@ -7043,8 +7043,8 @@
               "type": "source",
               "nodeId": "Recorder-1782856699704",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999914586558663,
+              "x": 113.00003051757812,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7055,8 +7055,8 @@
               "type": "target",
               "nodeId": "Recorder-1782856699704",
               "position": "left",
-              "x": -3.000102699687267,
-              "y": 26.999914586558663,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7082,10 +7082,10 @@
         },
         "events": {}
       },
-      "sourceX": 193.44278893984884,
-      "sourceY": 602.9641608736308,
-      "targetX": 239.08076561262243,
-      "targetY": 713.421744310908,
+      "sourceX": 193.44279114236429,
+      "sourceY": 602.96416214452,
+      "targetX": 239.0808683123097,
+      "targetY": 713.4218297243493,
       "selected": false
     },
     {
@@ -7123,8 +7123,8 @@
               "type": "source",
               "nodeId": "Feeder-1784653880439",
               "position": "right",
-              "x": 112.99995572620844,
-              "y": 26.999998729110892,
+              "x": 113.00000512599945,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7135,8 +7135,8 @@
               "type": "target",
               "nodeId": "Feeder-1784653880439",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3.0000001192092896,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7155,18 +7155,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
-            "use_sparse_admittance": true,
-            "name": "reference",
-            "sensor_location": "\"\""
+            "use_sparse_admittance": false,
+            "name": "reference"
           }
         },
         "events": {}
@@ -7190,8 +7190,8 @@
               "type": "source",
               "nodeId": "Recorder-1784653957890",
               "position": "right",
-              "x": 126.15619069363663,
-              "y": 27.00008287166312,
+              "x": 126.15625,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7202,8 +7202,8 @@
               "type": "target",
               "nodeId": "Recorder-1784653957890",
               "position": "left",
-              "x": -2.999976485858925,
-              "y": 27.00008287166312,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7229,10 +7229,10 @@
         },
         "events": {}
       },
-      "sourceX": -134.2240657511445,
-      "sourceY": 320.5090797612551,
-      "targetX": -238.34573162816875,
-      "targetY": 590.4502873561391,
+      "sourceX": -134.2240163513535,
+      "sourceY": 320.50908103214425,
+      "targetX": -238.34575514230983,
+      "targetY": 590.450204484476,
       "selected": false
     },
     {
@@ -7270,8 +7270,8 @@
               "type": "source",
               "nodeId": "Feeder-1784653880439",
               "position": "right",
-              "x": 112.99995572620844,
-              "y": 26.999998729110892,
+              "x": 113.00000512599945,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7282,8 +7282,8 @@
               "type": "target",
               "nodeId": "Feeder-1784653880439",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3.0000001192092896,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7302,18 +7302,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
-            "use_sparse_admittance": true,
-            "name": "reference",
-            "sensor_location": "\"\""
+            "use_sparse_admittance": false,
+            "name": "reference"
           }
         },
         "events": {}
@@ -7337,8 +7337,8 @@
               "type": "source",
               "nodeId": "Recorder-1784653987119",
               "position": "right",
-              "x": 134.49997652893992,
-              "y": 26.999914586558663,
+              "x": 134.50000953674316,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7349,8 +7349,8 @@
               "type": "target",
               "nodeId": "Recorder-1784653987119",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999914586558663,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7376,10 +7376,10 @@
         },
         "events": {}
       },
-      "sourceX": -134.2240657511445,
-      "sourceY": 320.5090797612551,
-      "targetX": -244.0951582673081,
-      "targetY": 519.7316580067732,
+      "sourceX": -134.2240163513535,
+      "sourceY": 320.50908103214425,
+      "targetX": -244.09513971017307,
+      "targetY": 519.7317434202146,
       "selected": false
     },
     {
@@ -7417,8 +7417,8 @@
               "type": "source",
               "nodeId": "Feeder-1784653880439",
               "position": "right",
-              "x": 112.99995572620844,
-              "y": 26.999998729110892,
+              "x": 113.00000512599945,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7429,8 +7429,8 @@
               "type": "target",
               "nodeId": "Feeder-1784653880439",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3.0000001192092896,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7449,18 +7449,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
-            "use_sparse_admittance": true,
-            "name": "reference",
-            "sensor_location": "\"\""
+            "use_sparse_admittance": false,
+            "name": "reference"
           }
         },
         "events": {}
@@ -7484,8 +7484,8 @@
               "type": "source",
               "nodeId": "Recorder-1784654004005",
               "position": "right",
-              "x": 124.82286781103267,
-              "y": 26.999914586558663,
+              "x": 124.82291603088379,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7496,8 +7496,8 @@
               "type": "target",
               "nodeId": "Recorder-1784654004005",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999914586558663,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7523,10 +7523,10 @@
         },
         "events": {}
       },
-      "sourceX": -134.2240657511445,
-      "sourceY": 320.5090797612551,
-      "targetX": -396.7242506796597,
-      "targetY": 594.5795220096285,
+      "sourceX": -134.2240163513535,
+      "sourceY": 320.50908103214425,
+      "targetX": -396.72423212252465,
+      "targetY": 594.5796074230698,
       "selected": false
     },
     {
@@ -7564,8 +7564,8 @@
               "type": "source",
               "nodeId": "Feeder-1784653880439",
               "position": "right",
-              "x": 112.99995572620844,
-              "y": 26.999998729110892,
+              "x": 113.00000512599945,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7576,8 +7576,8 @@
               "type": "target",
               "nodeId": "Feeder-1784653880439",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3.0000001192092896,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7596,18 +7596,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
-            "use_sparse_admittance": true,
-            "name": "reference",
-            "sensor_location": "\"\""
+            "use_sparse_admittance": false,
+            "name": "reference"
           }
         },
         "events": {}
@@ -7631,8 +7631,8 @@
               "type": "source",
               "nodeId": "Recorder-1784654010372",
               "position": "right",
-              "x": 133.16661157505985,
-              "y": 27.000167014215346,
+              "x": 133.1666717529297,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7643,8 +7643,8 @@
               "type": "target",
               "nodeId": "Recorder-1784654010372",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 27.000167014215346,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -7670,10 +7670,10 @@
         },
         "events": {}
       },
-      "sourceX": -134.2240657511445,
-      "sourceY": 320.5090797612551,
-      "targetX": -407.2565197004402,
-      "targetY": 524.8469577235744,
+      "sourceX": -134.2240163513535,
+      "sourceY": 320.50908103214425,
+      "targetX": -407.2565011433052,
+      "targetY": 524.8467907093591,
       "selected": false
     },
     {
@@ -7711,8 +7711,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -7723,8 +7723,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -7743,18 +7743,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -7778,8 +7778,8 @@
               "type": "source",
               "nodeId": "Recorder-1784654060575",
               "position": "right",
-              "x": 112.99995572620844,
-              "y": 26.999998729110892,
+              "x": 113.00000953674316,
+              "y": 27.000003814697266,
               "width": 10,
               "height": 10
             }
@@ -7790,8 +7790,8 @@
               "type": "target",
               "nodeId": "Recorder-1784654060575",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000003814697266,
               "width": 10,
               "height": 10
             }
@@ -7817,10 +7817,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": -237.35455762705521,
-      "targetY": 32.73071224692344,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": -237.35453906992018,
+      "targetY": 32.73071733250981,
       "selected": false
     },
     {
@@ -7858,8 +7858,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -7870,8 +7870,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -7890,18 +7890,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -7925,8 +7925,8 @@
               "type": "source",
               "nodeId": "Recorder-1784654062173",
               "position": "right",
-              "x": 120.3020567649298,
-              "y": 26.999998729110892,
+              "x": 120.30208778381348,
+              "y": 27.000001430511475,
               "width": 10,
               "height": 10
             }
@@ -7937,8 +7937,8 @@
               "type": "target",
               "nodeId": "Recorder-1784654062173",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000001430511475,
               "width": 10,
               "height": 10
             }
@@ -7964,10 +7964,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": -239.35455762705521,
-      "targetY": -34.81111139672522,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": -239.35453906992018,
+      "targetY": -34.811108695324634,
       "selected": false
     },
     {
@@ -8005,8 +8005,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -8017,8 +8017,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -8037,18 +8037,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -8072,8 +8072,8 @@
               "type": "source",
               "nodeId": "Recorder-1784654063584",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113.00000953674316,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -8084,8 +8084,8 @@
               "type": "target",
               "nodeId": "Recorder-1784654063584",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27,
               "width": 10,
               "height": 10
             }
@@ -8111,10 +8111,10 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": -400.7181227965385,
-      "targetY": 34.46489080704266,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": -400.7181042394035,
+      "targetY": 34.464892077931765,
       "selected": false
     },
     {
@@ -8152,8 +8152,8 @@
               "type": "source",
               "nodeId": "Feeder-1781715779030",
               "position": "right",
-              "x": 112.99999779748455,
-              "y": 26.999998729110892,
+              "x": 113,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -8164,8 +8164,8 @@
               "type": "target",
               "nodeId": "Feeder-1781715779030",
               "position": "left",
-              "x": -2.999934414582811,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000015258789062,
               "width": 10,
               "height": 10
             }
@@ -8184,18 +8184,18 @@
           "label": "Feeder",
           "componentType": "Feeder",
           "config": {
-            "use_smartds": true,
+            "use_smartds": false,
             "user_uploads_model": false,
-            "profile_location": "SMART-DS/v1.0/2018/SFO/P1U/profiles",
-            "opendss_location": "SMART-DS/v1.0/2018/SFO/P1U/scenarios/solar_extreme_batteries_none_timeseries/opendss/p1uhs0_1247/p1uhs0_1247--p1udt942",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
             "start_date": "2017-01-01 08:00:00",
             "number_of_timesteps": 8,
             "run_freq_sec": 3600,
             "start_time_index": 0,
             "topology_output": "topology.json",
             "use_sparse_admittance": true,
-            "name": "control",
-            "sensor_location": "\"\""
+            "name": "control"
           }
         },
         "events": {}
@@ -8219,8 +8219,8 @@
               "type": "source",
               "nodeId": "Recorder-1784654065192",
               "position": "right",
-              "x": 118.96869181104972,
-              "y": 26.999998729110892,
+              "x": 118.96875,
+              "y": 27.000001430511475,
               "width": 10,
               "height": 10
             }
@@ -8231,8 +8231,8 @@
               "type": "target",
               "nodeId": "Recorder-1784654065192",
               "position": "left",
-              "x": -3.000018557135039,
-              "y": 26.999998729110892,
+              "x": -3,
+              "y": 27.000001430511475,
               "width": 10,
               "height": 10
             }
@@ -8258,12 +8258,12 @@
         },
         "events": {}
       },
-      "sourceX": -135.50000220251545,
-      "sourceY": 222.99999872911087,
-      "targetX": -406.74099245757196,
-      "targetY": -34.986237328156086,
+      "sourceX": -135.5,
+      "sourceY": 223.00001525878903,
+      "targetX": -406.7409739004369,
+      "targetY": -34.986234626755504,
       "selected": false
     }
   ],
-  "createdAt": "2026-07-22T20:52:05.394Z"
+  "createdAt": "2026-07-23T17:36:14.703Z"
 }
