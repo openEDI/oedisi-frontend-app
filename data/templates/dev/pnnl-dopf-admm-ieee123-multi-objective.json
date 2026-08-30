@@ -1,7 +1,7 @@
 {
-  "id": "pnnl-dopf-admm-ieee123",
-  "name": "pnnl-dopf-admm-ieee123",
-  "description": "Microgrid DOPF using relaxed EnAPP version of ADMM",
+  "id": "pnnl-dopf-admm-ieee123-multi-objective",
+  "name": "pnnl-dopf-admm-ieee123-multi-objective",
+  "description": "Microgrid DOPF using relaxed EnAPP version of ADMM with multi-objective optimization",
   "nodes": [
     {
       "id": "Feeder-1781715779030",
@@ -196,7 +196,7 @@
           "deltat": 3600,
           "relaxed": false,
           "number_of_timesteps": 8,
-          "objective": "maximize_gen"
+          "objective": "minimize_loss"
         }
       },
       "events": {}
@@ -268,7 +268,7 @@
           "deltat": 3600,
           "relaxed": false,
           "number_of_timesteps": 8,
-          "objective": "maximize_gen"
+          "objective": "minimize_curtail"
         }
       },
       "events": {}
@@ -414,7 +414,7 @@
           "deltat": 3600,
           "relaxed": false,
           "number_of_timesteps": 8,
-          "objective": "maximize_gen"
+          "objective": "minimize_load"
         }
       },
       "events": {}
