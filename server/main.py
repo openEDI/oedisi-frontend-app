@@ -10,8 +10,6 @@ groups:
 See `CLAUDE.md` in this folder for the design rationale.
 """
 
-from __future__ import annotations
-
 import asyncio
 import json
 import logging
@@ -42,6 +40,7 @@ from fastapi import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from jupyter_server.services.contents.filemanager import FileContentsManager
 from oedisi.componentframework.basic_component import (
     ComponentDescription,
     basic_component,
@@ -51,6 +50,7 @@ from oedisi.componentframework.system_configuration import (
     generate_runner_config,
 )
 from pydantic import ConfigDict
+from tornado.web import HTTPError
 
 from output_annotations import OutputsList, annotate_outputs
 
@@ -166,6 +166,19 @@ def _check_components_env() -> None:
 JUPYTER_PORT = int(os.environ.get("OEDISI_JUPYTER_PORT", "8888"))
 
 
+class ReadOnlyContentsManager(FileContentsManager):
+    """Prevent notebook and file mutations in multi-user mode."""
+
+    def _reject_write(self, *args: Any, **kwargs: Any) -> None:
+        raise HTTPError(403, "Jupyter contents are read-only in multi-user mode")
+
+    save = _reject_write
+    delete_file = _reject_write
+    rename_file = _reject_write
+    copy = _reject_write
+    new_untitled = _reject_write
+
+
 async def _start_jupyter() -> asyncio.subprocess.Process | None:
     """Start a JupyterLab server as a background subprocess.
 
@@ -188,6 +201,8 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
         "--ServerApp.base_url=/jupyter/",
         "--ServerApp.disable_check_xsrf=True",
     ]
+    if os.environ.get("OEDISI_MULTI_USER"):
+        cmd.append("--ServerApp.contents_manager_class=main.ReadOnlyContentsManager")
     try:
         proc = await asyncio.create_subprocess_exec(
             *cmd,
@@ -636,7 +651,7 @@ async def start_run(
 
     run_id = uuid.uuid4().hex
     run_dir = _user_runs_dir(user) / run_id
-    build_dir = run_dir / "build"
+    data_dir = run_dir
 
     try:
         build_runner(wiring_diagram, build_dir)
@@ -978,7 +993,7 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
         if cell.cell_type == "code" and "DATA_DIR" in cell.source:
             cell.source = re.sub(
                 r'DATA_DIR\s*=\s*r?"[^"]*"',
-                f'DATA_DIR = r"{build_dir}"',
+                f'DATA_DIR = r"{data_dir}"',
                 cell.source,
             )
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -1019,7 +1034,7 @@ def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
             "jupyter_url": _jupyter_notebook_url(user, run_id),
         }
     # Fallback: create blank
-    nb = _make_blank_notebook(run_dir / "build")
+    nb = _make_blank_notebook(run_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
     nbformat.write(nb, str(path))
     return {

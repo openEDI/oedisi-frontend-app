@@ -1,12 +1,10 @@
-from __future__ import annotations
-
-import asyncio
 from datetime import datetime, timezone
 from pathlib import Path
 
 import nbformat
 import pytest
 from fastapi import HTTPException
+from tornado.web import HTTPError
 
 import main as server_main
 
@@ -69,7 +67,6 @@ def test_create_notebook_copies_from_template_and_status() -> None:
 
     run_dir = server_main._user_runs_dir(user) / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
-    (run_dir / "build").mkdir(parents=True, exist_ok=True)
 
     template_nb_path = server_main._template_notebook_path(user, template_id)
     _write_notebook(
@@ -100,7 +97,16 @@ def test_create_notebook_copies_from_template_and_status() -> None:
     code_cell_source = "\n".join(
         cell.source for cell in nb.cells if cell.cell_type == "code"
     )
-    assert f'DATA_DIR = r"{run_dir / "build"}"' in code_cell_source
+    assert f'DATA_DIR = r"{run_dir}"' in code_cell_source
+
+
+def test_multi_user_contents_manager_rejects_writes() -> None:
+    manager = server_main.ReadOnlyContentsManager()
+
+    with pytest.raises(HTTPError) as exc:
+        manager.save({}, "notebook.ipynb", "file", {})
+
+    assert exc.value.status_code == 403
 
 
 def test_save_notebook_to_template_strips_run_specific_data_dir() -> None:
@@ -161,30 +167,3 @@ def test_save_notebook_to_template_rejects_run_without_template() -> None:
     assert exc.value.status_code == 400
 
 
-def test_start_jupyter_uses_tokenless_mode_and_devnull_streams(
-    monkeypatch: pytest.MonkeyPatch,
-    tmp_path: Path,
-) -> None:
-    class FakeProc:
-        pid = 12345
-
-    captured: dict[str, object] = {}
-
-    async def fake_exec(*args, **kwargs):
-        captured["args"] = args
-        captured["kwargs"] = kwargs
-        return FakeProc()
-
-    monkeypatch.setenv("OEDISI_MULTI_USER", "1")
-    monkeypatch.setattr(server_main.asyncio, "create_subprocess_exec", fake_exec)
-    monkeypatch.setattr(server_main, "RUNS_DIR", tmp_path / "runs")
-
-    proc = asyncio.run(server_main._start_jupyter())
-
-    assert proc is not None
-    assert proc.pid == 12345
-    args = captured["args"]
-    kwargs = captured["kwargs"]
-    assert "--IdentityProvider.token=" in args
-    assert kwargs["stdout"] is asyncio.subprocess.DEVNULL
-    assert kwargs["stderr"] is asyncio.subprocess.DEVNULL

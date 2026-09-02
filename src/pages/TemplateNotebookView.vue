@@ -1,10 +1,13 @@
 <template>
   <div class="flex flex-col h-screen">
-    <div class="flex items-center gap-3 p-4 border-b">
+    <div class="flex items-center gap-3 p-4 border-b bg-amber-50 dark:bg-amber-950/30">
       <router-link to="/configs"
         class="text-primary hover:text-primary/80">← Back to
         Templates</router-link>
-      <h1 class="text-xl font-bold flex-1">Template Notebook</h1>
+      <div class="flex-1">
+        <h1 class="text-xl font-bold">Template Notebook</h1>
+        <p class="text-xs text-amber-700 dark:text-amber-300">Starting point for future simulation runs</p>
+      </div>
       <Button variant="destructive" size="sm" @click="handleDelete"
         :disabled="!jupyterUrl">
         Delete Notebook
