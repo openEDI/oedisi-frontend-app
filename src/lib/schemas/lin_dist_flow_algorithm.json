@@ -2,7 +2,10 @@
   "$defs": {
     "ControlType": {
       "description": "Enum for different types of DER control modes.",
-      "enum": [1, 2, 3],
+      "enum": [
+        1,
+        2
+      ],
       "title": "ControlType",
       "type": "integer"
     }
@@ -10,8 +13,8 @@
   "description": "Static configuration parameters defining schema.",
   "properties": {
     "name": {
-      "type": "string",
-      "title": "Name"
+      "title": "Name",
+      "type": "string"
     },
     "deltat": {
       "default": 0.1,
@@ -21,15 +24,18 @@
     },
     "control_type": {
       "$ref": "#/$defs/ControlType",
-      "default": 3,
-      "title": "Control Type"
+      "default": 1,
+      "title": "Control Type (Watt or VAR)"
     },
     "pf_flag": {
       "default": true,
-      "title": "Relaxed Power Flow",
+      "title": "Run Relaxed Power Flow",
       "type": "boolean"
     }
   },
+  "required": [
+    "name"
+  ],
   "title": "LinDistFlowConfig",
   "type": "object"
 }
