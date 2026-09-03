@@ -17,6 +17,7 @@ import nbformat
 import os
 import re
 import shutil
+import signal
 import socket
 import sys
 import tempfile
@@ -507,6 +508,26 @@ def _write_run_finish(record: RunRecord) -> None:
     _atomic_write_json(_run_json_path(record.run_dir), data)
 
 
+DEFAULT_MAX_RUN_SECONDS = 7200.0  # 2 hours
+
+
+def _max_run_seconds() -> float | None:
+    """Watchdog cap for a run, in seconds, from OEDISI_MAX_TIME.
+
+    A backstop for a hung broker/federate, not a normal limit. Non-positive or
+    unparseable disables it (returns None → the watchdog waits forever).
+    """
+    raw = os.environ.get("OEDISI_MAX_TIME")
+    if raw is None:
+        return DEFAULT_MAX_RUN_SECONDS
+    try:
+        seconds = float(raw)
+    except ValueError:
+        print(f"[config] ignoring invalid OEDISI_MAX_TIME={raw!r}", file=sys.stderr)
+        return DEFAULT_MAX_RUN_SECONDS
+    return seconds if seconds > 0 else None
+
+
 async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     """Await process exit, update the RunRecord, and persist completion.
 
@@ -514,8 +535,16 @@ async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     `_serialize_run` only reads, so no synchronization is needed. If the
     server exits before this resumes, the subprocess keeps going on its own;
     we just don't record the outcome, and the boot scan marks it "unknown".
+
+    Enforces the OEDISI_MAX_TIME watchdog: if the run outlives the cap we
+    tree-kill it, and the SIGKILL (-9) exit falls through to "failed" below.
     """
-    code = await proc.wait()
+    try:
+        code = await asyncio.wait_for(proc.wait(), timeout=_max_run_seconds())
+    except asyncio.TimeoutError:
+        print(f"[run {run_id}] exceeded OEDISI_MAX_TIME; killing", file=sys.stderr)
+        _tree_kill(proc.pid)
+        code = await proc.wait()  # reap the killed process so it isn't left a zombie
     record = runs.get(run_id)
     if record is None:
         return  # run was deleted while we waited
@@ -531,9 +560,22 @@ async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
 def _tree_kill(pid: int) -> None:
     """Kill the process and all its descendants.
 
-    `helics run` spawns a broker plus one federate per component; signalling
-    only the parent orphans the broker, which then lingers holding its port.
+    `helics run` spawns a broker plus one federate per component. We start it
+    in its own session (`start_new_session=True`), so on POSIX every descendant
+    shares a process group whose id equals `pid`, and one `killpg` reaches all
+    of them at once — including a broker spawned in the split second between an
+    enumeration and the kill, which a `children()` snapshot would miss and
+    orphan (it then lingers holding the ZMQ port). Windows has no such groups,
+    so fall back to a psutil tree walk there.
     """
+    if pid <= 0:  # sentinel pid (-1) before proc.pid is filled in; killpg(-1) is catastrophic
+        return
+    if os.name == "posix":
+        try:
+            os.killpg(os.getpgid(pid), signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+        return
     try:
         parent = psutil.Process(pid)
     except psutil.NoSuchProcess:
@@ -691,6 +733,10 @@ async def start_run(
             "run",
             f"--path={build_dir / 'system_runner.json'}",
             cwd=build_dir,
+            # Own session/process group so _tree_kill can killpg the broker +
+            # every federate atomically, regardless of spawn timing. POSIX-only;
+            # ignored on Windows, which uses the psutil fallback in _tree_kill.
+            start_new_session=True,
         )
     except Exception as exc:  # noqa: BLE001
         del runs[run_id]  # release the slot — nothing is running
