@@ -58,6 +58,11 @@
               <Button variant="secondary" @click="loadTemplate(config)">
                 Load
               </Button>
+              <router-link :to="`/templates/${config.id}/notebook`">
+                <Button variant="secondary" class="w-full">
+                  📓 Notebook
+                </Button>
+              </router-link>
               <Button variant="outline" @click="downloadTemplate(config)">
                 Download JSON
               </Button>

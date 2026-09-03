@@ -12,6 +12,13 @@ export default defineConfig({
     },
   },
   server: {
+    proxy: {
+      '/jupyter': {
+        target: 'http://127.0.0.1:8888',
+        ws: true,
+        changeOrigin: true,
+      },
+    }, 
     watch: {
       ignored: ['**/server/runs/**', '**/server/.venv/**'],
     },
