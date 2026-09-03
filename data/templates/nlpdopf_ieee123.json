@@ -1,0 +1,2626 @@
+{
+  "id": "1782355653557",
+  "name": "nlpdopf",
+  "description": "",
+  "nodes": [
+    {
+      "id": "Feeder-1776801555228",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 350,
+        "y": 264.5,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Feeder-1776801555228",
+            "position": "right",
+            "x": 112.99276702730778,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Feeder-1776801555228",
+            "position": "left",
+            "x": -3.0106142144271173,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 350,
+        "y": 264.5
+      },
+      "data": {
+        "label": "Feeder",
+        "componentType": "Feeder",
+        "config": {
+          "use_smartds": false,
+          "user_uploads_model": false,
+          "run_freq_sec": 900,
+          "topology_output": "topology.json",
+          "use_sparse_admittance": false,
+          "name": "feeder",
+          "profile_location": "gadal_ieee123/profiles",
+          "opendss_location": "gadal_ieee123/qsts",
+          "sensor_location": "gadal_ieee123/sensors.json",
+          "start_date": "2017-01-01 00:00:00",
+          "number_of_timesteps": 96,
+          "start_time_index": 0,
+          "tap_setting": 0
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801607029",
+      "type": "custom",
+      "dimensions": {
+        "width": 183,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 1198.979022316309,
+        "y": 71.86482935605895,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801607029",
+            "position": "right",
+            "x": 176.16898043807873,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801607029",
+            "position": "left",
+            "x": -2.994966382171161,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 1198.979022316309,
+        "y": 71.86482935605895
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_mag",
+          "feather_path": "voltage_mag.feather",
+          "csv_path": "voltage_mag.csv",
+          "csv_filename": "voltage_mag.csv",
+          "feather_filename": "voltage_mag.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "MeasurementComponent-1776801610044",
+      "type": "custom",
+      "dimensions": {
+        "width": 166,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 615.9994298834755,
+        "y": 143.37647724771995,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "MeasurementComponent-1776801610044",
+            "position": "right",
+            "x": 158.81079704911852,
+            "y": 26.985935680814727,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "MeasurementComponent-1776801610044",
+            "position": "left",
+            "x": -3.0106429260459358,
+            "y": 26.985935680814727,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 615.9994298834755,
+        "y": 143.37647724771995
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "measurement_file": "sensors.json",
+          "name": "sensor_powers_real"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801630390",
+      "type": "custom",
+      "dimensions": {
+        "width": 266,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 538.2180337066769,
+        "y": 43.40614259420025,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801630390",
+            "position": "right",
+            "x": 259.46763820040206,
+            "y": 26.99425089035122,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801630390",
+            "position": "left",
+            "x": -2.989781941835669,
+            "y": 26.99425089035122,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 538.2180337066769,
+        "y": 43.40614259420025
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_imaginary_actual",
+          "csv_path": "voltage_imag.csv",
+          "feather_path": "voltage_imag.feather",
+          "csv_filename": "voltage_imaginary_actual.csv",
+          "feather_filename": "voltage_imaginary_actual.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801632526",
+      "type": "custom",
+      "dimensions": {
+        "width": 227,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 538.7489136712836,
+        "y": -48.30527795459034,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801632526",
+            "position": "right",
+            "x": 220.38762973361787,
+            "y": 27.001597868880094,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801632526",
+            "position": "left",
+            "x": -2.994966382171161,
+            "y": 27.001597868880094,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 538.7489136712836,
+        "y": -48.30527795459034
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_real_actual",
+          "feather_path": "voltage_real.feather",
+          "csv_path": "voltage_real.csv",
+          "csv_filename": "voltage_real_actual.csv",
+          "feather_filename": "voltage_real_actual.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1776801644340",
+      "type": "custom",
+      "dimensions": {
+        "width": 191,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 1200.4308985036942,
+        "y": 186.91256721863536,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1776801644340",
+            "position": "right",
+            "x": 184.3854418185401,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1776801644340",
+            "position": "left",
+            "x": -2.994966382171161,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 1200.4308985036942,
+        "y": 186.91256721863536
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_angle",
+          "csv_path": "voltage_angle.csv",
+          "feather_path": "voltage_angle.feather",
+          "csv_filename": "voltage_angle.csv",
+          "feather_filename": "voltage_angle.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "MeasurementComponent-1782353885420",
+      "type": "custom",
+      "dimensions": {
+        "width": 205,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 587.7561597666136,
+        "y": 390.5935166961752,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "MeasurementComponent-1782353885420",
+            "position": "right",
+            "x": 197.90201060961607,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "MeasurementComponent-1782353885420",
+            "position": "left",
+            "x": -2.9949089589335247,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 587.7561597666136,
+        "y": 390.5935166961752
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "name": "sensor_powers_imaginary",
+          "measurement_file": "sensors.json"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "NlpDopfComponent-1782354995606",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 49
+      },
+      "computedPosition": {
+        "x": 927.5446653177435,
+        "y": 272.4807512222392,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "NlpDopfComponent-1782354995606",
+            "position": "right",
+            "x": 112.99273831568895,
+            "y": 19.50638670894303,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "NlpDopfComponent-1782354995606",
+            "position": "left",
+            "x": -2.994966382171161,
+            "y": 19.50638670894303,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 927.5446653177435,
+        "y": 272.4807512222392
+      },
+      "data": {
+        "label": "NLP DOPF",
+        "componentType": "NlpDopfComponent",
+        "config": {
+          "start_date": null,
+          "run_freq_sec": 900,
+          "start_time_index": 0,
+          "number_of_timesteps": 8
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1782355152997",
+      "type": "custom",
+      "dimensions": {
+        "width": 179,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 1206.0291931418249,
+        "y": 296.00140391008387,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1782355152997",
+            "position": "right",
+            "x": 171.93527997361224,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1782355152997",
+            "position": "left",
+            "x": -2.994966382171161,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 1206.0291931418249,
+        "y": 296.00140391008387
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_powers_real",
+          "csv_filename": "powers_real.csv",
+          "feather_filename": "powers_real.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1782355154814",
+      "type": "custom",
+      "dimensions": {
+        "width": 218,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 1198.5025842817145,
+        "y": 377.8532752637834,
+        "z": 1000
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1782355154814",
+            "position": "right",
+            "x": 211.0107595669974,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1782355154814",
+            "position": "left",
+            "x": -2.994966382171161,
+            "y": 27.001612224689502,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": true,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 1198.5025842817145,
+        "y": 377.8532752637834
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_powers_imaginary",
+          "csv_filename": "powers_imaginary.csv",
+          "feather_filename": "powers_imaginary.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1782355329301",
+      "type": "custom",
+      "dimensions": {
+        "width": 219,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 572.0799882420573,
+        "y": 466.0470477950601,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1782355329301",
+            "position": "right",
+            "x": 212.26522761640516,
+            "y": 27.001597868880094,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1782355329301",
+            "position": "left",
+            "x": -2.994966382171161,
+            "y": 27.001597868880094,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 572.0799882420573,
+        "y": 466.0470477950601
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_power_real_actual",
+          "csv_filename": "power_real_actual.csv",
+          "feather_filename": "power_real_actual.feather"
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1782355492384",
+      "type": "custom",
+      "dimensions": {
+        "width": 258,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 560.213538481203,
+        "y": 544.3820047950115,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1782355492384",
+            "position": "right",
+            "x": 251.33707130332897,
+            "y": 26.994211505511647,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1782355492384",
+            "position": "left",
+            "x": -3.0113254490833254,
+            "y": 26.994211505511647,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 560.213538481203,
+        "y": 544.3820047950115
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_power_imaginary_actual",
+          "csv_filename": "power_imaginary_actual.csv",
+          "feather_filename": "power_imaginary_actual.feather"
+        }
+      },
+      "events": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1776801630390-1776801653602",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1776801630390",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesImaginary",
+            "sourcePortId": "voltages_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesImaginary",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 112.99276702730778,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3.0106142144271173,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0,
+            "tap_setting": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801630390",
+        "type": "custom",
+        "dimensions": {
+          "width": 266,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 538.2180337066769,
+          "y": 43.40614259420025,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801630390",
+              "position": "right",
+              "x": 259.46763820040206,
+              "y": 26.99425089035122,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801630390",
+              "position": "left",
+              "x": -2.989781941835669,
+              "y": 26.99425089035122,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 538.2180337066769,
+          "y": 43.40614259420025
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_imaginary_actual",
+            "csv_path": "voltage_imag.csv",
+            "feather_path": "voltage_imag.feather",
+            "csv_filename": "voltage_imaginary_actual.csv",
+            "feather_filename": "voltage_imaginary_actual.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 472.99276702730776,
+      "sourceY": 296.5016122246895,
+      "targetX": 535.2282517648413,
+      "targetY": 75.40039348455147,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1776801632526-1776801655577",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1776801632526",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesReal",
+            "sourcePortId": "voltages_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesReal",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 112.99276702730778,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3.0106142144271173,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0,
+            "tap_setting": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801632526",
+        "type": "custom",
+        "dimensions": {
+          "width": 227,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 538.7489136712836,
+          "y": -48.30527795459034,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801632526",
+              "position": "right",
+              "x": 220.38762973361787,
+              "y": 27.001597868880094,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801632526",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 27.001597868880094,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 538.7489136712836,
+          "y": -48.30527795459034
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_real_actual",
+            "feather_path": "voltage_real.feather",
+            "csv_path": "voltage_real.csv",
+            "csv_filename": "voltage_real_actual.csv",
+            "feather_filename": "voltage_real_actual.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 472.99276702730776,
+      "sourceY": 296.5016122246895,
+      "targetX": 535.7539472891125,
+      "targetY": -16.303680085710244,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1776801610044-1776801657201",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1776801610044",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersReal",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 112.99276702730778,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3.0106142144271173,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0,
+            "tap_setting": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "MeasurementComponent-1776801610044",
+        "type": "custom",
+        "dimensions": {
+          "width": 166,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 615.9994298834755,
+          "y": 143.37647724771995,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "right",
+              "x": 158.81079704911852,
+              "y": 26.985935680814727,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "left",
+              "x": -3.0106429260459358,
+              "y": 26.985935680814727,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 615.9994298834755,
+          "y": 143.37647724771995
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_powers_real"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 472.99276702730776,
+      "sourceY": 296.5016122246895,
+      "targetX": 612.9887869574295,
+      "targetY": 175.36241292853467,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1782353885420-1782353938724",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1782353885420",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersImaginary",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 112.99276702730778,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3.0106142144271173,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0,
+            "tap_setting": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "MeasurementComponent-1782353885420",
+        "type": "custom",
+        "dimensions": {
+          "width": 205,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 587.7561597666136,
+          "y": 390.5935166961752,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1782353885420",
+              "position": "right",
+              "x": 197.90201060961607,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1782353885420",
+              "position": "left",
+              "x": -2.9949089589335247,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 587.7561597666136,
+          "y": 390.5935166961752
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "name": "sensor_powers_imaginary",
+            "measurement_file": "sensors.json"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 472.99276702730776,
+      "sourceY": 296.5016122246895,
+      "targetX": 584.7612508076801,
+      "targetY": 422.5951289208647,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-NlpDopfComponent-1782354995606-1782355069108",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "NlpDopfComponent-1782354995606",
+      "data": {
+        "wires": [
+          {
+            "type": "Topology",
+            "sourcePortId": "topology",
+            "targetPortId": "topology"
+          },
+          {
+            "type": "Injection",
+            "sourcePortId": "injections",
+            "targetPortId": "injections"
+          },
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "available_power"
+          }
+        ]
+      },
+      "events": {},
+      "label": "Topology\nInjection\nPowersReal",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 112.99276702730778,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3.0106142144271173,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0,
+            "tap_setting": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "NlpDopfComponent-1782354995606",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "right",
+              "x": 112.99273831568895,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392
+        },
+        "data": {
+          "label": "NLP DOPF",
+          "componentType": "NlpDopfComponent",
+          "config": {
+            "start_date": null,
+            "run_freq_sec": 900,
+            "start_time_index": 0,
+            "number_of_timesteps": 8
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 472.99276702730776,
+      "sourceY": 296.5016122246895,
+      "targetX": 924.5496989355723,
+      "targetY": 296.9871379311822,
+      "selected": false
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1776801607029-1782355128758",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1776801607029",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesMagnitude",
+            "sourcePortId": "voltage_mag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesMagnitude",
+      "sourceNode": {
+        "id": "NlpDopfComponent-1782354995606",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "right",
+              "x": 112.99273831568895,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392
+        },
+        "data": {
+          "label": "NLP DOPF",
+          "componentType": "NlpDopfComponent",
+          "config": {
+            "start_date": null,
+            "run_freq_sec": 900,
+            "start_time_index": 0,
+            "number_of_timesteps": 8
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801607029",
+        "type": "custom",
+        "dimensions": {
+          "width": 183,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 1198.979022316309,
+          "y": 71.86482935605895,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801607029",
+              "position": "right",
+              "x": 176.16898043807873,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801607029",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 1198.979022316309,
+          "y": 71.86482935605895
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_mag",
+            "feather_path": "voltage_mag.feather",
+            "csv_path": "voltage_mag.csv",
+            "csv_filename": "voltage_mag.csv",
+            "feather_filename": "voltage_mag.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 1050.5374036334324,
+      "sourceY": 296.9871379311822,
+      "targetX": 1195.9840559341378,
+      "targetY": 103.86644158074844,
+      "selected": false
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1776801644340-1782355130784",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1776801644340",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesAngle",
+            "sourcePortId": "voltage_angle",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "VoltagesAngle",
+      "sourceNode": {
+        "id": "NlpDopfComponent-1782354995606",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "right",
+              "x": 112.99273831568895,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392
+        },
+        "data": {
+          "label": "NLP DOPF",
+          "componentType": "NlpDopfComponent",
+          "config": {
+            "start_date": null,
+            "run_freq_sec": 900,
+            "start_time_index": 0,
+            "number_of_timesteps": 8
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1776801644340",
+        "type": "custom",
+        "dimensions": {
+          "width": 191,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 1200.4308985036942,
+          "y": 186.91256721863536,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1776801644340",
+              "position": "right",
+              "x": 184.3854418185401,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1776801644340",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 1200.4308985036942,
+          "y": 186.91256721863536
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_voltage_angle",
+            "csv_path": "voltage_angle.csv",
+            "feather_path": "voltage_angle.feather",
+            "csv_filename": "voltage_angle.csv",
+            "feather_filename": "voltage_angle.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 1050.5374036334324,
+      "sourceY": 296.9871379311822,
+      "targetX": 1197.435932121523,
+      "targetY": 218.91417944332485,
+      "selected": false
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1782355152997-1782355226198",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1782355152997",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersReal",
+      "sourceNode": {
+        "id": "NlpDopfComponent-1782354995606",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "right",
+              "x": 112.99273831568895,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392
+        },
+        "data": {
+          "label": "NLP DOPF",
+          "componentType": "NlpDopfComponent",
+          "config": {
+            "start_date": null,
+            "run_freq_sec": 900,
+            "start_time_index": 0,
+            "number_of_timesteps": 8
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1782355152997",
+        "type": "custom",
+        "dimensions": {
+          "width": 179,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 1206.0291931418249,
+          "y": 296.00140391008387,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1782355152997",
+              "position": "right",
+              "x": 171.93527997361224,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1782355152997",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 1206.0291931418249,
+          "y": 296.00140391008387
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_powers_real",
+            "csv_filename": "powers_real.csv",
+            "feather_filename": "powers_real.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 1050.5374036334324,
+      "sourceY": 296.9871379311822,
+      "targetX": 1203.0342267596536,
+      "targetY": 328.00301613477336,
+      "selected": false
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1782355154814-1782355232997",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1782355154814",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imaginary",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersImaginary",
+      "sourceNode": {
+        "id": "NlpDopfComponent-1782354995606",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "right",
+              "x": 112.99273831568895,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392
+        },
+        "data": {
+          "label": "NLP DOPF",
+          "componentType": "NlpDopfComponent",
+          "config": {
+            "start_date": null,
+            "run_freq_sec": 900,
+            "start_time_index": 0,
+            "number_of_timesteps": 8
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1782355154814",
+        "type": "custom",
+        "dimensions": {
+          "width": 218,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 1198.5025842817145,
+          "y": 377.8532752637834,
+          "z": 1000
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1782355154814",
+              "position": "right",
+              "x": 211.0107595669974,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1782355154814",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": true,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 1198.5025842817145,
+          "y": 377.8532752637834
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_powers_imaginary",
+            "csv_filename": "powers_imaginary.csv",
+            "feather_filename": "powers_imaginary.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 1050.5374036334324,
+      "sourceY": 296.9871379311822,
+      "targetX": 1195.5076178995432,
+      "targetY": 409.8548874884729,
+      "selected": false
+    },
+    {
+      "id": "edge-MeasurementComponent-1776801610044-NlpDopfComponent-1782354995606-1782355248798",
+      "type": "wiring",
+      "source": "MeasurementComponent-1776801610044",
+      "target": "NlpDopfComponent-1782354995606",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "powers_real"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "MeasurementComponent-1776801610044",
+        "type": "custom",
+        "dimensions": {
+          "width": 166,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 615.9994298834755,
+          "y": 143.37647724771995,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "right",
+              "x": 158.81079704911852,
+              "y": 26.985935680814727,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1776801610044",
+              "position": "left",
+              "x": -3.0106429260459358,
+              "y": 26.985935680814727,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 615.9994298834755,
+          "y": 143.37647724771995
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "measurement_file": "sensors.json",
+            "name": "sensor_powers_real"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "NlpDopfComponent-1782354995606",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "right",
+              "x": 112.99273831568895,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392
+        },
+        "data": {
+          "label": "NLP DOPF",
+          "componentType": "NlpDopfComponent",
+          "config": {
+            "start_date": null,
+            "run_freq_sec": 900,
+            "start_time_index": 0,
+            "number_of_timesteps": 8
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 784.810226932594,
+      "sourceY": 175.36241292853467,
+      "targetX": 924.5496989355723,
+      "targetY": 296.9871379311822,
+      "selected": false
+    },
+    {
+      "id": "edge-MeasurementComponent-1782353885420-NlpDopfComponent-1782354995606-1782355251238",
+      "type": "wiring",
+      "source": "MeasurementComponent-1782353885420",
+      "target": "NlpDopfComponent-1782354995606",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "powers_imaginary"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "MeasurementComponent-1782353885420",
+        "type": "custom",
+        "dimensions": {
+          "width": 205,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 587.7561597666136,
+          "y": 390.5935166961752,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "MeasurementComponent-1782353885420",
+              "position": "right",
+              "x": 197.90201060961607,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "MeasurementComponent-1782353885420",
+              "position": "left",
+              "x": -2.9949089589335247,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 587.7561597666136,
+          "y": 390.5935166961752
+        },
+        "data": {
+          "label": "Sensor",
+          "componentType": "MeasurementComponent",
+          "config": {
+            "additive_noise_stddev": 0,
+            "multiplicative_noise_stddev": 0,
+            "run_freq_time_step": 1,
+            "name": "sensor_powers_imaginary",
+            "measurement_file": "sensors.json"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "NlpDopfComponent-1782354995606",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 49
+        },
+        "computedPosition": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "right",
+              "x": 112.99273831568895,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "NlpDopfComponent-1782354995606",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 19.50638670894303,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 927.5446653177435,
+          "y": 272.4807512222392
+        },
+        "data": {
+          "label": "NLP DOPF",
+          "componentType": "NlpDopfComponent",
+          "config": {
+            "start_date": null,
+            "run_freq_sec": 900,
+            "start_time_index": 0,
+            "number_of_timesteps": 8
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 795.6581703762297,
+      "sourceY": 422.5951289208647,
+      "targetX": 924.5496989355723,
+      "targetY": 296.9871379311822,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1782355329301-1782355359579",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1782355329301",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersReal",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 112.99276702730778,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3.0106142144271173,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0,
+            "tap_setting": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1782355329301",
+        "type": "custom",
+        "dimensions": {
+          "width": 219,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 572.0799882420573,
+          "y": 466.0470477950601,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1782355329301",
+              "position": "right",
+              "x": 212.26522761640516,
+              "y": 27.001597868880094,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1782355329301",
+              "position": "left",
+              "x": -2.994966382171161,
+              "y": 27.001597868880094,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 572.0799882420573,
+          "y": 466.0470477950601
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_power_real_actual",
+            "csv_filename": "power_real_actual.csv",
+            "feather_filename": "power_real_actual.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 472.99276702730776,
+      "sourceY": 296.5016122246895,
+      "targetX": 569.0850218598862,
+      "targetY": 498.0486456639402,
+      "selected": false
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1782355492384-1782355509893",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1782355492384",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "PowersImaginary",
+      "sourceNode": {
+        "id": "Feeder-1776801555228",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 350,
+          "y": 264.5,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Feeder-1776801555228",
+              "position": "right",
+              "x": 112.99276702730778,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Feeder-1776801555228",
+              "position": "left",
+              "x": -3.0106142144271173,
+              "y": 27.001612224689502,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 350,
+          "y": 264.5
+        },
+        "data": {
+          "label": "Feeder",
+          "componentType": "Feeder",
+          "config": {
+            "use_smartds": false,
+            "user_uploads_model": false,
+            "run_freq_sec": 900,
+            "topology_output": "topology.json",
+            "use_sparse_admittance": false,
+            "name": "feeder",
+            "profile_location": "gadal_ieee123/profiles",
+            "opendss_location": "gadal_ieee123/qsts",
+            "sensor_location": "gadal_ieee123/sensors.json",
+            "start_date": "2017-01-01 00:00:00",
+            "number_of_timesteps": 96,
+            "start_time_index": 0,
+            "tap_setting": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1782355492384",
+        "type": "custom",
+        "dimensions": {
+          "width": 258,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 560.213538481203,
+          "y": 544.3820047950115,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1782355492384",
+              "position": "right",
+              "x": 251.33707130332897,
+              "y": 26.994211505511647,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1782355492384",
+              "position": "left",
+              "x": -3.0113254490833254,
+              "y": 26.994211505511647,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 560.213538481203,
+          "y": 544.3820047950115
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_power_imaginary_actual",
+            "csv_filename": "power_imaginary_actual.csv",
+            "feather_filename": "power_imaginary_actual.feather"
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 472.99276702730776,
+      "sourceY": 296.5016122246895,
+      "targetX": 557.2022130321197,
+      "targetY": 576.3762163005232,
+      "selected": false
+    }
+  ],
+  "createdAt": "2026-06-25T02:47:33.557Z"
+}
