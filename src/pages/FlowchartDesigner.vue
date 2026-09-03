@@ -210,7 +210,7 @@ import { createAjv, JsonSchema } from '@jsonforms/core'
 import { toWiringDiagram, WiringDiagram } from '@/lib/wiringDiagram'
 
 const renderers = markRaw(vanillaRenderers)
-const ajv = createAjv({ useDefaults: true })
+const ajv = createAjv({ useDefaults: true, coerceTypes: true })
 
 const nodePropertyStyles = mergeStyles(defaultStyles, {
   control: {

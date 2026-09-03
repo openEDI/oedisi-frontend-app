@@ -18,6 +18,9 @@ export default defineConfig({
         ws: true,
         changeOrigin: true,
       },
+    }, 
+    watch: {
+      ignored: ['**/server/runs/**', '**/server/.venv/**'],
     },
   },
 })
