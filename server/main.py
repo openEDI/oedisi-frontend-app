@@ -693,7 +693,7 @@ async def start_run(
 
     run_id = uuid.uuid4().hex
     run_dir = _user_runs_dir(user) / run_id
-    data_dir = run_dir
+    build_dir = run_dir / "build"
 
     try:
         build_runner(wiring_diagram, build_dir)
@@ -1034,7 +1034,7 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
         return False
     dest = run_dir / NOTEBOOK_FILENAME
     nb = nbformat.read(str(src), as_version=4)
-    build_dir = run_dir / "build"
+    data_dir = run_dir
     for cell in nb.cells:
         if cell.cell_type == "code" and "DATA_DIR" in cell.source:
             cell.source = re.sub(
