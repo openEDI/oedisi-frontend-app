@@ -1,7 +1,7 @@
 import { type TemplateData } from './flowTypes'
 import { type WiringDiagram } from './wiringDiagram'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 export interface RunSummary {
   run_id: string
