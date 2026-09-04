@@ -165,10 +165,11 @@ def _check_components_env() -> None:
 # ---------------------------------------------------------------------------
 
 JUPYTER_PORT = int(os.environ.get("OEDISI_JUPYTER_PORT", "8888"))
+VOILA_PORT = int(os.environ.get("OEDISI_VOILA_PORT", "8866"))
 
 
 class ReadOnlyContentsManager(FileContentsManager):
-    """Prevent notebook and file mutations in multi-user mode."""
+    """Prevent notebook and file mutations when JupyterLab is used."""
 
     def _reject_write(self, *args: Any, **kwargs: Any) -> None:
         raise HTTPError(403, "Jupyter contents are read-only in multi-user mode")
@@ -180,16 +181,33 @@ class ReadOnlyContentsManager(FileContentsManager):
     new_untitled = _reject_write
 
 
-async def _start_jupyter() -> asyncio.subprocess.Process | None:
-    """Start a JupyterLab server as a background subprocess.
+def _is_multi_user() -> bool:
+    """True when running in multi-user (cloud) mode."""
+    return bool(os.environ.get("OEDISI_MULTI_USER"))
 
-    Rooted at the RUNS_DIR so notebooks can access run data via relative paths.
-    Token-less mode is used because access is gated by localhost binding and
-    nginx authentication in multi-user deployments.
+
+def _notebook_server_command() -> list[str]:
+    """Build the notebook-server subprocess command.
+
+    Single-user (default): JupyterLab, editable.
+    Multi-user (OEDISI_MULTI_USER set): Voilà, read-only — users can view/run
+    notebooks but cannot edit them.
     """
-    RUNS_DIR.mkdir(parents=True, exist_ok=True)
-
-    cmd = [
+    if _is_multi_user():
+        return [
+            sys.executable,
+            "-m",
+            "voila",
+            f"--port={VOILA_PORT}",
+            "--Voila.ip=127.0.0.1",
+            "--no-browser",
+            f"--Voila.root_dir={RUNS_DIR}",
+            "--Voila.tornado_settings",
+            "allow_origin=*",
+            "--Voila.tornado_settings",
+            "disable_check_xsrf=true",
+        ]
+    return [
         sys.executable,
         "-m",
         "jupyterlab",
@@ -202,8 +220,18 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
         "--ServerApp.base_url=/jupyter/",
         "--ServerApp.disable_check_xsrf=True",
     ]
-    if os.environ.get("OEDISI_MULTI_USER"):
-        cmd.append("--ServerApp.contents_manager_class=main.ReadOnlyContentsManager")
+
+
+async def _start_jupyter() -> asyncio.subprocess.Process | None:
+    """Start the notebook server (JupyterLab or Voilà) as a background subprocess.
+
+    Rooted at the RUNS_DIR so notebooks can access run data via relative paths.
+    Token-less mode is used because access is gated by localhost binding and
+    nginx authentication in multi-user deployments.
+    """
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+
+    cmd = _notebook_server_command()
     try:
         proc = await asyncio.create_subprocess_exec(
             *cmd,
@@ -211,14 +239,15 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
             stderr=asyncio.subprocess.DEVNULL,
         )
         print(
-            f"[jupyter] started on port {JUPYTER_PORT} "
+            f"[notebook] started on port "
+            f"{VOILA_PORT if _is_multi_user() else JUPYTER_PORT} "
             f"(pid={proc.pid}, root={RUNS_DIR})",
             file=sys.stderr,
         )
         return proc
     except Exception as exc:  # noqa: BLE001
         print(
-            f"[jupyter] failed to start JupyterLab: {exc}\n"
+            f"[notebook] failed to start: {exc}\n"
             "Notebook features will be unavailable.",
             file=sys.stderr,
         )
@@ -1047,14 +1076,24 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
     return True
 
 
+def _notebook_url_prefix() -> str:
+    """URL prefix for notebook rendering.
+
+    Multi-user: read-only Voilà render. Single-user: editable JupyterLab tree.
+    """
+    if _is_multi_user():
+        return "/voila/render"
+    return "/jupyter/lab/tree"
+
+
 def _jupyter_notebook_url(user: str, run_id: str) -> str:
-    """Return the JupyterLab URL path for a run's notebook."""
-    return f"/jupyter/lab/tree/{user}/{run_id}/{NOTEBOOK_FILENAME}"
+    """Return the notebook URL path for a run."""
+    return f"{_notebook_url_prefix()}/{user}/{run_id}/{NOTEBOOK_FILENAME}"
 
 
 def _jupyter_template_notebook_url(user: str, template_id: str) -> str:
-    """Return the JupyterLab URL path for a template's notebook."""
-    return f"/jupyter/lab/tree/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
+    """Return the notebook URL path for a template."""
+    return f"{_notebook_url_prefix()}/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
 
 
 @app.post("/api/runs/{run_id}/notebook")

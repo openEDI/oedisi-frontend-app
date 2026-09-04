@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -167,3 +168,85 @@ def test_save_notebook_to_template_rejects_run_without_template() -> None:
     assert exc.value.status_code == 400
 
 
+def test_start_notebook_server_single_user_uses_jupyterlab(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    class FakeProc:
+        pid = 12345
+
+    captured: dict[str, object] = {}
+
+    async def fake_exec(*args, **kwargs):
+        captured["args"] = args
+        captured["kwargs"] = kwargs
+        return FakeProc()
+
+    monkeypatch.delenv("OEDISI_MULTI_USER", raising=False)
+    monkeypatch.setattr(server_main.asyncio, "create_subprocess_exec", fake_exec)
+    monkeypatch.setattr(server_main, "RUNS_DIR", tmp_path / "runs")
+
+    proc = asyncio.run(server_main._start_jupyter())
+
+    assert proc is not None
+    assert proc.pid == 12345
+    args = captured["args"]
+    kwargs = captured["kwargs"]
+    assert "jupyterlab" in args
+    assert "--IdentityProvider.token=" in args
+    assert kwargs["stdout"] is asyncio.subprocess.DEVNULL
+    assert kwargs["stderr"] is asyncio.subprocess.DEVNULL
+
+
+def test_start_notebook_server_multi_user_uses_voila(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    class FakeProc:
+        pid = 12346
+
+    captured: dict[str, object] = {}
+
+    async def fake_exec(*args, **kwargs):
+        captured["args"] = args
+        captured["kwargs"] = kwargs
+        return FakeProc()
+
+    monkeypatch.setenv("OEDISI_MULTI_USER", "1")
+    monkeypatch.setattr(server_main.asyncio, "create_subprocess_exec", fake_exec)
+    monkeypatch.setattr(server_main, "RUNS_DIR", tmp_path / "runs")
+
+    proc = asyncio.run(server_main._start_jupyter())
+
+    assert proc is not None
+    assert proc.pid == 12346
+    args = captured["args"]
+    kwargs = captured["kwargs"]
+    assert "voila" in args
+    assert "--Voila.ip=127.0.0.1" in args
+    assert kwargs["stdout"] is asyncio.subprocess.DEVNULL
+    assert kwargs["stderr"] is asyncio.subprocess.DEVNULL
+
+
+def test_notebook_urls_single_user_use_jupyterlab(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("OEDISI_MULTI_USER", raising=False)
+    assert server_main._jupyter_notebook_url("dev", "run1").startswith(
+        "/jupyter/lab/tree/"
+    )
+    assert server_main._jupyter_template_notebook_url("dev", "t1").startswith(
+        "/jupyter/lab/tree/"
+    )
+
+
+def test_notebook_urls_multi_user_use_voila(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("OEDISI_MULTI_USER", "1")
+    assert server_main._jupyter_notebook_url("alice", "run1").startswith(
+        "/voila/render/"
+    )
+    assert server_main._jupyter_template_notebook_url("alice", "t1").startswith(
+        "/voila/render/"
+    )
