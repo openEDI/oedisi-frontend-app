@@ -64,9 +64,7 @@
           "number_of_timesteps": 96,
           "run_freq_sec": 900,
           "topology_output": "../../outputs/topology.json",
-          "name": "feeder",
-          "start_time_index": 0,
-          "use_sparse_admittance": false
+          "name": "feeder"
         }
       },
       "events": {}
@@ -1400,6 +1398,5 @@
       "targetY": 104.0,
       "selected": false
     }
-  ],
-  "config_version": "1"
+  ]
 }

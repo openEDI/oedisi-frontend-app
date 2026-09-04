@@ -2113,5 +2113,6 @@
       "selected": false
     }
   ],
-  "createdAt": "2026-07-23T20:45:22.444Z"
+  "createdAt": "2026-07-23T20:45:22.444Z",
+  "config_version": "1"
 }
