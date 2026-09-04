@@ -55,6 +55,7 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 - `helics` binary on `PATH` (only needed to actually run simulations)
 - `jupyterlab` is installed automatically with the backend dependencies
 
+
 ### Installation
 
 1. Navigate to the project directory:
@@ -70,8 +71,12 @@ npm install
 # or
 pnpm install
 
-# Backend (Python)
+# Backend (Python core dependencies)
 uv --directory server sync
+
+# Sync co-simulation components (requires setting OEDISI_COMPONENTS environment variable)
+export OEDISI_COMPONENTS="$HOME/dev/oedisi-components/Components"
+npm run setup:components
 ```
 
 3. Start the development servers:

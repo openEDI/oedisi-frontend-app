@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import asyncio
 from datetime import datetime, timezone
 from pathlib import Path
@@ -7,6 +5,7 @@ from pathlib import Path
 import nbformat
 import pytest
 from fastapi import HTTPException
+from tornado.web import HTTPError
 
 import main as server_main
 
@@ -69,7 +68,6 @@ def test_create_notebook_copies_from_template_and_status() -> None:
 
     run_dir = server_main._user_runs_dir(user) / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
-    (run_dir / "build").mkdir(parents=True, exist_ok=True)
 
     template_nb_path = server_main._template_notebook_path(user, template_id)
     _write_notebook(
@@ -100,7 +98,16 @@ def test_create_notebook_copies_from_template_and_status() -> None:
     code_cell_source = "\n".join(
         cell.source for cell in nb.cells if cell.cell_type == "code"
     )
-    assert f'DATA_DIR = r"{run_dir / "build"}"' in code_cell_source
+    assert f'DATA_DIR = r"{run_dir}"' in code_cell_source
+
+
+def test_multi_user_contents_manager_rejects_writes() -> None:
+    manager = server_main.ReadOnlyContentsManager()
+
+    with pytest.raises(HTTPError) as exc:
+        manager.save({}, "notebook.ipynb", "file", {})
+
+    assert exc.value.status_code == 403
 
 
 def test_save_notebook_to_template_strips_run_specific_data_dir() -> None:

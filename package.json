@@ -6,6 +6,7 @@
     "dev": "vite",
     "dev:server": "uv --directory server run uvicorn main:app --reload --port 3001",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev\"",
+    "setup:components": "npx tsx scripts/importComponent.ts --all && uv run server/install_components.py",
     "build": "vue-tsc && vite build",
     "preview": "vite preview",
     "smoke:templates": "node scripts/smoke-templates.mjs",

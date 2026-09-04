@@ -1,10 +1,13 @@
 <template>
   <div class="flex flex-col h-screen">
-    <div class="flex items-center gap-3 p-4 border-b">
+    <div class="flex items-center gap-3 p-4 border-b bg-sky-50 dark:bg-sky-950/30">
       <router-link :to="`/runs/${runId}/results`"
         class="text-primary hover:text-primary/80">← Back to
         Results</router-link>
-      <h1 class="text-xl font-bold flex-1">Notebook</h1>
+      <div class="flex-1">
+        <h1 class="text-xl font-bold">Run Notebook</h1>
+        <p class="text-xs text-sky-700 dark:text-sky-300">Editable analysis for this simulation run</p>
+      </div>
       <Button variant="secondary" size="sm" @click="handleSaveToTemplate"
         :disabled="saving">
         {{ saving ? 'Saving...' : '💾 Save to Template' }}

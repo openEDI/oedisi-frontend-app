@@ -10,8 +10,6 @@ groups:
 See `CLAUDE.md` in this folder for the design rationale.
 """
 
-from __future__ import annotations
-
 import asyncio
 import json
 import logging
@@ -19,6 +17,7 @@ import nbformat
 import os
 import re
 import shutil
+import signal
 import socket
 import sys
 import tempfile
@@ -42,6 +41,7 @@ from fastapi import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from jupyter_server.services.contents.filemanager import FileContentsManager
 from oedisi.componentframework.basic_component import (
     ComponentDescription,
     basic_component,
@@ -51,6 +51,7 @@ from oedisi.componentframework.system_configuration import (
     generate_runner_config,
 )
 from pydantic import ConfigDict
+from tornado.web import HTTPError
 
 from output_annotations import OutputsList, annotate_outputs
 
@@ -165,6 +166,19 @@ def _check_components_env() -> None:
 
 JUPYTER_PORT = int(os.environ.get("OEDISI_JUPYTER_PORT", "8888"))
 VOILA_PORT = int(os.environ.get("OEDISI_VOILA_PORT", "8866"))
+
+
+class ReadOnlyContentsManager(FileContentsManager):
+    """Prevent notebook and file mutations when JupyterLab is used."""
+
+    def _reject_write(self, *args: Any, **kwargs: Any) -> None:
+        raise HTTPError(403, "Jupyter contents are read-only in multi-user mode")
+
+    save = _reject_write
+    delete_file = _reject_write
+    rename_file = _reject_write
+    copy = _reject_write
+    new_untitled = _reject_write
 
 
 def _is_multi_user() -> bool:
@@ -523,6 +537,26 @@ def _write_run_finish(record: RunRecord) -> None:
     _atomic_write_json(_run_json_path(record.run_dir), data)
 
 
+DEFAULT_MAX_RUN_SECONDS = 7200.0  # 2 hours
+
+
+def _max_run_seconds() -> float | None:
+    """Watchdog cap for a run, in seconds, from OEDISI_MAX_TIME.
+
+    A backstop for a hung broker/federate, not a normal limit. Non-positive or
+    unparseable disables it (returns None → the watchdog waits forever).
+    """
+    raw = os.environ.get("OEDISI_MAX_TIME")
+    if raw is None:
+        return DEFAULT_MAX_RUN_SECONDS
+    try:
+        seconds = float(raw)
+    except ValueError:
+        print(f"[config] ignoring invalid OEDISI_MAX_TIME={raw!r}", file=sys.stderr)
+        return DEFAULT_MAX_RUN_SECONDS
+    return seconds if seconds > 0 else None
+
+
 async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     """Await process exit, update the RunRecord, and persist completion.
 
@@ -530,8 +564,16 @@ async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     `_serialize_run` only reads, so no synchronization is needed. If the
     server exits before this resumes, the subprocess keeps going on its own;
     we just don't record the outcome, and the boot scan marks it "unknown".
+
+    Enforces the OEDISI_MAX_TIME watchdog: if the run outlives the cap we
+    tree-kill it, and the SIGKILL (-9) exit falls through to "failed" below.
     """
-    code = await proc.wait()
+    try:
+        code = await asyncio.wait_for(proc.wait(), timeout=_max_run_seconds())
+    except asyncio.TimeoutError:
+        print(f"[run {run_id}] exceeded OEDISI_MAX_TIME; killing", file=sys.stderr)
+        _tree_kill(proc.pid)
+        code = await proc.wait()  # reap the killed process so it isn't left a zombie
     record = runs.get(run_id)
     if record is None:
         return  # run was deleted while we waited
@@ -547,9 +589,22 @@ async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
 def _tree_kill(pid: int) -> None:
     """Kill the process and all its descendants.
 
-    `helics run` spawns a broker plus one federate per component; signalling
-    only the parent orphans the broker, which then lingers holding its port.
+    `helics run` spawns a broker plus one federate per component. We start it
+    in its own session (`start_new_session=True`), so on POSIX every descendant
+    shares a process group whose id equals `pid`, and one `killpg` reaches all
+    of them at once — including a broker spawned in the split second between an
+    enumeration and the kill, which a `children()` snapshot would miss and
+    orphan (it then lingers holding the ZMQ port). Windows has no such groups,
+    so fall back to a psutil tree walk there.
     """
+    if pid <= 0:  # sentinel pid (-1) before proc.pid is filled in; killpg(-1) is catastrophic
+        return
+    if os.name == "posix":
+        try:
+            os.killpg(os.getpgid(pid), signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+        return
     try:
         parent = psutil.Process(pid)
     except psutil.NoSuchProcess:
@@ -667,7 +722,7 @@ async def start_run(
 
     run_id = uuid.uuid4().hex
     run_dir = _user_runs_dir(user) / run_id
-    build_dir = run_dir / "build"
+    data_dir = run_dir
 
     try:
         build_runner(wiring_diagram, build_dir)
@@ -707,6 +762,10 @@ async def start_run(
             "run",
             f"--path={build_dir / 'system_runner.json'}",
             cwd=build_dir,
+            # Own session/process group so _tree_kill can killpg the broker +
+            # every federate atomically, regardless of spawn timing. POSIX-only;
+            # ignored on Windows, which uses the psutil fallback in _tree_kill.
+            start_new_session=True,
         )
     except Exception as exc:  # noqa: BLE001
         del runs[run_id]  # release the slot — nothing is running
@@ -1009,7 +1068,7 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
         if cell.cell_type == "code" and "DATA_DIR" in cell.source:
             cell.source = re.sub(
                 r'DATA_DIR\s*=\s*r?"[^"]*"',
-                f'DATA_DIR = r"{build_dir}"',
+                f'DATA_DIR = r"{data_dir}"',
                 cell.source,
             )
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -1060,7 +1119,7 @@ def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
             "jupyter_url": _jupyter_notebook_url(user, run_id),
         }
     # Fallback: create blank
-    nb = _make_blank_notebook(run_dir / "build")
+    nb = _make_blank_notebook(run_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
     nbformat.write(nb, str(path))
     return {

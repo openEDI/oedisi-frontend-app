@@ -33,5 +33,8 @@ export default defineConfig({
         },
       },
     },
+    watch: {
+      ignored: ['**/server/runs/**', '**/server/.venv/**'],
+    },
   },
 })
