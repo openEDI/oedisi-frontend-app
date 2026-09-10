@@ -30,7 +30,9 @@ dist-ssr
 
 # Data folder (template storage)
 data/templates/*.json
+data/templates/dev/*.json
 !data/.gitkeep
 !data/templates/.gitkeep
-!data/templates/ornl_*.json
-!data/templates/nlpd*.json
+!data/templates/dev/.gitkeep
+!data/templates/dev/ornl_*.json
+!data/templates/dev/nlpd*.json
