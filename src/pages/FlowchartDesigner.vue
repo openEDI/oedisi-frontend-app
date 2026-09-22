@@ -195,7 +195,7 @@ import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import { api, StartError } from '@/lib/api'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
-import { COMPONENT_CATALOG } from '@/lib/componentCatalog'
+import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
@@ -210,7 +210,7 @@ import { createAjv, JsonSchema } from '@jsonforms/core'
 import { toWiringDiagram, WiringDiagram } from '@/lib/wiringDiagram'
 
 const renderers = markRaw(vanillaRenderers)
-const ajv = createAjv({ useDefaults: true, coerceTypes: true })
+const ajv = createAjv({ coerceTypes: true })
 
 const nodePropertyStyles = mergeStyles(defaultStyles, {
   control: {
@@ -261,6 +261,8 @@ const templateDescription = ref('')
 const selectedWireOption = ref('')
 const { screenToFlowCoordinate } = useVueFlow()
 
+
+
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
   const newNode: Node<NodeData> = {
@@ -270,6 +272,7 @@ const addNode = (type: string, position: { x: number; y: number }) => {
     data: {
       label: component?.name || type.charAt(0).toUpperCase() + type.slice(1),
       componentType: type,
+      config: component?.inputSchema ? makeDefaults(component?.inputSchema) : {},
     },
   }
   nodes.value.push(newNode)
@@ -561,6 +564,7 @@ function getTemplate(name: string, description: string, nodes: Node[], edges: Ed
     nodes: nodes,
     edges: edges,
     createdAt: new Date().toISOString(),
+    config_version: "1",
   }
 }
 

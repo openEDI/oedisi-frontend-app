@@ -18,3 +18,16 @@ export interface ComponentDefinition {
 }
 
 export const COMPONENT_CATALOG: ComponentDefinition[] = componentCatalogJSON
+
+export function makeDefaults(inputSchema: Record<string, unknown>) {
+  const props = inputSchema.properties
+  if (typeof props === 'object' && props !== null) {
+    return Object.fromEntries(
+      Object.entries(props)
+        .filter(([, value]) => value.default !== undefined)
+        .map(([key, value]) => [key, structuredClone(value.default)])
+    )
+  } else {
+    return {}
+  }
+}
