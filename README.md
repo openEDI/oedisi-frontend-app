@@ -55,7 +55,6 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 - `helics` binary on `PATH` (only needed to actually run simulations)
 - `jupyterlab` is installed automatically with the backend dependencies
 
-
 ### Installation
 
 1. Navigate to the project directory:
@@ -114,6 +113,14 @@ npm run build
 # or
 pnpm build
 ```
+
+## Optional hosted authentication
+
+The public landing page is available at `/`, with the authenticated workspace at
+`/workspace`. Example deployment configuration is provided in
+`deploy/nginx.session-auth.example.conf` and `deploy/session-auth.env.example`.
+
+In authenticated deployments, the backend must remain bound to localhost.
 
 ## Pages
 
@@ -243,6 +250,7 @@ Each template document contains:
 The backend provides REST API endpoints:
 
 Templates:
+
 - `GET /api/templates` - Get all templates
 - `GET /api/templates/{id}` - Get a single template
 - `POST /api/templates` - Save a new template
@@ -250,12 +258,14 @@ Templates:
 - `DELETE /api/templates/{id}` - Delete a template
 
 Simulation runs:
+
 - `POST /api/runs` - Build a runner config from a `WiringDiagram` and start a HELICS subprocess
 - `GET /api/runs/{run_id}` - Poll run status (`running` / `done` / `failed`)
 - `GET /api/runs/{run_id}/logs/{component}` - Stream a component log file
 - `DELETE /api/runs/{run_id}` - Kill a running simulation
 
 Notebooks:
+
 - `POST /api/runs/{run_id}/notebook` - Create a blank analysis notebook for the run
 - `GET /api/runs/{run_id}/notebook` - Check if a notebook exists and get its JupyterLab URL
 - `DELETE /api/runs/{run_id}/notebook` - Delete the notebook

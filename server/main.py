@@ -11,6 +11,9 @@ See `CLAUDE.md` in this folder for the design rationale.
 """
 
 import asyncio
+import base64
+import hashlib
+import hmac
 import json
 import logging
 import nbformat
@@ -21,6 +24,7 @@ import signal
 import socket
 import sys
 import tempfile
+import time
 import uuid
 from contextlib import asynccontextmanager
 from copy import deepcopy
@@ -28,17 +32,20 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated, Any
+from urllib.parse import unquote, urlsplit
 
 import psutil
 import pyarrow.feather as pa_feather
 import uvicorn
 from fastapi import (
     BackgroundTasks,
+    Cookie,
     Depends,
     FastAPI,
     Header,
     HTTPException,
     Path as PathParam,
+    Response,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -132,6 +139,82 @@ def current_user(
 
 
 CurrentUser = Annotated[str, Depends(current_user)]
+
+
+# ---------------------------------------------------------------------------
+# Browser session authentication
+# ---------------------------------------------------------------------------
+#
+# A reverse proxy validates deployment-managed credentials and sends only the
+# validated username to POST /api/auth/session. The backend exchanges it for a
+# signed, short-lived HttpOnly cookie. No usernames, password hashes, or secret
+# material are stored in this repository.
+
+SESSION_COOKIE_NAME = "oedisi_session"
+SESSION_MAX_AGE_SECONDS = 8 * 60 * 60
+
+
+def _session_secret() -> bytes:
+    path = os.environ.get("OEDISI_SESSION_SECRET_FILE")
+    if path:
+        try:
+            secret = Path(path).read_bytes().strip()
+        except OSError as exc:
+            raise HTTPException(
+                status_code=503, detail="Workspace authentication is unavailable"
+            ) from exc
+    else:
+        secret = os.environ.get("OEDISI_SESSION_SECRET", "").encode()
+    if len(secret) < 32:
+        raise HTTPException(
+            status_code=503, detail="Workspace authentication is unavailable"
+        )
+    return secret
+
+
+def _encode_session(user: str, now: int | None = None) -> str:
+    issued_at = int(time.time()) if now is None else now
+    payload = json.dumps(
+        {"sub": user, "iat": issued_at, "exp": issued_at + SESSION_MAX_AGE_SECONDS},
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode()
+    encoded = base64.urlsafe_b64encode(payload).rstrip(b"=")
+    signature = hmac.new(_session_secret(), encoded, hashlib.sha256).digest()
+    encoded_signature = base64.urlsafe_b64encode(signature).rstrip(b"=")
+    return f"{encoded.decode()}.{encoded_signature.decode()}"
+
+
+def _decode_session(token: str | None, now: int | None = None) -> str | None:
+    if not token:
+        return None
+    try:
+        encoded, encoded_signature = token.split(".", 1)
+        expected = hmac.new(
+            _session_secret(), encoded.encode(), hashlib.sha256
+        ).digest()
+        supplied = base64.urlsafe_b64decode(
+            encoded_signature + "=" * (-len(encoded_signature) % 4)
+        )
+        if not hmac.compare_digest(expected, supplied):
+            return None
+        payload = json.loads(
+            base64.urlsafe_b64decode(encoded + "=" * (-len(encoded) % 4))
+        )
+        user = payload.get("sub")
+        expires = payload.get("exp")
+        current_time = int(time.time()) if now is None else now
+        if not isinstance(user, str) or not USER_ID_PATTERN.fullmatch(user):
+            return None
+        if not isinstance(expires, int) or expires <= current_time:
+            return None
+        return user
+    except (ValueError, TypeError, json.JSONDecodeError):
+        return None
+
+
+def _session_cookie_secure() -> bool:
+    return os.environ.get("OEDISI_SESSION_SECURE", "1") != "0"
 
 
 def _user_templates_dir(user: str) -> Path:
@@ -302,6 +385,95 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ---------------------------------------------------------------------------
+# Session endpoints (credentials are validated by the reverse proxy)
+# ---------------------------------------------------------------------------
+
+
+@app.post("/api/auth/session")
+def create_browser_session(
+    response: Response,
+    x_remote_user: Annotated[str | None, Header()] = None,
+) -> dict[str, Any]:
+    if x_remote_user is None or not USER_ID_PATTERN.fullmatch(x_remote_user):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=_encode_session(x_remote_user),
+        max_age=SESSION_MAX_AGE_SECONDS,
+        httponly=True,
+        secure=_session_cookie_secure(),
+        samesite="strict",
+        path="/",
+    )
+    return {"authenticated": True, "username": x_remote_user}
+
+
+@app.get("/api/auth/status")
+def browser_session_status(
+    token: Annotated[str | None, Cookie(alias=SESSION_COOKIE_NAME)] = None,
+) -> dict[str, Any]:
+    user = _decode_session(token)
+    if user is None:
+        return {"authenticated": False}
+    return {"authenticated": True, "username": user}
+
+
+@app.get("/api/auth/verify", status_code=204)
+def verify_browser_session(
+    token: Annotated[str | None, Cookie(alias=SESSION_COOKIE_NAME)] = None,
+) -> Response:
+    user = _decode_session(token)
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    return Response(status_code=204, headers={"X-Authenticated-User": user})
+
+
+def _notebook_uri_owner(original_uri: str) -> str | None:
+    """Return the user embedded in a user-scoped Voila URL."""
+    decoded_path = unquote(urlsplit(original_uri).path)
+    segments = decoded_path.split("/")
+    if any(segment in {".", ".."} for segment in segments):
+        raise HTTPException(status_code=400, detail="Invalid notebook path")
+    if len(segments) < 4 or segments[1:3] not in (
+        ["voila", "render"],
+        ["voila", "files"],
+    ):
+        return None
+    owner = segments[3]
+    if not USER_ID_PATTERN.fullmatch(owner):
+        raise HTTPException(status_code=400, detail="Invalid notebook owner")
+    return owner
+
+
+@app.get("/api/auth/verify-notebook", status_code=204)
+def verify_notebook_session(
+    token: Annotated[str | None, Cookie(alias=SESSION_COOKIE_NAME)] = None,
+    x_original_uri: Annotated[str | None, Header(alias="X-Original-URI")] = None,
+) -> Response:
+    user = _decode_session(token)
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    if x_original_uri is None:
+        raise HTTPException(status_code=400, detail="Notebook path is required")
+    owner = _notebook_uri_owner(x_original_uri)
+    if owner is not None and owner != user:
+        raise HTTPException(status_code=403, detail="Notebook access denied")
+    return Response(status_code=204, headers={"X-Authenticated-User": user})
+
+
+@app.post("/api/auth/logout")
+def delete_browser_session(response: Response) -> dict[str, bool]:
+    response.delete_cookie(
+        key=SESSION_COOKIE_NAME,
+        path="/",
+        secure=_session_cookie_secure(),
+        httponly=True,
+        samesite="strict",
+    )
+    return {"authenticated": False}
 
 
 # ---------------------------------------------------------------------------
