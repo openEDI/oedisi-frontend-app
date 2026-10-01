@@ -16,6 +16,7 @@ import logging
 import nbformat
 import os
 import re
+import shlex
 import shutil
 import signal
 import socket
@@ -35,10 +36,14 @@ import uvicorn
 from fastapi import (
     BackgroundTasks,
     Depends,
+    File,
     FastAPI,
+    Form,
     Header,
     HTTPException,
     Path as PathParam,
+    Query,
+    UploadFile,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -55,6 +60,22 @@ from pydantic import ConfigDict
 from tornado.web import HTTPError
 
 from output_annotations import OutputsList, annotate_outputs
+from model_manager import (
+    ModelManagerError,
+    archive_directory,
+    artifact_directory,
+    delete_model,
+    list_model_records,
+    load_inspection,
+    load_model_record,
+    resolve_model_references,
+    load_sensor_config,
+    save_sensor_config,
+    upload_sensor_file,
+    source_directory,
+    stage_model_upload,
+    update_model_record,
+)
 
 
 class AppWiringDiagram(WiringDiagram):
@@ -77,6 +98,7 @@ class AppWiringDiagram(WiringDiagram):
 SERVER_DIR = Path(__file__).resolve().parent
 DATA_DIR = SERVER_DIR.parent / "data"
 TEMPLATES_DIR = DATA_DIR / "templates"
+MODELS_DIR = DATA_DIR / "models"
 RUNS_DIR = SERVER_DIR / "runs"
 COMPONENTS_JSON_PATH = SERVER_DIR / "components.json"
 CATALOG_JSON_PATH = SERVER_DIR.parent / "src" / "lib" / "catalog.json"
@@ -482,6 +504,216 @@ def delete_template(template_id: str, user: CurrentUser) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Managed models
+# ---------------------------------------------------------------------------
+
+
+MODEL_MAX_UPLOAD_SIZE = 500 * 1024 * 1024
+
+
+def _model_error(exc: ModelManagerError) -> HTTPException:
+    return HTTPException(
+        status_code=exc.status_code,
+        detail={"message": str(exc), "error_code": exc.error_code, **exc.extra},
+        headers={"X-OEDISI-Model-Error": exc.error_code},
+    )
+
+
+@app.post("/api/models/upload", status_code=201)
+async def upload_model(
+    user: CurrentUser,
+    file: UploadFile = File(...),
+    name: str = Form(""),
+    description: str = Form(""),
+    input_format: str = Form("auto"),
+    load_model_id: str | None = Form(None),
+    crs: str | None = Form(None),
+) -> dict[str, Any]:
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="Uploaded model must have a filename")
+    content = await file.read()
+    if len(content) > MODEL_MAX_UPLOAD_SIZE:
+        raise HTTPException(status_code=413, detail="Model upload is too large (max 500 MB)")
+    try:
+        return stage_model_upload(
+            content,
+            file.filename,
+            MODELS_DIR,
+            user,
+            name=name,
+            description=description,
+            requested_format=input_format,
+            load_model_id=load_model_id,
+            crs=crs,
+        )
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.get("/api/models")
+def list_models(user: CurrentUser) -> list[dict[str, Any]]:
+    try:
+        return list_model_records(MODELS_DIR, user)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.get("/api/models/{model_id}/inspection")
+def get_model_inspection(model_id: str, user: CurrentUser) -> dict[str, Any]:
+    try:
+        return load_inspection(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.get("/api/models/{model_id}/components")
+def list_model_components(
+    model_id: str,
+    user: CurrentUser,
+    component_type: str | None = Query(None),
+    search: str | None = Query(None),
+    offset: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=1000),
+) -> dict[str, Any]:
+    try:
+        inspection = load_inspection(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+    components = inspection.get("components", [])
+    if component_type:
+        components = [item for item in components if item.get("_type") == component_type]
+    if search:
+        needle = search.lower()
+        components = [
+            item
+            for item in components
+            if needle in str(item.get("name", "")).lower()
+            or needle in str(item.get("_type", "")).lower()
+            or needle in str(item.get("uuid", "")).lower()
+        ]
+    total = len(components)
+    return {
+        "items": components[offset : offset + limit],
+        "total": total,
+        "offset": offset,
+        "limit": limit,
+    }
+
+
+@app.get("/api/models/{model_id}/components/{component_id}")
+def get_model_component(model_id: str, component_id: str, user: CurrentUser) -> dict[str, Any]:
+    try:
+        inspection = load_inspection(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+    for component in inspection.get("components", []):
+        if str(component.get("uuid")) == component_id:
+            return component
+    raise HTTPException(status_code=404, detail="Model component not found")
+
+
+@app.get("/api/models/{model_id}/topology")
+def get_model_topology(model_id: str, user: CurrentUser) -> dict[str, Any]:
+    try:
+        inspection = load_inspection(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+    return inspection.get("topology", {"nodes": [], "edges": []})
+
+
+@app.get("/api/models/{model_id}/sensors")
+def get_model_sensors(model_id: str, user: CurrentUser) -> dict[str, Any]:
+    try:
+        return load_sensor_config(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.put("/api/models/{model_id}/sensors")
+def put_model_sensors(model_id: str, payload: dict[str, Any], user: CurrentUser) -> dict[str, Any]:
+    try:
+        return save_sensor_config(MODELS_DIR, user, model_id, payload)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.post("/api/models/{model_id}/sensors/upload")
+async def upload_model_sensor_file(
+    model_id: str,
+    user: CurrentUser,
+    file: UploadFile = File(...),
+    sensor_type: str = Form("voltage"),
+) -> dict[str, Any]:
+    if not file.filename:
+        raise HTTPException(status_code=400, detail="Sensor file must have a filename")
+    content = await file.read()
+    if len(content) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Sensor file is too large (max 10 MB)")
+    try:
+        return upload_sensor_file(MODELS_DIR, user, model_id, content, sensor_type)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.get("/api/models/{model_id}/source/download")
+def download_model_source(model_id: str, user: CurrentUser) -> FileResponse:
+    try:
+        directory = source_directory(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+    files = [path for path in directory.rglob("*") if path.is_file()]
+    if len(files) == 1:
+        return FileResponse(files[0], filename=files[0].name)
+    archive = directory.parent / "source-download.zip"
+    archive_directory(directory, archive)
+    return FileResponse(archive, filename=f"{model_id}-source.zip", media_type="application/zip")
+
+
+@app.get("/api/models/{model_id}/artifacts/opendss/download")
+def download_model_opendss(model_id: str, user: CurrentUser) -> FileResponse:
+    try:
+        directory = artifact_directory(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+    archive = directory.parent / "opendss-download.zip"
+    archive_directory(directory, archive)
+    return FileResponse(archive, filename=f"{model_id}-opendss.zip", media_type="application/zip")
+
+
+@app.get("/api/models/{model_id}")
+def get_model(model_id: str, user: CurrentUser) -> dict[str, Any]:
+    try:
+        return load_model_record(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.patch("/api/models/{model_id}")
+def update_model(model_id: str, payload: dict[str, Any], user: CurrentUser) -> dict[str, Any]:
+    unknown = set(payload) - {"name", "description"}
+    if unknown:
+        raise HTTPException(status_code=400, detail=f"Unsupported model fields: {', '.join(sorted(unknown))}")
+    try:
+        return update_model_record(
+            MODELS_DIR,
+            user,
+            model_id,
+            name=payload.get("name"),
+            description=payload.get("description"),
+        )
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+@app.delete("/api/models/{model_id}", status_code=204)
+def remove_model(model_id: str, user: CurrentUser) -> None:
+    try:
+        delete_model(MODELS_DIR, user, model_id)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
+
+
+# ---------------------------------------------------------------------------
 # oedisi build (in-process)
 # ---------------------------------------------------------------------------
 
@@ -534,8 +766,21 @@ def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
         wiring_diagram, component_types, target_directory=str(build_dir)
     )
     build_dir.mkdir(parents=True, exist_ok=True)
+    runner_payload = runner_config.model_dump(mode="json")
+    # The virtualenv's console scripts can have stale shebangs when the
+    # environment was moved or recreated.  Launch the broker through the same
+    # interpreter running this server so local runs use the installed HELICS
+    # package reliably.
+    for federate in runner_payload.get("federates", []):
+        if federate.get("name") == "broker" and str(federate.get("exec", "")).startswith("helics_broker"):
+            broker_args = str(federate["exec"])[len("helics_broker") :].strip()
+            federate["exec"] = (
+                f"{shlex.quote(sys.executable)} -c "
+                "'from helics.bin import helics_broker; helics_broker()'"
+                f" {broker_args}"
+            ).strip()
     (build_dir / "system_runner.json").write_text(
-        runner_config.model_dump_json(indent=2), encoding="utf-8"
+        json.dumps(runner_payload, indent=2), encoding="utf-8"
     )
     (build_dir / "outputs_list.json").write_text(
         annotate_outputs(wiring_diagram, descriptions).model_dump_json(
@@ -782,9 +1027,18 @@ async def start_run(
     run_id = uuid.uuid4().hex
     run_dir = _user_runs_dir(user) / run_id
     build_dir = run_dir / "build"
+    submitted_wiring = wiring_diagram.model_dump(mode="json")
 
     try:
-        build_runner(wiring_diagram, build_dir)
+        resolved_wiring, model_references = resolve_model_references(
+            submitted_wiring,
+            MODELS_DIR,
+            user,
+            build_dir,
+        )
+        build_runner(AppWiringDiagram.model_validate(resolved_wiring), build_dir)
+    except ModelManagerError as exc:
+        raise _model_error(exc) from exc
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=400, detail=f"Build failed: {exc}") from exc
 
@@ -792,9 +1046,8 @@ async def start_run(
 
     # Snapshot what was submitted — authoritative record of what actually ran,
     # independent of whether the originating template is later edited or deleted.
-    (run_dir / "wiring.json").write_text(
-        wiring_diagram.model_dump_json(indent=2), encoding="utf-8"
-    )
+    _atomic_write_json(run_dir / "wiring.json", submitted_wiring)
+    _atomic_write_json(run_dir / "model_refs.json", {"models": model_references})
 
     # Copy template notebook into the run if one exists.
     if template_id:
@@ -817,7 +1070,9 @@ async def start_run(
 
     try:
         proc = await asyncio.create_subprocess_exec(
-            "helics",
+            sys.executable,
+            "-m",
+            "helics.cli",
             "run",
             f"--path={build_dir / 'system_runner.json'}",
             cwd=build_dir,

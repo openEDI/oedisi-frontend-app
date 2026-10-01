@@ -32,4 +32,8 @@ dist-ssr
 data/templates/*.json
 !data/.gitkeep
 !data/templates/.gitkeep
+
+# Uploaded and converted model storage
+data/models/*
+!data/models/.gitkeep
 !data/templates/ornl_*.json

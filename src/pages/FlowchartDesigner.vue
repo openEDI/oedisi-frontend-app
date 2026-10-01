@@ -8,6 +8,9 @@
         <h1 class="text-xl font-semibold">OEDISI Simulation Designer</h1>
       </div>
       <div class="flex items-center gap-2">
+        <Button variant="outline" @click="navigate('/models')">
+          🧩 Models
+        </Button>
         <Button variant="outline" @click="navigate('/configs')">
           📁 Saved Templates
         </Button>
@@ -57,6 +60,24 @@
 
         <!-- Node Properties -->
         <div v-else-if="selectedNode" class="space-y-4">
+          <div v-if="isFeederNode" class="space-y-2 rounded-md border border-emerald-200 bg-emerald-50/50 p-3">
+            <div class="flex items-center justify-between gap-2">
+              <label class="text-sm font-semibold">Managed distribution model</label>
+              <router-link to="/models" class="text-xs text-primary hover:underline">Manage models</router-link>
+            </div>
+            <select
+              v-model="selectedModelId"
+              class="h-10 w-full rounded-md border border-border bg-card px-3 py-2 text-sm"
+            >
+              <option value="">Use legacy/manual feeder configuration</option>
+              <option v-for="model in feederModels" :key="model.id" :value="model.id">
+                {{ model.name }} — {{ model.source_format.toUpperCase() }}{{ model.status === 'ready_with_warnings' ? ' (warnings)' : '' }}
+              </option>
+            </select>
+            <p v-if="selectedModelId" class="text-xs text-muted-foreground">
+              The template stores the model ID. The backend resolves it to an OpenDSS artifact only when the run is built.
+            </p>
+          </div>
           <div class="space-y-2">
             <label class="text-sm font-semibold">Static Inputs</label>
             <div v-if="selectedNodeSchema" class="space-y-2">
@@ -193,7 +214,7 @@ import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
-import { api, StartError } from '@/lib/api'
+import { api, StartError, type ManagedModel } from '@/lib/api'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
@@ -259,6 +280,7 @@ const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
 const selectedWireOption = ref('')
+const managedModels = ref<ManagedModel[]>([])
 const { screenToFlowCoordinate } = useVueFlow()
 
 
@@ -454,13 +476,53 @@ const nodeConfig = computed(() => {
   return nodeData?.config ?? {}
 })
 
+const isFeederNode = computed(() => {
+  const componentType = (selectedNode.value?.data as NodeData | undefined)?.componentType
+  return componentType === 'Feeder' || componentType === 'LocalFeeder'
+})
+
+const feederModels = computed(() => managedModels.value.filter((model) =>
+  (model.status === 'ready' || model.status === 'ready_with_warnings')
+    && model.artifacts?.opendss,
+))
+
+const selectedModelId = computed<string>({
+  get: () => {
+    const value = nodeConfig.value.model_id
+    return typeof value === 'string' ? value : ''
+  },
+  set: (value: string) => {
+    const node = nodes.value.find((item) => item.id === selectedNodeId.value)
+    if (!node) return
+    const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
+    const config = { ...(currentData.config ?? {}) }
+    if (value) config.model_id = value
+    else delete config.model_id
+    node.data = { ...currentData, config }
+  },
+})
+
 const updateNodeConfig = (event: { data: unknown }) => {
   const node = nodes.value.find((node) => node.id === selectedNodeId.value)
   if (!node) {
     return
   }
   const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
-  node.data = { ...currentData, config: event.data }
+  const nextConfig = event.data && typeof event.data === 'object'
+    ? { ...(event.data as Record<string, unknown>) }
+    : {}
+  if (currentData.config?.model_id && nextConfig.model_id === undefined) {
+    nextConfig.model_id = currentData.config.model_id
+  }
+  node.data = { ...currentData, config: nextConfig }
+}
+
+async function loadManagedModels() {
+  try {
+    managedModels.value = await api.listModels()
+  } catch (error) {
+    console.warn('Could not load managed models:', error)
+  }
 }
 
 const wireDisplayLabel = (wire: EdgeWire): string => wire.type
@@ -556,9 +618,11 @@ const getNodeLabel = (nodeId: string): string => {
   return node?.data?.label || nodeId
 }
 
+const editingTemplateId = ref<string | null>(null)
+
 function getTemplate(name: string, description: string, nodes: Node[], edges: Edge[]): TemplateData {
   return {
-    id: Date.now().toString(),
+    id: editingTemplateId.value || Date.now().toString(),
     name: name || `Flow ${new Date().toLocaleString()}`,
     description: description,
     nodes: nodes,
@@ -576,6 +640,7 @@ const saveTemplate = async () => {
 
   try {
     await api.saveTemplate(config)
+    editingTemplateId.value = config.id
     saveDialogOpen.value = false
   } catch (error) {
     console.error('Error saving template:', error)
@@ -619,6 +684,7 @@ const saveAndRunTemplate = async () => {
   try {
     try {
       await api.saveTemplate(config)
+      editingTemplateId.value = config.id
     } catch (error) {
       console.error('Error saving template:', error)
       alert('Failed to save template. Please try again.')
@@ -659,9 +725,11 @@ function isValidTemplate(value: unknown): value is TemplateData {
 
 // Load template from history state (coming from SavedConfig or others)
 onActivated(() => {
+  void loadManagedModels()
   const config = window.history.state?.template
   if (config === undefined || config === null) return
   if (isValidTemplate(config)) {
+    editingTemplateId.value = typeof config.id === 'string' ? config.id : null
     nodes.value = config.nodes || []
     edges.value = (config.edges || []).map((edge: Edge) => {
       const edgeData = edge.data as EdgeData | undefined

@@ -10,6 +10,34 @@
       </div>
 
       <div class="grid md:grid-cols-2 gap-6">
+        <!-- Model Manager -->
+        <Card class="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <div class="flex flex-col space-y-3">
+              <div
+                class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none"
+                  stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2" d="M4 6h16M4 12h16M4 18h10">
+                  </path>
+                </svg>
+              </div>
+              <CardTitle>Model Manager</CardTitle>
+              <CardDescription>
+                Upload, convert, and inspect distribution models before selecting them for a Feeder.
+              </CardDescription>
+            </div>
+          </CardHeader>
+          <CardFooter>
+            <router-link to="/models" class="w-full">
+              <Button variant="outline">
+                Manage Models
+              </Button>
+            </router-link>
+          </CardFooter>
+        </Card>
+
         <!-- Create New Simulation -->
         <Card class="hover:shadow-lg transition-shadow">
           <CardHeader>
@@ -71,8 +99,7 @@
         </Card>
 
         <!-- Simulation Status -->
-        <Card
-          class="md:col-span-2 md:justify-self-center md:max-w-md hover:shadow-lg transition-shadow">
+        <Card class="hover:shadow-lg transition-shadow">
           <CardHeader>
             <div class="flex flex-col space-y-3">
               <div

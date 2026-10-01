@@ -7,6 +7,8 @@ import NotebookView from '@/pages/NotebookView.vue'
 import TemplateNotebookView from '@/pages/TemplateNotebookView.vue'
 import RunsList from '@/pages/RunsList.vue'
 import RunsDetail from '@/pages/RunsDetail.vue'
+import ModelManager from '@/pages/ModelManager.vue'
+import ModelDetail from '@/pages/ModelDetail.vue'
 
 const routes = [
   {
@@ -40,6 +42,14 @@ const routes = [
   {
     path: '/runs/:runId',
     component: RunsDetail,
+  },
+  {
+    path: '/models',
+    component: ModelManager,
+  },
+  {
+    path: '/models/:modelId',
+    component: ModelDetail,
   },
   {
     path: '/:pathMatch(.*)*',
