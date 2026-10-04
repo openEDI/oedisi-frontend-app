@@ -6,10 +6,12 @@
         Templates</router-link>
       <div class="flex-1">
         <h1 class="text-xl font-bold">Template Notebook</h1>
-        <p class="text-xs text-amber-700 dark:text-amber-300">Starting point for future simulation runs</p>
+        <p class="text-xs text-amber-700 dark:text-amber-300">
+          {{ readOnly ? 'Read-only hosted preview for future simulation runs' : 'Starting point for future simulation runs' }}
+        </p>
       </div>
-      <Button variant="destructive" size="sm" @click="handleDelete"
-        :disabled="!jupyterUrl">
+      <Button variant="destructive" size="sm" :disabled="!jupyterUrl"
+        @click="handleDelete">
         Delete Notebook
       </Button>
     </div>
@@ -35,6 +37,7 @@ const router = useRouter()
 const templateId = computed<string>(() => String(route.params.templateId))
 
 const jupyterUrl = ref<string | null>(null)
+const readOnly = ref(false)
 const loading = ref(true)
 const error = ref<string | null>(null)
 
@@ -46,8 +49,10 @@ async function loadNotebook() {
     if (!status.exists) {
       const result = await api.createTemplateNotebook(templateId.value)
       jupyterUrl.value = result.jupyter_url
+      readOnly.value = result.read_only
     } else {
       jupyterUrl.value = status.jupyter_url
+      readOnly.value = status.read_only
     }
   } catch (e) {
     error.value = `Failed to load notebook: ${e instanceof Error ? e.message : String(e)}`

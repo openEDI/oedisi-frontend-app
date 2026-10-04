@@ -111,6 +111,12 @@ KNOWN_COMPONENTS: dict[str, dict[str, str]] = {
         "name": "ORNL DSSE (GN-WLS)",
         "description": "Distribution state estimation via Gauss-Newton WLS",
     },
+    "ornl-od-prony": {
+        "id": "ODComponent",
+        "base_name": "ornl_od_prony",
+        "name": "ORNL Oscillation Detection (Prony)",
+        "description": "Oscillation detection using Prony analysis",
+    },
     "pnnl-dsse-ekf": {
         "id": "PnnlDsseEkfComponent",
         "name": "PNNL DSSE EKF",

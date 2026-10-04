@@ -1,0 +1,361 @@
+{
+    "id":  "pnnl-emt-swod",
+    "name":  "pnnl_emt_swod_scenario",
+    "nodes":  [
+                  {
+                      "id":  "PlayerComponent-1",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  120,
+                                       "y":  100
+                                   },
+                      "data":  {
+                                   "label":  "player_v",
+                                   "componentType":  "PlayerComponent",
+                                   "config":  {
+                                                  "name":  "player_v",
+                                                  "filename":  "/components/pnnl-emt-swod/data/v_abc.csv",
+                                                  "data_type":  "VoltagesMagnitude",
+                                                  "number_of_timesteps":  100000,
+                                                  "start_time_index":  0,
+                                                  "run_freq_time_step":  0.00004
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "PlayerComponent-2",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  420,
+                                       "y":  100
+                                   },
+                      "data":  {
+                                   "label":  "player_i",
+                                   "componentType":  "PlayerComponent",
+                                   "config":  {
+                                                  "name":  "player_i",
+                                                  "filename":  "/components/pnnl-emt-swod/data/i_abc.csv",
+                                                  "data_type":  "CurrentsMagnitude",
+                                                  "number_of_timesteps":  100000,
+                                                  "start_time_index":  0,
+                                                  "run_freq_time_step":  0.00004
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "PnnlEmtSwodComponent-3",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  720,
+                                       "y":  100
+                                   },
+                      "data":  {
+                                   "label":  "swod",
+                                   "componentType":  "PnnlEmtSwodComponent",
+                                   "config":  {
+                                                  "name":  "swod",
+                                                  "window_length":  50000
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-4",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  1020,
+                                       "y":  100
+                                   },
+                      "data":  {
+                                   "label":  "recorder_osc_freq",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_osc_freq",
+                                                  "feather_filename":  "../../outputs/swod_oscillation_frequency.feather",
+                                                  "csv_filename":  "../../outputs/swod_oscillation_frequency.csv"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-5",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  120,
+                                       "y":  250
+                                   },
+                      "data":  {
+                                   "label":  "recorder_osc_amp",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_osc_amp",
+                                                  "feather_filename":  "../../outputs/swod_oscillation_amplitude.feather",
+                                                  "csv_filename":  "../../outputs/swod_oscillation_amplitude.csv"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-6",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  420,
+                                       "y":  250
+                                   },
+                      "data":  {
+                                   "label":  "recorder_har_freq",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_har_freq",
+                                                  "feather_filename":  "../../outputs/swod_harmonic_frequency.feather",
+                                                  "csv_filename":  "../../outputs/swod_harmonic_frequency.csv"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-7",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  720,
+                                       "y":  250
+                                   },
+                      "data":  {
+                                   "label":  "recorder_har_amp",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_har_amp",
+                                                  "feather_filename":  "../../outputs/swod_harmonic_amplitude.feather",
+                                                  "csv_filename":  "../../outputs/swod_harmonic_amplitude.csv"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-8",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  1020,
+                                       "y":  250
+                                   },
+                      "data":  {
+                                   "label":  "recorder_real_ssp",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_real_ssp",
+                                                  "feather_filename":  "../../outputs/swod_real_ssp.feather",
+                                                  "csv_filename":  "../../outputs/swod_real_ssp.csv"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-9",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  120,
+                                       "y":  400
+                                   },
+                      "data":  {
+                                   "label":  "recorder_reactive_ssp",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_reactive_ssp",
+                                                  "feather_filename":  "../../outputs/swod_reactive_ssp.feather",
+                                                  "csv_filename":  "../../outputs/swod_reactive_ssp.csv"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-10",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  420,
+                                       "y":  400
+                                   },
+                      "data":  {
+                                   "label":  "recorder_watts_rms",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_watts_rms",
+                                                  "feather_filename":  "../../outputs/swod_watts_rms.feather",
+                                                  "csv_filename":  "../../outputs/swod_watts_rms.csv"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "Recorder-11",
+                      "type":  "custom",
+                      "position":  {
+                                       "x":  720,
+                                       "y":  400
+                                   },
+                      "data":  {
+                                   "label":  "recorder_vars_rms",
+                                   "componentType":  "Recorder",
+                                   "config":  {
+                                                  "name":  "recorder_vars_rms",
+                                                  "feather_filename":  "../../outputs/swod_vars_rms.feather",
+                                                  "csv_filename":  "../../outputs/swod_vars_rms.csv"
+                                              }
+                               }
+                  }
+              ],
+    "edges":  [
+                  {
+                      "id":  "edge-1",
+                      "type":  "wiring",
+                      "source":  "PlayerComponent-1",
+                      "target":  "PnnlEmtSwodComponent-3",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "publication",
+                                                     "targetPortId":  "voltages_abs"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-2",
+                      "type":  "wiring",
+                      "source":  "PlayerComponent-2",
+                      "target":  "PnnlEmtSwodComponent-3",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "publication",
+                                                     "targetPortId":  "currents_abs"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-3",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-4",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "oscillation_frequency",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-4",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-5",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "oscillation_amplitude",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-5",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-6",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "harmonic_frequency",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-6",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-7",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "harmonic_amplitude",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-7",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-8",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "real_ssp",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-8",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-9",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "MeasurementArray",
+                                                     "sourcePortId":  "reactive_ssp",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "MeasurementArray"
+                  },
+                  {
+                      "id":  "edge-9",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-10",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "PowersReal",
+                                                     "sourcePortId":  "watts_rms",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "PowersReal"
+                  },
+                  {
+                      "id":  "edge-10",
+                      "type":  "wiring",
+                      "source":  "PnnlEmtSwodComponent-3",
+                      "target":  "Recorder-11",
+                      "data":  {
+                                   "wires":  [
+                                                 {
+                                                     "type":  "PowersImaginary",
+                                                     "sourcePortId":  "vars_rms",
+                                                     "targetPortId":  "subscription"
+                                                 }
+                                             ]
+                               },
+                      "label":  "PowersImaginary"
+                  }
+              ],
+    "createdAt":  "2026-07-22T12:00:00.000Z"
+}

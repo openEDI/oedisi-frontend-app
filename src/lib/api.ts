@@ -12,6 +12,12 @@ export interface RunSummary {
   template_id: string | null
   exit_code?: number
   run_dir: string
+  usecase?: string | null
+}
+
+export interface RunAvailability {
+  available: boolean
+  retry_after_seconds: number
 }
 
 export interface ResultEntry {
@@ -124,6 +130,15 @@ export const api = {
 
     return await response.json()
   },
+  async getRunAvailability(): Promise<RunAvailability> {
+    const response = await fetch(`${API_BASE_URL}/run-availability`, {
+      cache: 'no-store',
+    })
+    if (!response.ok) {
+      throw new Error('Failed to get simulation availability')
+    }
+    return await response.json()
+  },
   async runStatus(run_id: string): Promise<RunSummary> {
     const response = await fetch(`${API_BASE_URL}/runs/${run_id}`, {
       method: 'GET',
@@ -174,6 +189,25 @@ export const api = {
   },
   runDownloadUrl(run_id: string): string {
     return `${API_BASE_URL}/runs/${run_id}/download`
+  },
+  reportUrl(run_id: string): string {
+    return `${API_BASE_URL}/runs/${run_id}/report`
+  },
+  async createReport(
+    run_id: string,
+    force = false
+  ): Promise<{ engine: string; usecase: string; cached: boolean; url: string }> {
+    const response = await fetch(
+      `${API_BASE_URL}/runs/${run_id}/report${force ? '?force=true' : ''}`,
+      { method: 'POST' }
+    )
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      const errorMessage =
+        errorData.detail || `HTTP ${response.status}: ${response.statusText}`
+      throw new Error(errorMessage)
+    }
+    return await response.json()
   },
   async getWiring(run_id: string): Promise<WiringDiagram> {
     const response = await fetch(`${API_BASE_URL}/runs/${run_id}/wiring`, {
@@ -262,7 +296,7 @@ export const api = {
   },
   async createNotebook(
     run_id: string
-  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/runs/${run_id}/notebook`,
       { method: 'POST' }
@@ -277,7 +311,7 @@ export const api = {
   },
   async getNotebookStatus(
     run_id: string
-  ): Promise<{ exists: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/runs/${run_id}/notebook`,
       { method: 'GET' }
@@ -319,7 +353,7 @@ export const api = {
   },
   async createTemplateNotebook(
     templateId: string
-  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/templates/${templateId}/notebook`,
       { method: 'POST' }
@@ -334,7 +368,7 @@ export const api = {
   },
   async getTemplateNotebookStatus(
     templateId: string
-  ): Promise<{ exists: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/templates/${templateId}/notebook`,
       { method: 'GET' }

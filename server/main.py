@@ -62,6 +62,7 @@ from pydantic import ConfigDict
 from tornado.web import HTTPError
 
 from output_annotations import OutputsList, annotate_outputs
+import postprocess as pp
 
 
 class AppWiringDiagram(WiringDiagram):
@@ -83,8 +84,8 @@ class AppWiringDiagram(WiringDiagram):
 
 SERVER_DIR = Path(__file__).resolve().parent
 DATA_DIR = SERVER_DIR.parent / "data"
-TEMPLATES_DIR = DATA_DIR / "templates"
-RUNS_DIR = SERVER_DIR / "runs"
+TEMPLATES_DIR = Path(os.environ.get("OEDISI_TEMPLATES_DIR", DATA_DIR / "templates"))
+RUNS_DIR = Path(os.environ.get("OEDISI_RUNS_DIR", SERVER_DIR / "runs"))
 COMPONENTS_JSON_PATH = SERVER_DIR / "components.json"
 CATALOG_JSON_PATH = SERVER_DIR.parent / "src" / "lib" / "catalog.json"
 
@@ -681,6 +682,61 @@ def _resolve_component_path(raw: str) -> str:
     return os.path.expanduser(raw)
 
 
+PORTABLE_COMPONENT_PREFIX = "/components/"
+COMPONENT_EXECUTE_OVERRIDES = {
+    "NlpDopfComponent": "python -m nlpdopf.federate.fed",
+    "NlpDsseComponent": "python -m nlpdsse.federate.fed",
+    "PnnlDsseEkfComponent": (
+        "python -c \"from src.ekf_federate.server import run_sim_cli; "
+        "run_sim_cli()\""
+    ),
+}
+
+
+def _resolve_runtime_parameter(value: Any) -> Any:  # noqa: ANN401
+    """Resolve portable template asset paths inside component parameters.
+
+    Canonical templates use ``/components/<component>/...`` so they remain
+    independent of a particular checkout location. Federates receive ordinary
+    filesystem paths, so convert those values immediately before building the
+    runner configuration. The submitted wiring snapshot remains portable.
+    """
+    if isinstance(value, str) and value.startswith(PORTABLE_COMPONENT_PREFIX):
+        components_root = os.environ.get("OEDISI_COMPONENTS")
+        if not components_root:
+            raise RuntimeError(
+                "OEDISI_COMPONENTS is required to resolve portable component assets"
+            )
+        parts = value[len(PORTABLE_COMPONENT_PREFIX) :].split("/")
+        if len(parts) < 2 or any(part in {"", ".", ".."} for part in parts):
+            raise ValueError(f"Invalid portable component asset path: {value}")
+        root = Path(components_root).expanduser().resolve()
+        resolved = root.joinpath(*parts).resolve()
+        try:
+            resolved.relative_to(root)
+        except ValueError as exc:
+            raise ValueError(
+                f"Portable component asset escapes component root: {value}"
+            ) from exc
+        if not resolved.is_file():
+            raise FileNotFoundError(f"Portable component asset not found: {value}")
+        return str(resolved)
+    if isinstance(value, dict):
+        return {key: _resolve_runtime_parameter(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_resolve_runtime_parameter(item) for item in value]
+    return value
+
+
+def _runtime_wiring(wiring_diagram: WiringDiagram) -> WiringDiagram:
+    data = wiring_diagram.model_dump()
+    for component in data.get("components", []):
+        component["parameters"] = _resolve_runtime_parameter(
+            component.get("parameters", {})
+        )
+    return WiringDiagram.model_validate(data)
+
+
 def load_component_descriptions() -> dict[str, ComponentDescription]:
     """Load the component-name → ComponentDescription mapping from components.json."""
     with open(COMPONENTS_JSON_PATH) as f:
@@ -692,6 +748,8 @@ def load_component_descriptions() -> dict[str, ComponentDescription]:
         with open(path) as f:
             comp_desc = ComponentDescription.model_validate(json.load(f))
         comp_desc.directory = os.path.dirname(path)
+        if name in COMPONENT_EXECUTE_OVERRIDES:
+            comp_desc.execute_function = COMPONENT_EXECUTE_OVERRIDES[name]
         descriptions[name] = comp_desc
     return descriptions
 
@@ -702,8 +760,9 @@ def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
         name: basic_component(desc, _bad_type_checker)
         for name, desc in descriptions.items()
     }
+    runtime_wiring = _runtime_wiring(wiring_diagram)
     runner_config = generate_runner_config(
-        wiring_diagram, component_types, target_directory=str(build_dir)
+        runtime_wiring, component_types, target_directory=str(build_dir)
     )
     build_dir.mkdir(parents=True, exist_ok=True)
     (build_dir / "system_runner.json").write_text(
@@ -805,6 +864,10 @@ async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
         print(f"[run {run_id}] exceeded OEDISI_MAX_TIME; killing", file=sys.stderr)
         _tree_kill(proc.pid)
         code = await proc.wait()  # reap the killed process so it isn't left a zombie
+    # The runner can exit as soon as one federate fails while its broker or
+    # sibling federates remain alive. The run owns its whole process group, so
+    # clean any survivors before releasing the single-run slot.
+    _tree_kill(proc.pid)
     record = runs.get(run_id)
     if record is None:
         return  # run was deleted while we waited
@@ -832,7 +895,10 @@ def _tree_kill(pid: int) -> None:
         return
     if os.name == "posix":
         try:
-            os.killpg(os.getpgid(pid), signal.SIGKILL)
+            # start_new_session=True makes the runner pid its process-group id.
+            # Address the group directly because the runner may already have
+            # exited and been reaped while descendants are still alive.
+            os.killpg(pid, signal.SIGKILL)
         except (ProcessLookupError, PermissionError):
             pass
         return
@@ -907,6 +973,11 @@ def _restore_runs() -> None:
 # fixed pair of ports, so a second concurrent `helics run` collides on them.
 # Default ZMQ broker port (23404) plus its reply channel (23405).
 HELICS_BROKER_PORTS: tuple[int, ...] = (23404, 23405)
+RUN_AVAILABILITY_RETRY_SECONDS = 5
+RUN_BUSY_DETAIL = (
+    "Another simulation is currently running. Your simulation was not started. "
+    "Please wait and try again."
+)
 
 
 def _port_in_use(port: int) -> bool:
@@ -921,26 +992,31 @@ def _port_in_use(port: int) -> bool:
         return sock.connect_ex(("127.0.0.1", port)) == 0
 
 
-def _assert_no_run_in_progress() -> None:
-    """Reject the request (409) if a simulation is already running.
+def _run_slot_available() -> bool:
+    """Return whether the one global HELICS simulation slot is available.
 
     Two layers: the in-process check catches a rapid double-submit before the
     broker has bound its port; the port check catches brokers started outside
     this server or left alive (`"unknown"`) across a restart.
     """
-    for run_id, record in runs.items():
-        if record.status == "running":
-            raise HTTPException(
-                status_code=409,
-                detail=f"A simulation is already running ({record.name or run_id}).",
-            )
-    busy = [p for p in HELICS_BROKER_PORTS if _port_in_use(p)]
-    if busy:
-        ports = ", ".join(str(p) for p in busy)
-        raise HTTPException(
-            status_code=409,
-            detail=f"HELICS broker port {ports} in use; a simulation is already running.",
-        )
+    if any(record.status == "running" for record in runs.values()):
+        return False
+    return not any(_port_in_use(port) for port in HELICS_BROKER_PORTS)
+
+
+@app.get("/api/run-availability")
+def run_availability(_user: CurrentUser) -> dict[str, bool | int]:
+    """Publish only global slot availability; never another user's run details."""
+    return {
+        "available": _run_slot_available(),
+        "retry_after_seconds": RUN_AVAILABILITY_RETRY_SECONDS,
+    }
+
+
+def _assert_no_run_in_progress() -> None:
+    """Reject a launch if the one global simulation slot is occupied."""
+    if not _run_slot_available():
+        raise HTTPException(status_code=409, detail=RUN_BUSY_DETAIL)
 
 
 @app.post("/api/runs")
@@ -1012,6 +1088,19 @@ async def start_run(
     return {"run_id": run_id}
 
 
+_usecase_cache: dict[str, str | None] = {}
+
+
+def _run_usecase(run_id: str, run_dir: Path) -> str | None:
+    """Use case for a run ('ev' / 'od' / None), cached per run id."""
+    if run_id not in _usecase_cache:
+        try:
+            _usecase_cache[run_id] = pp.detect_usecase(run_dir)
+        except Exception:  # noqa: BLE001 — unknown/other use cases are simply None
+            _usecase_cache[run_id] = None
+    return _usecase_cache[run_id]
+
+
 def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
     out: dict[str, Any] = {
         "run_id": run_id,
@@ -1020,6 +1109,7 @@ def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
         "template_id": record.template_id,
         "run_dir": str(record.run_dir),
         "status": record.status,
+        "usecase": _run_usecase(run_id, record.run_dir),
     }
     if record.exit_code is not None:
         out["exit_code"] = record.exit_code
@@ -1102,6 +1192,39 @@ def run_log(run_id: RunId, component: str, user: CurrentUser) -> FileResponse:
     if not log_path.exists():
         raise HTTPException(status_code=404, detail="Log not found")
     return FileResponse(log_path, media_type="text/plain; charset=utf-8")
+
+
+@app.post("/api/runs/{run_id}/report")
+def create_report(
+    run_id: RunId, user: CurrentUser, force: bool = False
+) -> dict[str, Any]:
+    """Generate (or reuse) the per-use-case post-process report for a run."""
+    run_dir = _user_runs_dir(user) / run_id
+    if not run_dir.exists():
+        raise HTTPException(status_code=404, detail="Run not found")
+    try:
+        info = pp.generate(run_dir, force=force)
+    except pp.UnsupportedUseCase as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except pp.OutputsMissing as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    return {
+        "engine": info.engine,
+        "usecase": info.usecase,
+        "cached": info.cached,
+        "url": f"/api/runs/{run_id}/report",
+    }
+
+
+@app.get("/api/runs/{run_id}/report")
+def get_report(run_id: RunId, user: CurrentUser) -> FileResponse:
+    path = pp.html_path(_user_runs_dir(user) / run_id)
+    if not path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Report not generated yet — POST /api/runs/{run_id}/report first.",
+        )
+    return FileResponse(path, media_type="text/html; charset=utf-8")
 
 
 def _load_run_wiring(user: str, run_id: str) -> dict[str, Any]:
@@ -1299,7 +1422,7 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
         if cell.cell_type == "code" and "DATA_DIR" in cell.source:
             cell.source = re.sub(
                 r'DATA_DIR\s*=\s*r?"[^"]*"',
-                f'DATA_DIR = r"{data_dir}"',
+                lambda _match: f'DATA_DIR = r"{data_dir}"',
                 cell.source,
             )
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -1340,6 +1463,7 @@ def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
             "exists": True,
             "created": False,
             "jupyter_url": _jupyter_notebook_url(user, run_id),
+            "read_only": _is_multi_user(),
         }
     run_dir = _user_runs_dir(user) / run_id
     # Try copying from template notebook
@@ -1348,6 +1472,7 @@ def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
             "exists": True,
             "created": True,
             "jupyter_url": _jupyter_notebook_url(user, run_id),
+            "read_only": _is_multi_user(),
         }
     # Fallback: create blank
     nb = _make_blank_notebook(run_dir)
@@ -1357,6 +1482,7 @@ def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
         "exists": True,
         "created": True,
         "jupyter_url": _jupyter_notebook_url(user, run_id),
+        "read_only": _is_multi_user(),
     }
 
 
@@ -1368,6 +1494,7 @@ def get_notebook_status(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
     return {
         "exists": path.exists(),
         "jupyter_url": _jupyter_notebook_url(user, run_id),
+        "read_only": _is_multi_user(),
     }
 
 
@@ -1427,6 +1554,7 @@ def create_template_notebook(
             "exists": True,
             "created": False,
             "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+            "read_only": _is_multi_user(),
         }
     nb = _make_blank_notebook(Path("<run data will appear here>"))
     # Replace the placeholder with a generic comment for templates
@@ -1448,6 +1576,7 @@ def create_template_notebook(
         "exists": True,
         "created": True,
         "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+        "read_only": _is_multi_user(),
     }
 
 
@@ -1462,6 +1591,7 @@ def get_template_notebook_status(
     return {
         "exists": path.exists(),
         "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+        "read_only": _is_multi_user(),
     }
 
 

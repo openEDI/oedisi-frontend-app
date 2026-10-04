@@ -60,7 +60,7 @@ This is a Vue 3 + Vite TypeScript application that provides a web-based interfac
 1. Navigate to the project directory:
 
 ```bash
-cd /Users/alatif/Documents/GitHub/oedisi-frontend-app
+cd oedisi-frontend-app
 ```
 
 2. Install dependencies:
