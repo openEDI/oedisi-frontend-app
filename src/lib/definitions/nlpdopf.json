@@ -1,6 +1,6 @@
 {
     "directory": "./",
-    "execute_function": "python federate_distflowopf.py",
+    "execute_function": "python fed.py",
     "static_inputs": [
     ],
     "dynamic_inputs": [

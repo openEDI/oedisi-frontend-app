@@ -17,6 +17,13 @@
       </div>
     </div>
 
+    <div v-if="runAvailable === false" role="status" aria-live="polite"
+      class="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+      <span class="font-semibold">Simulation server busy.</span>
+      Another simulation is currently running. Please wait; this page checks
+      again automatically.
+    </div>
+
     <div class="flex-1 flex min-h-0">
       <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
@@ -64,6 +71,27 @@
                 :renderers="renderers" :ajv="ajv"
                 :validation-mode="'ValidateAndHide'"
                 @change="updateNodeConfig" />
+              <div v-if="selectedNodeIsOrnlOdPlayer"
+                class="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-950">
+                <p>
+                  <strong>dataset preset:</strong> changing the input
+                  dataset also applies its matched playback length, sample rate,
+                  detector settings, and ground truth.
+                </p>
+                <p v-if="selectedOrnlOdPresetIsLongRun"
+                  class="mt-2 font-semibold">
+                  This dataset is approximately 30.5 minutes of recorded data
+                  and may take substantially longer to run.
+                </p>
+              </div>
+              <div v-if="selectedNodeIsSwitchableOrnlEvFeeder"
+                class="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-950">
+                <p>
+                  <strong>Feeder preset:</strong> changing the feeder also
+                  applies its matched profiles, simulation date, EV buses,
+                  assignments, and sensitivity settings.
+                </p>
+              </div>
             </div>
             <p v-else class="text-sm text-muted-foreground">No static inputs for
               this component.</p>
@@ -175,9 +203,11 @@
             @click="saveDialogOpen = false">Cancel</Button>
           <Button variant="secondary" @click="exportTemplate">Export as Wiring
             Diagram</Button>
-          <Button :disabled="runPending" variant="secondary"
-            @click="saveAndRunTemplate">{{ runPending ? 'Starting...' :
-              'Save and Run' }}</Button>
+          <Button :disabled="runPending || runAvailable === false"
+            :title="runAvailable === false ? RUN_BUSY_MESSAGE : undefined"
+            variant="secondary" @click="saveAndRunTemplate">{{ runPending ?
+              'Starting...' : runAvailable === false ? 'Server Busy' :
+                'Save and Run' }}</Button>
           <Button :disabled="savePending" @click="saveTemplate">{{ savePending ?
             'Saving...' : 'Save' }}</Button>
         </DialogFooter>
@@ -187,15 +217,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, watch, markRaw, provide, onActivated } from 'vue'
+import { ref, nextTick, computed, watch, markRaw, provide, onActivated, onDeactivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import { api, StartError } from '@/lib/api'
+import { RUN_BUSY_MESSAGE, runAvailability } from '@/lib/runAvailability'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
+import {
+  buildOrnlOdPresetUpdate,
+  hasOrnlOdPlayerConfigChange,
+  isOrnlOdPlayer,
+  mergeOrnlOdPlayerConfig,
+  ornlOdPresetForFilename,
+  withOrnlOdDatasetDropdown,
+} from '@/lib/ornlOdDatasets'
+import {
+  buildOrnlEvFeederPresetUpdate,
+  hasOrnlEvConfigChange,
+  isSwitchableOrnlEvComponent,
+  isSwitchableOrnlEvFeeder,
+  normalizeOrnlEvFeederFormConfig,
+  withOrnlEvControlModeDropdown,
+  withOrnlEvFeederDropdown,
+} from '@/lib/ornlEvFeederPresets'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
@@ -255,6 +303,35 @@ const selectedNode = computed<Node | null>(() => {
 const selectedEdge = computed<Edge | null>(() => {
   return (edges.value as Edge[]).find((edge) => edge.id === selectedEdgeId.value) ?? null
 })
+const selectedNodeIsOrnlOdPlayer = computed(
+  () => selectedNodeId.value !== null && isOrnlOdPlayer(
+    selectedNodeId.value,
+    nodes.value as Node[],
+    edges.value as Edge[],
+  ),
+)
+const selectedOrnlOdPreset = computed(() => selectedNodeIsOrnlOdPlayer.value
+  ? ornlOdPresetForFilename(
+    (selectedNode.value?.data as NodeData | undefined)?.config?.filename,
+  )
+  : undefined)
+const selectedOrnlOdPresetIsLongRun = computed(
+  () => selectedOrnlOdPreset.value?.longRun === true,
+)
+const selectedNodeIsSwitchableOrnlEvFeeder = computed(
+  () => selectedNodeId.value !== null && isSwitchableOrnlEvFeeder(
+    selectedNodeId.value,
+    nodes.value as Node[],
+    edges.value as Edge[],
+  ),
+)
+const selectedNodeIsSwitchableOrnlEvComponent = computed(
+  () => selectedNodeId.value !== null && isSwitchableOrnlEvComponent(
+    selectedNodeId.value,
+    nodes.value as Node[],
+    edges.value as Edge[],
+  ),
+)
 const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
@@ -446,7 +523,17 @@ const selectedNodeSchema = computed<JsonSchema | null>(() => {
   if (!component.inputSchema) {
     return null
   }
-  return component.inputSchema ?? {}
+  const schema = component.inputSchema ?? {}
+  if (selectedNodeIsOrnlOdPlayer.value) {
+    return withOrnlOdDatasetDropdown(schema) as JsonSchema
+  }
+  if (selectedNodeIsSwitchableOrnlEvFeeder.value) {
+    return withOrnlEvFeederDropdown(schema) as JsonSchema
+  }
+  if (selectedNodeIsSwitchableOrnlEvComponent.value) {
+    return withOrnlEvControlModeDropdown(schema) as JsonSchema
+  }
+  return schema
 })
 
 const nodeConfig = computed(() => {
@@ -460,6 +547,96 @@ const updateNodeConfig = (event: { data: unknown }) => {
     return
   }
   const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
+  const submittedConfig = event.data && typeof event.data === 'object' && !Array.isArray(event.data)
+    ? event.data as Record<string, unknown>
+    : {}
+  const currentConfig = currentData.config ?? {}
+
+  if (selectedNodeIsSwitchableOrnlEvFeeder.value) {
+    const normalizedConfig = normalizeOrnlEvFeederFormConfig(submittedConfig)
+    if (!hasOrnlEvConfigChange(currentConfig, normalizedConfig)) {
+      return
+    }
+    const feederChanged =
+      normalizedConfig.opendss_location !== currentConfig.opendss_location
+    if (feederChanged) {
+      const update = buildOrnlEvFeederPresetUpdate(
+        node.id,
+        currentConfig,
+        normalizedConfig,
+        nodes.value as Node[],
+        edges.value as Edge[],
+      )
+      if (update) {
+        node.data = { ...currentData, config: update.feederConfig }
+        for (const evNodeId of update.evNodeIds) {
+          const evNode = nodes.value.find((candidate) => candidate.id === evNodeId)
+          if (!evNode) continue
+          const evData = (evNode.data as NodeData | undefined) ?? { label: evNode.id }
+          evNode.data = {
+            ...evData,
+            config: update.evConfig(evData.config ?? {}),
+          }
+        }
+        return
+      }
+    }
+
+    node.data = {
+      ...currentData,
+      config: { ...currentConfig, ...normalizedConfig },
+    }
+    return
+  }
+
+  if (selectedNodeIsSwitchableOrnlEvComponent.value) {
+    if (!hasOrnlEvConfigChange(currentConfig, submittedConfig)) {
+      return
+    }
+    node.data = {
+      ...currentData,
+      config: { ...currentConfig, ...submittedConfig },
+    }
+    return
+  }
+
+  if (selectedNodeIsOrnlOdPlayer.value) {
+    if (!hasOrnlOdPlayerConfigChange(currentConfig, submittedConfig)) {
+      return
+    }
+    const filenameChanged = submittedConfig.filename !== currentConfig.filename
+    if (filenameChanged) {
+      const update = buildOrnlOdPresetUpdate(
+        node.id,
+        currentConfig,
+        submittedConfig,
+        nodes.value as Node[],
+        edges.value as Edge[],
+      )
+      if (update) {
+        node.data = { ...currentData, config: update.playerConfig }
+        for (const odNodeId of update.odNodeIds) {
+          const odNode = nodes.value.find((candidate) => candidate.id === odNodeId)
+          if (!odNode) continue
+          const odData = (odNode.data as NodeData | undefined) ?? { label: odNode.id }
+          odNode.data = {
+            ...odData,
+            config: update.odConfig(odData.config ?? {}),
+          }
+        }
+        return
+      }
+    }
+
+    // JSON Forms omits properties not present in the visible schema. Preserve
+    // Player runtime fields such as run_freq_time_step for ORNL OD presets.
+    node.data = {
+      ...currentData,
+      config: mergeOrnlOdPlayerConfig(currentConfig, submittedConfig),
+    }
+    return
+  }
+
   node.data = { ...currentData, config: event.data }
 }
 
@@ -611,6 +788,12 @@ const exportTemplate = () => {
 }
 
 const runPending = ref(false)
+const {
+  available: runAvailable,
+  start: startRunAvailabilityPolling,
+  stop: stopRunAvailabilityPolling,
+  markBusy: markRunBusy,
+} = runAvailability
 
 const saveAndRunTemplate = async () => {
   runPending.value = true
@@ -634,12 +817,14 @@ const saveAndRunTemplate = async () => {
     }
     try {
       const { run_id: runId } = await api.startRun(wiringDiagram, config.id)
+      markRunBusy()
       saveDialogOpen.value = false
       router.push(`/runs/${runId}`)
     } catch (error) {
       console.error('saveAndRunTemplate error:', error)
       if (error instanceof StartError && error.status === 409) {
-        alert(`Saved template. Cannot run multiple simulations at once. Please try again later.`)
+        markRunBusy()
+        alert(`Saved template. ${RUN_BUSY_MESSAGE}`)
       } else {
         alert(`Saved template. Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
       }
@@ -659,6 +844,7 @@ function isValidTemplate(value: unknown): value is TemplateData {
 
 // Load template from history state (coming from SavedConfig or others)
 onActivated(() => {
+  startRunAvailabilityPolling()
   const config = window.history.state?.template
   if (config === undefined || config === null) return
   if (isValidTemplate(config)) {
@@ -678,6 +864,8 @@ onActivated(() => {
     console.error('Error loading template:', config)
   }
 })
+
+onDeactivated(stopRunAvailabilityPolling)
 </script>
 
 <style>

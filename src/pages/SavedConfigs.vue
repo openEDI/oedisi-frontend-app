@@ -2,12 +2,19 @@
   <div class="min-h-screen p-8">
     <div class="max-w-6xl mx-auto">
       <div class="mb-8">
-        <router-link to="/"
+        <router-link to="/workspace"
           class="text-primary hover:text-primary/80 mb-4 inline-block">← Back to
           Home</router-link>
         <h1 class="text-3xl font-bold mb-2">Saved Simulation Templates</h1>
         <p class="text-muted-foreground">Manage and run your saved simulation
           configurations</p>
+      </div>
+
+      <div v-if="runAvailable === false" role="status" aria-live="polite"
+        class="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+        <span class="font-semibold">Simulation server busy.</span>
+        Another simulation is currently running. Please wait; this page checks
+        again automatically.
       </div>
 
       <div v-if="loading" class="bg-card rounded-lg p-8 text-center">
@@ -52,8 +59,13 @@
               </div>
             </div>
             <div class="flex flex-col gap-2">
-              <Button :disabled="runPending" @click="runTemplate(config)">
+              <Button :disabled="runPending || runAvailable === false"
+                :title="runAvailable === false ? RUN_BUSY_MESSAGE : undefined"
+                @click="runTemplate(config)">
+                <span v-if="runAvailable === false">Server Busy</span>
+                <span v-else>
                 ▶ Run
+                </span>
               </Button>
               <Button variant="secondary" @click="loadTemplate(config)">
                 Load
@@ -78,13 +90,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onActivated, toRaw, shallowRef } from 'vue'
+import { ref, onActivated, onDeactivated, toRaw, shallowRef } from 'vue'
 import { type HistoryState, useRouter } from 'vue-router'
 import { api, StartError } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { TemplateData } from '@/lib/flowTypes'
 import { toWiringDiagram } from '@/lib/wiringDiagram'
+import { RUN_BUSY_MESSAGE, runAvailability } from '@/lib/runAvailability'
 
 const router = useRouter()
 const savedConfigs = shallowRef<TemplateData[]>([])
@@ -107,6 +120,12 @@ const formatDate = (dateString: string): string => {
 }
 
 const runPending = ref(false)
+const {
+  available: runAvailable,
+  start: startRunAvailabilityPolling,
+  stop: stopRunAvailabilityPolling,
+  markBusy: markRunBusy,
+} = runAvailability
 
 const runTemplate = async (config: TemplateData) => {
   // Convert to wiringDiagram and start a run.
@@ -114,11 +133,13 @@ const runTemplate = async (config: TemplateData) => {
     runPending.value = true
     const wiringDiagram = toWiringDiagram(config)
     const { run_id: runId } = await api.startRun(wiringDiagram, config.id)
+    markRunBusy()
     router.push(`/runs/${runId}`)
   } catch (error) {
     console.error('runTemplate error:', error)
     if (error instanceof StartError && error.status === 409) {
-      alert(`Cannot run multiple simulations at once. Please try again later.`)
+      markRunBusy()
+      alert(RUN_BUSY_MESSAGE)
     } else {
       alert(`Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
     }
@@ -158,6 +179,9 @@ const deleteTemplate = async (id: string) => {
 }
 
 onActivated(() => {
+  startRunAvailabilityPolling()
   loadConfigs()
 })
+
+onDeactivated(stopRunAvailabilityPolling)
 </script>

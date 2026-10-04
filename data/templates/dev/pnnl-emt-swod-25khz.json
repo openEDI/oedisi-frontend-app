@@ -56,7 +56,7 @@
         "config": {
           "run_freq_time_step": 900,
           "name": "i_abc",
-          "filename": "~/dev/swod_data/i_abc.csv",
+          "filename": "/components/pnnl-emt-swod/data/i_abc.csv",
           "data_type": "CurrentsMagnitude",
           "number_of_timesteps": 1500000,
           "start_time_index": 50000
@@ -117,7 +117,7 @@
         "config": {
           "run_freq_time_step": 900,
           "name": "v_abc",
-          "filename": "~/dev/swod_data/v_abc.csv",
+          "filename": "/components/pnnl-emt-swod/data/v_abc.csv",
           "data_type": "VoltagesMagnitude",
           "number_of_timesteps": 1500000,
           "start_time_index": 50000
@@ -725,7 +725,7 @@
           "config": {
             "run_freq_time_step": 900,
             "name": "i_abc",
-            "filename": "~/dev/swod_data/i_abc.csv",
+            "filename": "/components/pnnl-emt-swod/data/i_abc.csv",
             "data_type": "CurrentsMagnitude",
             "number_of_timesteps": 1500000,
             "start_time_index": 50000
@@ -873,7 +873,7 @@
           "config": {
             "run_freq_time_step": 900,
             "name": "v_abc",
-            "filename": "~/dev/swod_data/v_abc.csv",
+            "filename": "/components/pnnl-emt-swod/data/v_abc.csv",
             "data_type": "VoltagesMagnitude",
             "number_of_timesteps": 1500000,
             "start_time_index": 50000

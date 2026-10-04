@@ -1,0 +1,16 @@
+{
+    "title": "ORNL OD Federate Static Inputs",
+    "type": "object",
+    "properties": {
+        "name": {"type": "string", "default": "od"},
+        "sample_rate_hz": {"type": "number", "default": 10.0, "minimum": 0.001},
+        "detection_window_sec": {"type": "number", "default": 5.0, "minimum": 0.1},
+        "prony_window_sec": {"type": "number", "default": 90.0, "minimum": 1.0},
+        "trigger_threshold": {"type": "number", "default": 0.01},
+        "detection_threshold2": {"type": "number", "default": 0.01},
+        "detection_cooldown_sec": {"type": "number", "default": 50.0, "minimum": 0.0},
+        "event_clustering_window_sec": {"type": "number", "default": 2.0, "minimum": 0.0},
+        "ground_truth_json": {"type": "string", "default": ""}
+    },
+    "required": ["name", "sample_rate_hz"]
+}

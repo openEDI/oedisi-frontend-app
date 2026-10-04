@@ -6,10 +6,12 @@
         Results</router-link>
       <div class="flex-1">
         <h1 class="text-xl font-bold">Run Notebook</h1>
-        <p class="text-xs text-sky-700 dark:text-sky-300">Editable analysis for this simulation run</p>
+        <p class="text-xs text-sky-700 dark:text-sky-300">
+          {{ readOnly ? 'Read-only hosted analysis for this simulation run' : 'Editable analysis for this simulation run' }}
+        </p>
       </div>
-      <Button variant="secondary" size="sm" @click="handleSaveToTemplate"
-        :disabled="saving">
+      <Button v-if="!readOnly" variant="secondary" size="sm" :disabled="saving"
+        @click="handleSaveToTemplate">
         {{ saving ? 'Saving...' : '💾 Save to Template' }}
       </Button>
       <Button variant="destructive" size="sm" @click="handleDelete">
@@ -38,6 +40,7 @@ const router = useRouter()
 const runId = computed<string>(() => String(route.params.runId))
 
 const jupyterUrl = ref<string | null>(null)
+const readOnly = ref(false)
 const loading = ref(true)
 const error = ref<string | null>(null)
 
@@ -49,8 +52,10 @@ async function loadNotebook() {
     if (!status.exists) {
       const result = await api.createNotebook(runId.value)
       jupyterUrl.value = result.jupyter_url
+      readOnly.value = result.read_only
     } else {
       jupyterUrl.value = status.jupyter_url
+      readOnly.value = status.read_only
     }
   } catch (e) {
     error.value = `Failed to load notebook: ${e instanceof Error ? e.message : String(e)}`

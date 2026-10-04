@@ -370,7 +370,7 @@
     "definitionFile": "nlpdopf.json",
     "definition": {
       "directory": "./",
-      "execute_function": "python federate_distflowopf.py",
+      "execute_function": "python fed.py",
       "static_inputs": [],
       "dynamic_inputs": [
         {
@@ -979,6 +979,12 @@
           "type": "",
           "port_id": "random_seed",
           "description": "Random seed for reproducibility",
+          "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "control_mode",
+          "description": "Charging control mode: dopf (PSO-optimized) or uncontrolled (baseline)",
           "unit": ""
         }
       ],
@@ -2113,6 +2119,139 @@
       ],
       "title": "ComponentParameters",
       "type": "object"
+    }
+  },
+  {
+    "id": "ODComponent",
+    "name": "ORNL Oscillation Detection (Prony)",
+    "description": "Oscillation detection using Prony analysis",
+    "definitionFile": "ornl_od_prony.json",
+    "definition": {
+      "directory": "od_federate",
+      "execute_function": "python -m src.od_federate.od_federate",
+      "static_inputs": [
+        {
+          "type": "string",
+          "port_id": "name",
+          "description": "Federate name (HELICS core name)",
+          "unit": ""
+        },
+        {
+          "type": "number",
+          "port_id": "sample_rate_hz",
+          "description": "Physical sample rate of incoming frequency stream; must equal 1/Player.run_freq_time_step",
+          "unit": "Hz"
+        },
+        {
+          "type": "number",
+          "port_id": "detection_window_sec",
+          "description": "Rolling window over which the state machine looks for trigger",
+          "unit": "s"
+        },
+        {
+          "type": "number",
+          "port_id": "prony_window_sec",
+          "description": "Window analyzed by Prony AR(p) decomposition after a trigger",
+          "unit": "s"
+        },
+        {
+          "type": "number",
+          "port_id": "trigger_threshold",
+          "description": "Detection threshold 1: rate-of-change trigger (step 1)",
+          "unit": ""
+        },
+        {
+          "type": "number",
+          "port_id": "detection_threshold2",
+          "description": "Detection threshold 2: |max-min| confirmation (step 2)",
+          "unit": ""
+        },
+        {
+          "type": "number",
+          "port_id": "detection_cooldown_sec",
+          "description": "Minimum seconds between reported events; raise (e.g. 9999) to treat one long oscillation as a single event",
+          "unit": "s"
+        },
+        {
+          "type": "number",
+          "port_id": "event_clustering_window_sec",
+          "description": "Time window for clustering simultaneous unit detections into one event",
+          "unit": "s"
+        },
+        {
+          "type": "string",
+          "port_id": "ground_truth_json",
+          "description": "Optional ground-truth event list (inline JSON or file path): [{start_time_sec, frequency_hz, amplitude, damping_ratio}, ...]",
+          "unit": ""
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "frequency",
+          "description": "PMU frequency time-series from Player (values interpreted as Hz; one row per HELICS time grant)",
+          "unit": "Hz"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "events",
+          "description": "Detected oscillation events; values carry per-mode frequency_hz, ids carry mode tags",
+          "unit": ""
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ORNL OD Federate Static Inputs",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "od"
+        },
+        "sample_rate_hz": {
+          "type": "number",
+          "default": 10.0,
+          "minimum": 0.001
+        },
+        "detection_window_sec": {
+          "type": "number",
+          "default": 5.0,
+          "minimum": 0.1
+        },
+        "prony_window_sec": {
+          "type": "number",
+          "default": 90.0,
+          "minimum": 1.0
+        },
+        "trigger_threshold": {
+          "type": "number",
+          "default": 0.01
+        },
+        "detection_threshold2": {
+          "type": "number",
+          "default": 0.01
+        },
+        "detection_cooldown_sec": {
+          "type": "number",
+          "default": 50.0,
+          "minimum": 0.0
+        },
+        "event_clustering_window_sec": {
+          "type": "number",
+          "default": 2.0,
+          "minimum": 0.0
+        },
+        "ground_truth_json": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "name",
+        "sample_rate_hz"
+      ]
     }
   }
 ]

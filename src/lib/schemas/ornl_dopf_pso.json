@@ -2,10 +2,57 @@
   "title": "ComponentParameters",
   "type": "object",
   "properties": {
-    "pv_buses":       { "title": "PV Buses",       "type": "array", "items": { "type": "string" } },
-    "pv_capacity_kw": { "title": "PV Capacity kW", "type": "array", "items": { "type": "number" } },
-    "num_particles":  { "title": "Num Particles",  "type": "integer" },
-    "max_iterations": { "title": "Max Iterations", "type": "integer" }
+    "pv_buses": {
+      "title": "PV Buses",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "7.1",
+        "29.1",
+        "49.1",
+        "55.1",
+        "63.1",
+        "68.1",
+        "80.1",
+        "87.1",
+        "113.1"
+      ]
+    },
+    "pv_capacity_kw": {
+      "title": "PV Capacity kW",
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": [
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150,
+        150
+      ]
+    },
+    "num_particles": {
+      "title": "Num Particles",
+      "type": "integer",
+      "default": 30
+    },
+    "max_iterations": {
+      "title": "Max Iterations",
+      "type": "integer",
+      "default": 30
+    }
   },
-  "required": [ "pv_buses", "pv_capacity_kw", "num_particles", "max_iterations" ]
+  "required": [
+    "pv_buses",
+    "pv_capacity_kw",
+    "num_particles",
+    "max_iterations"
+  ]
 }

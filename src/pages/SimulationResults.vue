@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen max-w-6xl mx-auto p-8">
     <div class="mb-8">
-      <router-link to="/"
+      <router-link to="/workspace"
         class="text-primary hover:text-primary/80 mb-4 inline-block">← Back to
         Home</router-link>
       <div class="flex items-center justify-between mb-3">

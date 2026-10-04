@@ -2,9 +2,25 @@
   "title": "ComponentParameters",
   "type": "object",
   "properties": {
-    "tol":        { "title": "Tolerance",      "type": "number"  },
-    "base_power": { "title": "Base Power",     "type": "number"  },
-    "max_iter":   { "title": "Max Iterations", "type": "integer" }
+    "tol": {
+      "title": "Tolerance",
+      "type": "number",
+      "default": 0.0001
+    },
+    "base_power": {
+      "title": "Base Power",
+      "type": "number",
+      "default": 100.0
+    },
+    "max_iter": {
+      "title": "Max Iterations",
+      "type": "integer",
+      "default": 100
+    }
   },
-  "required": [ "tol", "base_power", "max_iter" ]
+  "required": [
+    "tol",
+    "base_power",
+    "max_iter"
+  ]
 }
