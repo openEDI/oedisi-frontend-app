@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '@/pages/HomePage.vue'
+import LandingPage from '@/pages/LandingPage.vue'
+import LandingReadMore from '@/pages/LandingReadMore.vue'
 import FlowchartDesigner from '@/pages/FlowchartDesigner.vue'
 import SavedConfigs from '@/pages/SavedConfigs.vue'
 import SimulationResults from '@/pages/SimulationResults.vue'
@@ -11,6 +13,14 @@ import RunsDetail from '@/pages/RunsDetail.vue'
 const routes = [
   {
     path: '/',
+    component: LandingPage,
+  },
+  {
+    path: '/read-more',
+    component: LandingReadMore,
+  },
+  {
+    path: '/workspace',
     component: Home,
   },
   {
