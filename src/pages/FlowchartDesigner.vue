@@ -17,6 +17,13 @@
       </div>
     </div>
 
+    <div v-if="runAvailable === false" role="status" aria-live="polite"
+      class="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+      <span class="font-semibold">Simulation server busy.</span>
+      Another simulation is currently running. Please wait; this page checks
+      again automatically.
+    </div>
+
     <div class="flex-1 flex min-h-0">
       <div class="w-64 bg-card border-r p-6 overflow-y-auto">
         <h2 class="text-lg font-semibold mb-6">Components</h2>
@@ -175,9 +182,11 @@
             @click="saveDialogOpen = false">Cancel</Button>
           <Button variant="secondary" @click="exportTemplate">Export as Wiring
             Diagram</Button>
-          <Button :disabled="runPending" variant="secondary"
-            @click="saveAndRunTemplate">{{ runPending ? 'Starting...' :
-              'Save and Run' }}</Button>
+          <Button :disabled="runPending || runAvailable === false"
+            :title="runAvailable === false ? RUN_BUSY_MESSAGE : undefined"
+            variant="secondary" @click="saveAndRunTemplate">{{ runPending ?
+              'Starting...' : runAvailable === false ? 'Server Busy' :
+                'Save and Run' }}</Button>
           <Button :disabled="savePending" @click="saveTemplate">{{ savePending ?
             'Saving...' : 'Save' }}</Button>
         </DialogFooter>
@@ -187,13 +196,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed, watch, markRaw, provide, onActivated } from 'vue'
+import { ref, nextTick, computed, watch, markRaw, provide, onActivated, onDeactivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { Background } from '@vue-flow/background'
 import { Controls } from '@vue-flow/controls'
 import { MiniMap } from '@vue-flow/minimap'
 import { api, StartError } from '@/lib/api'
+import { RUN_BUSY_MESSAGE, runAvailability } from '@/lib/runAvailability'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
@@ -611,6 +621,12 @@ const exportTemplate = () => {
 }
 
 const runPending = ref(false)
+const {
+  available: runAvailable,
+  start: startRunAvailabilityPolling,
+  stop: stopRunAvailabilityPolling,
+  markBusy: markRunBusy,
+} = runAvailability
 
 const saveAndRunTemplate = async () => {
   runPending.value = true
@@ -634,12 +650,14 @@ const saveAndRunTemplate = async () => {
     }
     try {
       const { run_id: runId } = await api.startRun(wiringDiagram, config.id)
+      markRunBusy()
       saveDialogOpen.value = false
       router.push(`/runs/${runId}`)
     } catch (error) {
       console.error('saveAndRunTemplate error:', error)
       if (error instanceof StartError && error.status === 409) {
-        alert(`Saved template. Cannot run multiple simulations at once. Please try again later.`)
+        markRunBusy()
+        alert(`Saved template. ${RUN_BUSY_MESSAGE}`)
       } else {
         alert(`Saved template. Failed to run template:\n${error instanceof Error ? error.message : String(error)}`)
       }
@@ -659,6 +677,7 @@ function isValidTemplate(value: unknown): value is TemplateData {
 
 // Load template from history state (coming from SavedConfig or others)
 onActivated(() => {
+  startRunAvailabilityPolling()
   const config = window.history.state?.template
   if (config === undefined || config === null) return
   if (isValidTemplate(config)) {
@@ -678,6 +697,8 @@ onActivated(() => {
     console.error('Error loading template:', config)
   }
 })
+
+onDeactivated(stopRunAvailabilityPolling)
 </script>
 
 <style>
