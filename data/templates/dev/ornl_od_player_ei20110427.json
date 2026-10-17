@@ -1,0 +1,101 @@
+{
+  "id": "1780000000400",
+  "name": "ORNL OD (Prony)",
+  "description": "ORNL Prony oscillation detection with selectable real-event and synthetic datasets. Defaults to the EI 2011-04-27 event (3 PMUs, 37 s at 10 Hz).",
+  "createdAt": "2026-06-01T00:00:00.000Z",
+  "nodes": [
+    {
+      "id": "Player-1780000000001",
+      "type": "custom",
+      "position": {
+        "x": 200,
+        "y": 400
+      },
+      "data": {
+        "label": "Player (PMU data)",
+        "componentType": "PlayerComponent",
+        "config": {
+          "name": "player",
+          "filename": "/components/ornl-od-prony/data/EI_OscillationEvent_20110427.csv",
+          "data_type": "MeasurementArray",
+          "number_of_timesteps": 370,
+          "start_time_index": 0,
+          "run_freq_time_step": 0.1
+        }
+      }
+    },
+    {
+      "id": "ODComponent-1780000000002",
+      "type": "custom",
+      "position": {
+        "x": 650,
+        "y": 400
+      },
+      "data": {
+        "label": "ORNL Oscillation Detection",
+        "componentType": "ODComponent",
+        "config": {
+          "name": "od",
+          "sample_rate_hz": 10,
+          "detection_window_sec": 5,
+          "prony_window_sec": 10,
+          "trigger_threshold": 0.005,
+          "detection_threshold2": 0.005,
+          "detection_cooldown_sec": 9999,
+          "event_clustering_window_sec": 5,
+          "ground_truth_json": "[{\"frequency_hz\": 0.60}]"
+        }
+      }
+    },
+    {
+      "id": "Recorder-1780000000003",
+      "type": "custom",
+      "position": {
+        "x": 1050,
+        "y": 400
+      },
+      "data": {
+        "label": "Recorder (events)",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_events",
+          "feather_filename": "../../outputs/events.feather",
+          "csv_filename": "../../outputs/events.csv"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-Player-1780000000001-ODComponent-1780000000002-1780000000010",
+      "type": "wiring",
+      "source": "Player-1780000000001",
+      "target": "ODComponent-1780000000002",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "frequency"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-ODComponent-1780000000002-Recorder-1780000000003-1780000000011",
+      "type": "wiring",
+      "source": "ODComponent-1780000000002",
+      "target": "Recorder-1780000000003",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "events",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    }
+  ],
+  "config_version": "1"
+}
