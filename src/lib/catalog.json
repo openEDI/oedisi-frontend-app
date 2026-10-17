@@ -980,6 +980,12 @@
           "port_id": "random_seed",
           "description": "Random seed for reproducibility",
           "unit": ""
+        },
+        {
+          "type": "",
+          "port_id": "control_mode",
+          "description": "Charging control mode: dopf (PSO-optimized) or uncontrolled (baseline)",
+          "unit": ""
         }
       ],
       "dynamic_inputs": [
