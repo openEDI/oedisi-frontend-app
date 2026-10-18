@@ -2,7 +2,7 @@
   <div class="min-h-screen p-8">
     <div class="max-w-6xl mx-auto">
       <div class="mb-8">
-        <router-link to="/"
+        <router-link to="/workspace"
           class="text-primary hover:text-primary/80 mb-4 inline-block">← Back to
           Home</router-link>
         <h1 class="text-3xl font-bold mb-2">Simulation Status</h1>
