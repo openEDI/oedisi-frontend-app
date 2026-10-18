@@ -1192,24 +1192,26 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
     return True
 
 
-def _notebook_url_prefix() -> str:
+def _notebook_url_prefix(workspace: str) -> str:
     """URL prefix for notebook rendering.
 
-    Multi-user: read-only Voilà render. Single-user: editable JupyterLab tree.
+    Multi-user: read-only Voilà render. Single-user: a workspace per notebook.
     """
     if _is_multi_user():
         return "/voila/render"
-    return "/jupyter/lab/tree"
+    return f"/jupyter/lab/workspaces/{workspace}/tree"
 
 
 def _jupyter_notebook_url(user: str, run_id: str) -> str:
     """Return the notebook URL path for a run."""
-    return f"{_notebook_url_prefix()}/{user}/{run_id}/{NOTEBOOK_FILENAME}"
+    prefix = _notebook_url_prefix(f"run-{run_id}")
+    return f"{prefix}/{user}/{run_id}/{NOTEBOOK_FILENAME}"
 
 
 def _jupyter_template_notebook_url(user: str, template_id: str) -> str:
     """Return the notebook URL path for a template."""
-    return f"{_notebook_url_prefix()}/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
+    prefix = _notebook_url_prefix(f"template-{template_id}")
+    return f"{prefix}/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
 
 
 @app.post("/api/runs/{run_id}/notebook")

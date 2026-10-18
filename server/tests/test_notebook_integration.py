@@ -91,6 +91,7 @@ def test_create_notebook_copies_from_template_and_status() -> None:
     assert created["exists"] is True
     assert created["created"] is True
     assert status["exists"] is True
+    assert created["jupyter_url"] == status["jupyter_url"]
     assert status["jupyter_url"].endswith(f"/{user}/{run_id}/notebook.ipynb")
 
     run_nb_path = server_main._notebook_path(user, run_id)
@@ -228,15 +229,17 @@ def test_start_notebook_server_multi_user_uses_voila(
     assert kwargs["stderr"] is asyncio.subprocess.DEVNULL
 
 
-def test_notebook_urls_single_user_use_jupyterlab(
+@pytest.mark.parametrize("notebook_id", ["run1", "abc-def_123"])
+def test_notebook_urls_single_user_use_distinct_jupyterlab_workspaces(
     monkeypatch: pytest.MonkeyPatch,
+    notebook_id: str,
 ) -> None:
     monkeypatch.delenv("OEDISI_MULTI_USER", raising=False)
-    assert server_main._jupyter_notebook_url("dev", "run1").startswith(
-        "/jupyter/lab/tree/"
+    assert server_main._jupyter_notebook_url("dev", notebook_id) == (
+        f"/jupyter/lab/workspaces/run-{notebook_id}/tree/dev/{notebook_id}/notebook.ipynb"
     )
-    assert server_main._jupyter_template_notebook_url("dev", "t1").startswith(
-        "/jupyter/lab/tree/"
+    assert server_main._jupyter_template_notebook_url("dev", notebook_id) == (
+        f"/jupyter/lab/workspaces/template-{notebook_id}/tree/dev/_notebooks/{notebook_id}/notebook.ipynb"
     )
 
 
@@ -244,9 +247,9 @@ def test_notebook_urls_multi_user_use_voila(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("OEDISI_MULTI_USER", "1")
-    assert server_main._jupyter_notebook_url("alice", "run1").startswith(
-        "/voila/render/"
+    assert server_main._jupyter_notebook_url("alice", "run1") == (
+        "/voila/render/alice/run1/notebook.ipynb"
     )
-    assert server_main._jupyter_template_notebook_url("alice", "t1").startswith(
-        "/voila/render/"
+    assert server_main._jupyter_template_notebook_url("alice", "t1") == (
+        "/voila/render/alice/_notebooks/t1/notebook.ipynb"
     )
