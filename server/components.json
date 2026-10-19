@@ -17,5 +17,10 @@
     "DSSEGNWLSComponent": "${OEDISI_COMPONENTS}/ornl-dsse-gnwls/component_definition.json",
     "PnnlDsseEkfComponent": "${OEDISI_COMPONENTS}/pnnl-dsse-ekf/component_definition.json",
     "PlayerComponent": "${OEDISI_COMPONENTS}/player/component_definition.json",
-    "PnnlEmtSwodComponent": "${OEDISI_COMPONENTS}/pnnl-emt-swod/component_definition.json"
+    "PnnlEmtSwodComponent": "${OEDISI_COMPONENTS}/pnnl-emt-swod/component_definition.json",
+    "OrnlOdPronyComponent": "${OEDISI_COMPONENTS}/ornl-od-prony/component_definition.json",
+    "ParaemtHelicsComponent": "${OEDISI_COMPONENTS}/paraemt-helics/component_definition.json",
+    "PnnlAnonDpComponent": "${OEDISI_COMPONENTS}/pnnl-anon-dp/component_definition.json",
+    "PnnlImputationFfnnComponent": "${OEDISI_COMPONENTS}/pnnl-imputation-ffnn/component_definition.json",
+    "PnnlProfilerSdvComponent": "${OEDISI_COMPONENTS}/pnnl-profiler-sdv/component_definition.json"
 }

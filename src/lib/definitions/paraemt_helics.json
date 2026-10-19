@@ -1,0 +1,73 @@
+{
+    "directory": "paraemt-helics",
+    "execute_function": "uv run python step1_test.py",
+    "static_inputs": [
+        {
+            "type": "",
+            "port_id": "powerflow"
+        },
+        {
+            "type": "",
+            "port_id": "simulation"
+        },
+        {
+            "type": "",
+            "port_id": "forced_oscillation"
+        },
+        {
+            "type": "",
+            "port_id": "gen_trip"
+        },
+        {
+            "type": "",
+            "port_id": "bus_fault"
+        },
+        {
+            "type": "",
+            "port_id": "state_perturbation"
+        },
+        {
+            "type": "",
+            "port_id": "step_change"
+        }
+    ],
+    "dynamic_inputs": [],
+    "dynamic_outputs": [
+        {
+            "type": "VoltagesReal",
+            "port_id": "voltage"
+        },
+        {
+            "type": "CurrentsReal",
+            "port_id": "current"
+        },
+        {
+            "type": "MeasurementArray",
+            "port_id": "frequency"
+        },
+        {
+            "type": "MeasurementArray",
+            "port_id": "ibr_frequency"
+        },
+        {
+            "type": "MeasurementArray",
+            "port_id": "bus_electrical_power"
+        },
+        {
+            "type": "MeasurementArray",
+            "port_id": "generator_electrical_power"
+        },
+        {
+            "type": "MeasurementArray",
+            "port_id": "generator_reactive_power"
+        },
+        {
+            "type": "MeasurementArray",
+            "port_id": "tie_line_flow"
+        },
+        {
+            "type": "MeasurementArray",
+            "port_id": "generator_rotor_speed"
+        }
+    ]
+}

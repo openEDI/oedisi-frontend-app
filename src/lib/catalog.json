@@ -2114,5 +2114,1600 @@
       "title": "ComponentParameters",
       "type": "object"
     }
+  },
+  {
+    "id": "OrnlOdPronyComponent",
+    "name": "ORNL Od Prony",
+    "description": "ORNL Od Prony component",
+    "definitionFile": "ornl_od_prony.json",
+    "definition": {
+      "directory": "od_federate",
+      "execute_function": "python -m src.od_federate.od_federate",
+      "static_inputs": [
+        {
+          "type": "string",
+          "port_id": "name",
+          "description": "Federate name (HELICS core name)",
+          "unit": ""
+        },
+        {
+          "type": "number",
+          "port_id": "sample_rate_hz",
+          "description": "Physical sample rate of incoming frequency stream; must equal 1/Player.run_freq_time_step",
+          "unit": "Hz"
+        },
+        {
+          "type": "number",
+          "port_id": "detection_window_sec",
+          "description": "Rolling window over which the state machine looks for trigger",
+          "unit": "s"
+        },
+        {
+          "type": "number",
+          "port_id": "prony_window_sec",
+          "description": "Window analyzed by Prony AR(p) decomposition after a trigger",
+          "unit": "s"
+        },
+        {
+          "type": "number",
+          "port_id": "trigger_threshold",
+          "description": "Detection threshold 1: rate-of-change trigger (step 1)",
+          "unit": ""
+        },
+        {
+          "type": "number",
+          "port_id": "detection_threshold2",
+          "description": "Detection threshold 2: |max-min| confirmation (step 2)",
+          "unit": ""
+        },
+        {
+          "type": "number",
+          "port_id": "detection_cooldown_sec",
+          "description": "Minimum seconds between reported events; raise (e.g. 9999) to treat one long oscillation as a single event",
+          "unit": "s"
+        },
+        {
+          "type": "number",
+          "port_id": "event_clustering_window_sec",
+          "description": "Time window for clustering simultaneous unit detections into one event",
+          "unit": "s"
+        },
+        {
+          "type": "string",
+          "port_id": "ground_truth_json",
+          "description": "Optional ground-truth event list (inline JSON or file path): [{start_time_sec, frequency_hz, amplitude, damping_ratio}, ...]",
+          "unit": ""
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "frequency",
+          "description": "PMU frequency time-series from Player (values interpreted as Hz; one row per HELICS time grant)",
+          "unit": "Hz"
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "MeasurementArray",
+          "port_id": "events",
+          "description": "Detected oscillation events; values carry per-mode frequency_hz, ids carry mode tags",
+          "unit": ""
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ORNL OD Federate Static Inputs",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "od"
+        },
+        "sample_rate_hz": {
+          "type": "number",
+          "default": 10.0,
+          "minimum": 0.001
+        },
+        "detection_window_sec": {
+          "type": "number",
+          "default": 5.0,
+          "minimum": 0.1
+        },
+        "prony_window_sec": {
+          "type": "number",
+          "default": 90.0,
+          "minimum": 1.0
+        },
+        "trigger_threshold": {
+          "type": "number",
+          "default": 0.01
+        },
+        "detection_threshold2": {
+          "type": "number",
+          "default": 0.01
+        },
+        "detection_cooldown_sec": {
+          "type": "number",
+          "default": 50.0,
+          "minimum": 0.0
+        },
+        "event_clustering_window_sec": {
+          "type": "number",
+          "default": 2.0,
+          "minimum": 0.0
+        },
+        "ground_truth_json": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "name",
+        "sample_rate_hz"
+      ]
+    }
+  },
+  {
+    "id": "ParaemtHelicsComponent",
+    "name": "Paraemt Helics",
+    "description": "Paraemt Helics component",
+    "definitionFile": "paraemt_helics.json",
+    "definition": {
+      "directory": "paraemt-helics",
+      "execute_function": "uv run python step1_test.py",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "powerflow"
+        },
+        {
+          "type": "",
+          "port_id": "simulation"
+        },
+        {
+          "type": "",
+          "port_id": "forced_oscillation"
+        },
+        {
+          "type": "",
+          "port_id": "gen_trip"
+        },
+        {
+          "type": "",
+          "port_id": "bus_fault"
+        },
+        {
+          "type": "",
+          "port_id": "state_perturbation"
+        },
+        {
+          "type": "",
+          "port_id": "step_change"
+        }
+      ],
+      "dynamic_inputs": [],
+      "dynamic_outputs": [
+        {
+          "type": "VoltagesReal",
+          "port_id": "voltage"
+        },
+        {
+          "type": "CurrentsReal",
+          "port_id": "current"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "frequency"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "ibr_frequency"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "bus_electrical_power"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "generator_electrical_power"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "generator_reactive_power"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "tie_line_flow"
+        },
+        {
+          "type": "MeasurementArray",
+          "port_id": "generator_rotor_speed"
+        }
+      ]
+    },
+    "inputSchema": {
+      "title": "ParaEMT Configuration",
+      "description": "JSON Schema for the ParaEMT runtime configuration. This schema describes parameter names, data types, defaults, and basic validation rules. The runtime parameter values remain stored in Config.json.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "description": "Component instance name. Also used as the HELICS federate name, so publications are named <name>/<stream>.",
+          "type": "string"
+        },
+        "powerflow": {
+          "$ref": "#/$defs/PowerFlowParameters",
+          "default": {
+            "systemN": 7.3
+          }
+        },
+        "simulation": {
+          "$ref": "#/$defs/SimulationParameters",
+          "default": {
+            "systemN": 7.3,
+            "ts": 5e-05,
+            "t_end": 2.0,
+            "DSrate": 20,
+            "netMod": "lu",
+            "dump_all": false,
+            "show_progress": false,
+            "save_results_csv": false,
+            "N_row": 1,
+            "N_col": 1,
+            "SimMod": 0,
+            "save_snapshot": 1,
+            "save_snapshot_mode": 0,
+            "t_release_f": 0.0,
+            "loadmodel_option": 1,
+            "EMT_N": 1,
+            "kts": 333,
+            "stepk": 332,
+            "record4cosim": false,
+            "playback_voltphasor": false,
+            "playback_enable": false,
+            "flag_changeKp": false,
+            "Kp_new": 7,
+            "helics_live_enable": true,
+            "helics_period": 0.001
+          }
+        },
+        "forced_oscillation": {
+          "$ref": "#/$defs/ForcedOscillationParameters",
+          "default": {
+            "enabled": true,
+            "start_time": 1.0,
+            "target_gen": 1,
+            "flag_exc_gov_fo": 1,
+            "magnitude": 2.0,
+            "frequency_hz": 5.0,
+            "lock_ini": 0,
+            "lock_value": 0
+          }
+        },
+        "gen_trip": {
+          "$ref": "#/$defs/GeneratorTripParameters",
+          "default": {
+            "enabled": true,
+            "time": 100,
+            "target_gen": 33,
+            "flag_reinit": 0
+          }
+        },
+        "bus_fault": {
+          "$ref": "#/$defs/BusFaultParameters",
+          "default": {
+            "enabled": false,
+            "time": 100.0,
+            "fault_bus_idx": 0,
+            "duration": 0.0666666667,
+            "fault_type": 7,
+            "fault_r": [
+              1e-05,
+              1e-05,
+              1e-05,
+              1e-05,
+              1e-05,
+              1e-05
+            ],
+            "trip_line": 0,
+            "fault_line_idx": 0
+          }
+        },
+        "state_perturbation": {
+          "$ref": "#/$defs/StatePerturbationParameters",
+          "default": {
+            "enabled": false,
+            "time": 1000.0,
+            "dx": 0.1,
+            "type": 1,
+            "device_index": 4,
+            "state_index": 1
+          }
+        },
+        "step_change": {
+          "$ref": "#/$defs/StepChangeParameters",
+          "default": {
+            "enabled": false,
+            "time": 0.0,
+            "target_gen": 44,
+            "flag_exc_gov": 0,
+            "magnitude": 0.3
+          }
+        }
+      },
+      "required": [
+        "name",
+        "powerflow",
+        "simulation",
+        "forced_oscillation",
+        "gen_trip",
+        "bus_fault",
+        "state_perturbation",
+        "step_change"
+      ],
+      "additionalProperties": false,
+      "$defs": {
+        "PowerFlowParameters": {
+          "title": "Power Flow Parameters",
+          "description": "Parameters used by the power-flow initialization.",
+          "type": "object",
+          "properties": {
+            "systemN": {
+              "title": "System Identifier",
+              "description": "Identifier or version number of the power-system case used for power-flow initialization.",
+              "type": "number",
+              "default": 7.3
+            }
+          },
+          "required": [
+            "systemN"
+          ],
+          "additionalProperties": false,
+          "default": {
+            "systemN": 7.3
+          }
+        },
+        "SimulationParameters": {
+          "title": "Simulation Parameters",
+          "description": "General ParaEMT simulation, output, playback, and HELICS settings.",
+          "type": "object",
+          "properties": {
+            "systemN": {
+              "title": "System Identifier",
+              "description": "Identifier or version number of the system case used by the EMT simulation.",
+              "type": "number",
+              "default": 7.3
+            },
+            "ts": {
+              "title": "Simulation Time Step",
+              "description": "EMT simulation time step in seconds.",
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 5e-05
+            },
+            "t_end": {
+              "title": "Simulation End Time",
+              "description": "Total simulation duration in seconds.",
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 2.0
+            },
+            "DSrate": {
+              "title": "Downsampling Rate",
+              "description": "Number of simulation steps between recorded or published output samples.",
+              "type": "integer",
+              "minimum": 1,
+              "default": 20
+            },
+            "netMod": {
+              "title": "Network Solution Mode",
+              "description": "Network equation solution method or implementation mode.",
+              "type": "string",
+              "minLength": 1,
+              "default": "lu",
+              "examples": [
+                "lu"
+              ]
+            },
+            "dump_all": {
+              "title": "Dump All Results",
+              "description": "Whether to dump all available simulation results.",
+              "type": "boolean",
+              "default": false
+            },
+            "show_progress": {
+              "title": "Show Progress",
+              "description": "Whether to display simulation progress during execution.",
+              "type": "boolean",
+              "default": false
+            },
+            "save_results_csv": {
+              "title": "Save Results as CSV",
+              "description": "Whether to save simulation results in CSV format.",
+              "type": "boolean",
+              "default": false
+            },
+            "N_row": {
+              "title": "Partition Rows",
+              "description": "Number of row partitions used by the simulation layout or decomposition.",
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "N_col": {
+              "title": "Partition Columns",
+              "description": "Number of column partitions used by the simulation layout or decomposition.",
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "SimMod": {
+              "title": "Simulation Mode",
+              "description": "Integer code selecting the ParaEMT simulation mode.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "save_snapshot": {
+              "title": "Save Snapshot",
+              "description": "Integer flag controlling whether a simulation snapshot is saved.",
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ],
+              "default": 1
+            },
+            "save_snapshot_mode": {
+              "title": "Snapshot Mode",
+              "description": "Integer code selecting the snapshot-saving mode.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "t_release_f": {
+              "title": "Release Time",
+              "description": "Release or switching time used by the selected simulation mode, in seconds.",
+              "type": "number",
+              "minimum": 0,
+              "default": 0.0
+            },
+            "loadmodel_option": {
+              "title": "Load Model Option",
+              "description": "Integer code selecting the load-model option.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 1
+            },
+            "EMT_N": {
+              "title": "EMT Model Count or Index",
+              "description": "Integer parameter identifying the EMT model count, partition, or selected EMT subsystem.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 1
+            },
+            "kts": {
+              "title": "Time-Step Index",
+              "description": "Integer time-step-related index used internally by the simulation.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 333
+            },
+            "stepk": {
+              "title": "Simulation Step Index",
+              "description": "Integer simulation-step index used internally by the simulation.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 332
+            },
+            "record4cosim": {
+              "title": "Record for Co-simulation",
+              "description": "Whether to record data intended for co-simulation.",
+              "type": "boolean",
+              "default": false
+            },
+            "playback_voltphasor": {
+              "title": "Playback Voltage Phasor",
+              "description": "Whether voltage-phasor playback is enabled.",
+              "type": "boolean",
+              "default": false
+            },
+            "playback_enable": {
+              "title": "Enable Playback",
+              "description": "Whether the playback workflow is enabled.",
+              "type": "boolean",
+              "default": false
+            },
+            "flag_changeKp": {
+              "title": "Enable Kp Change",
+              "description": "Whether the controller proportional gain is changed during the simulation.",
+              "type": "boolean",
+              "default": false
+            },
+            "Kp_new": {
+              "title": "New Kp Value",
+              "description": "Replacement proportional gain used when flag_changeKp is enabled.",
+              "type": "number",
+              "default": 7
+            },
+            "helics_live_enable": {
+              "title": "Enable HELICS Live Publishing",
+              "description": "Whether simulation data are published live through HELICS. Must be enabled when running under OEDISI, otherwise no streams are published.",
+              "type": "boolean",
+              "default": true
+            },
+            "helics_period": {
+              "title": "HELICS Publishing Period",
+              "description": "Requested HELICS publication period in seconds.",
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "default": 0.001
+            },
+            "oedi_start_timestamp": {
+              "title": "OEDI Start Timestamp",
+              "description": "ISO 8601 timestamp of simulation time zero, used for the time field of published HELICS payloads.",
+              "type": "string",
+              "default": "2026-01-01 00:00:00"
+            }
+          },
+          "required": [
+            "systemN",
+            "ts",
+            "t_end",
+            "DSrate",
+            "netMod",
+            "dump_all",
+            "show_progress",
+            "save_results_csv",
+            "N_row",
+            "N_col",
+            "SimMod",
+            "save_snapshot",
+            "save_snapshot_mode",
+            "t_release_f",
+            "loadmodel_option",
+            "EMT_N",
+            "kts",
+            "stepk",
+            "record4cosim",
+            "playback_voltphasor",
+            "playback_enable",
+            "flag_changeKp",
+            "Kp_new",
+            "helics_live_enable",
+            "helics_period"
+          ],
+          "additionalProperties": false,
+          "default": {
+            "systemN": 7.3,
+            "ts": 5e-05,
+            "t_end": 2.0,
+            "DSrate": 20,
+            "netMod": "lu",
+            "dump_all": false,
+            "show_progress": false,
+            "save_results_csv": false,
+            "N_row": 1,
+            "N_col": 1,
+            "SimMod": 0,
+            "save_snapshot": 1,
+            "save_snapshot_mode": 0,
+            "t_release_f": 0.0,
+            "loadmodel_option": 1,
+            "EMT_N": 1,
+            "kts": 333,
+            "stepk": 332,
+            "record4cosim": false,
+            "playback_voltphasor": false,
+            "playback_enable": false,
+            "flag_changeKp": false,
+            "Kp_new": 7,
+            "helics_live_enable": true,
+            "helics_period": 0.001
+          }
+        },
+        "ForcedOscillationParameters": {
+          "title": "Forced Oscillation Parameters",
+          "description": "Parameters for injecting a forced oscillation into a selected generator controller.",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "title": "Enable Forced Oscillation",
+              "description": "Whether the forced-oscillation event is active.",
+              "type": "boolean",
+              "default": true
+            },
+            "start_time": {
+              "title": "Start Time",
+              "description": "Forced-oscillation start time in seconds.",
+              "type": "number",
+              "minimum": 0,
+              "default": 1.0
+            },
+            "target_gen": {
+              "title": "Target Generator",
+              "description": "Generator identifier or index to which the oscillation is applied.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 1
+            },
+            "flag_exc_gov_fo": {
+              "title": "Exciter or Governor Selection",
+              "description": "Integer flag selecting whether the forced oscillation is applied through the exciter or governor.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 1
+            },
+            "magnitude": {
+              "title": "Oscillation Magnitude",
+              "description": "Amplitude of the injected forced oscillation.",
+              "type": "number",
+              "default": 2.0
+            },
+            "frequency_hz": {
+              "title": "Oscillation Frequency",
+              "description": "Frequency of the injected forced oscillation in hertz.",
+              "type": "number",
+              "minimum": 0,
+              "default": 5.0
+            },
+            "lock_ini": {
+              "title": "Lock Initial Value",
+              "description": "Integer flag controlling whether an initial value is locked.",
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ],
+              "default": 0
+            },
+            "lock_value": {
+              "title": "Locked Value",
+              "description": "Value used when lock_ini is enabled.",
+              "type": "number",
+              "default": 0
+            }
+          },
+          "required": [
+            "enabled",
+            "start_time",
+            "target_gen",
+            "flag_exc_gov_fo",
+            "magnitude",
+            "frequency_hz",
+            "lock_ini",
+            "lock_value"
+          ],
+          "additionalProperties": false,
+          "default": {
+            "enabled": true,
+            "start_time": 1.0,
+            "target_gen": 1,
+            "flag_exc_gov_fo": 1,
+            "magnitude": 2.0,
+            "frequency_hz": 5.0,
+            "lock_ini": 0,
+            "lock_value": 0
+          }
+        },
+        "GeneratorTripParameters": {
+          "title": "Generator Trip Parameters",
+          "description": "Parameters for a generator-trip disturbance.",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "title": "Enable Generator Trip",
+              "description": "Whether the generator-trip event is active.",
+              "type": "boolean",
+              "default": true
+            },
+            "time": {
+              "title": "Trip Time",
+              "description": "Generator-trip time in seconds.",
+              "type": "number",
+              "minimum": 0,
+              "default": 100
+            },
+            "target_gen": {
+              "title": "Target Generator",
+              "description": "Generator identifier or index to trip.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 33
+            },
+            "flag_reinit": {
+              "title": "Reinitialization Flag",
+              "description": "Integer flag controlling model reinitialization after the trip.",
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ],
+              "default": 0
+            }
+          },
+          "required": [
+            "enabled",
+            "time",
+            "target_gen",
+            "flag_reinit"
+          ],
+          "additionalProperties": false,
+          "default": {
+            "enabled": true,
+            "time": 100,
+            "target_gen": 33,
+            "flag_reinit": 0
+          }
+        },
+        "BusFaultParameters": {
+          "title": "Bus Fault Parameters",
+          "description": "Parameters for applying a bus fault and optionally tripping a line.",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "title": "Enable Bus Fault",
+              "description": "Whether the bus-fault event is active.",
+              "type": "boolean",
+              "default": false
+            },
+            "time": {
+              "title": "Fault Start Time",
+              "description": "Bus-fault start time in seconds.",
+              "type": "number",
+              "minimum": 0,
+              "default": 100.0
+            },
+            "fault_bus_idx": {
+              "title": "Faulted Bus Index",
+              "description": "Index of the bus at which the fault is applied.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "duration": {
+              "title": "Fault Duration",
+              "description": "Fault duration in seconds.",
+              "type": "number",
+              "minimum": 0,
+              "default": 0.0666666667
+            },
+            "fault_type": {
+              "title": "Fault Type",
+              "description": "Integer code identifying the electrical fault type.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 7
+            },
+            "fault_r": {
+              "title": "Fault Resistance Parameters",
+              "description": "Six numerical fault-resistance or conductance-related values used by the fault model.",
+              "type": "array",
+              "items": {
+                "type": "number",
+                "minimum": 0
+              },
+              "minItems": 6,
+              "maxItems": 6,
+              "default": [
+                1e-05,
+                1e-05,
+                1e-05,
+                1e-05,
+                1e-05,
+                1e-05
+              ]
+            },
+            "trip_line": {
+              "title": "Trip Line",
+              "description": "Integer flag controlling whether a line is tripped in association with the fault.",
+              "type": "integer",
+              "enum": [
+                0,
+                1
+              ],
+              "default": 0
+            },
+            "fault_line_idx": {
+              "title": "Faulted Line Index",
+              "description": "Index of the line associated with the fault or post-fault trip.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          "required": [
+            "enabled",
+            "time",
+            "fault_bus_idx",
+            "duration",
+            "fault_type",
+            "fault_r",
+            "trip_line",
+            "fault_line_idx"
+          ],
+          "additionalProperties": false,
+          "default": {
+            "enabled": false,
+            "time": 100.0,
+            "fault_bus_idx": 0,
+            "duration": 0.0666666667,
+            "fault_type": 7,
+            "fault_r": [
+              1e-05,
+              1e-05,
+              1e-05,
+              1e-05,
+              1e-05,
+              1e-05
+            ],
+            "trip_line": 0,
+            "fault_line_idx": 0
+          }
+        },
+        "StatePerturbationParameters": {
+          "title": "State Perturbation Parameters",
+          "description": "Parameters for perturbing a selected state of a selected device.",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "title": "Enable State Perturbation",
+              "description": "Whether the state-perturbation event is active.",
+              "type": "boolean",
+              "default": false
+            },
+            "time": {
+              "title": "Perturbation Time",
+              "description": "State-perturbation time in seconds.",
+              "type": "number",
+              "minimum": 0,
+              "default": 1000.0
+            },
+            "dx": {
+              "title": "State Perturbation Magnitude",
+              "description": "Increment applied to the selected state.",
+              "type": "number",
+              "default": 0.1
+            },
+            "type": {
+              "title": "Device Type",
+              "description": "Integer code identifying the device category whose state is perturbed.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 1
+            },
+            "device_index": {
+              "title": "Device Index",
+              "description": "Index of the device whose state is perturbed.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 4
+            },
+            "state_index": {
+              "title": "State Index",
+              "description": "Index of the state variable to perturb.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 1
+            }
+          },
+          "required": [
+            "enabled",
+            "time",
+            "dx",
+            "type",
+            "device_index",
+            "state_index"
+          ],
+          "additionalProperties": false,
+          "default": {
+            "enabled": false,
+            "time": 1000.0,
+            "dx": 0.1,
+            "type": 1,
+            "device_index": 4,
+            "state_index": 1
+          }
+        },
+        "StepChangeParameters": {
+          "title": "Step Change Parameters",
+          "description": "Parameters for applying a step change through a selected generator controller.",
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "title": "Enable Step Change",
+              "description": "Whether the step-change event is active.",
+              "type": "boolean",
+              "default": false
+            },
+            "time": {
+              "title": "Step Time",
+              "description": "Step-change application time in seconds.",
+              "type": "number",
+              "minimum": 0,
+              "default": 0.0
+            },
+            "target_gen": {
+              "title": "Target Generator",
+              "description": "Generator identifier or index to which the step change is applied.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 44
+            },
+            "flag_exc_gov": {
+              "title": "Exciter or Governor Selection",
+              "description": "Integer flag selecting whether the step change is applied through the exciter or governor.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "magnitude": {
+              "title": "Step Magnitude",
+              "description": "Magnitude of the applied step change.",
+              "type": "number",
+              "default": 0.3
+            }
+          },
+          "required": [
+            "enabled",
+            "time",
+            "target_gen",
+            "flag_exc_gov",
+            "magnitude"
+          ],
+          "additionalProperties": false,
+          "default": {
+            "enabled": false,
+            "time": 0.0,
+            "target_gen": 44,
+            "flag_exc_gov": 0,
+            "magnitude": 0.3
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "PnnlAnonDpComponent",
+    "name": "PNNL Anon Dp",
+    "description": "PNNL Anon Dp component",
+    "definitionFile": "pnnl_anon_dp.json",
+    "definition": {
+      "directory": "pnnl-anon-dp",
+      "execute_function": "python -m pnnl_anon_dp.cli",
+      "static_inputs": [
+        {
+          "port_id": "model_dir",
+          "type": "str",
+          "description": "Path to OpenDSS model directory"
+        },
+        {
+          "port_id": "master_file",
+          "type": "str",
+          "description": "Master DSS file name",
+          "default": "master.dss"
+        },
+        {
+          "port_id": "output_dir",
+          "type": "str",
+          "description": "Output directory for anonymized OpenDSS files",
+          "optional": true
+        },
+        {
+          "port_id": "in_place",
+          "type": "bool",
+          "description": "Modify OpenDSS model in place",
+          "default": false
+        },
+        {
+          "port_id": "noise_level",
+          "type": "float",
+          "description": "Relative noise level for physical parameters (e.g. 0.05 = +/-5%)",
+          "default": 0.05
+        },
+        {
+          "port_id": "epsilon",
+          "type": "float",
+          "description": "Optional Differential Privacy epsilon parameter",
+          "optional": true
+        },
+        {
+          "port_id": "salt",
+          "type": "str",
+          "description": "Salt string for deterministic SHA-256 pseudonymization",
+          "default": "oedisi_anon_dp"
+        },
+        {
+          "port_id": "seed",
+          "type": "int",
+          "description": "Optional random seed for reproducible noise generation",
+          "optional": true
+        },
+        {
+          "port_id": "anonymize_names",
+          "type": "bool",
+          "description": "Pseudonymize bus and element names",
+          "default": true
+        },
+        {
+          "port_id": "anonymize_values",
+          "type": "bool",
+          "description": "Inject noise into physical parameters",
+          "default": true
+        },
+        {
+          "port_id": "anonymize_loadshapes",
+          "type": "bool",
+          "description": "Pseudonymize and perturb loadshape profiles",
+          "default": true
+        },
+        {
+          "port_id": "validate_powerflow",
+          "type": "bool",
+          "description": "Verify power flow convergence after anonymization",
+          "default": true
+        },
+        {
+          "port_id": "save_mapping",
+          "type": "bool",
+          "description": "Save original-to-anonymized name mapping table",
+          "default": true
+        }
+      ],
+      "dynamic_inputs": [],
+      "dynamic_outputs": []
+    },
+    "inputSchema": {
+      "description": "Configuration schema and OEDISI ComponentParameters for model anonymization.\n\nAttributes:\n    name: Optional component or scenario name.\n    model_dir: Path to OpenDSS model directory.\n    master_file: Name of the master DSS file (e.g. 'master.dss' or 'IEEE123Master.dss').\n    output_dir: Optional destination directory for anonymized OpenDSS files.\n    in_place: Whether to modify source files in place (mutually exclusive with output_dir).\n    noise_level: Relative noise level for numerical parameters (default: 0.05 = +/-5%).\n    epsilon: Optional Differential Privacy epsilon parameter.\n    salt: Salt string for deterministic SHA-256 pseudonymization.\n    seed: Optional integer random seed for reproducible noise generation.\n    anonymize_names: Whether to pseudonymize bus and element names.\n    anonymize_values: Whether to inject noise into physical parameters (kW, kvar, length, etc.).\n    anonymize_loadshapes: Whether to pseudonymize and perturb loadshape profiles.\n    validate_powerflow: Whether to verify power flow convergence after anonymization.\n    save_mapping: Whether to save name_mapping.json containing original-to-anonymized map.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional component or scenario name",
+          "title": "Name"
+        },
+        "model_dir": {
+          "description": "Path to OpenDSS model directory",
+          "format": "path",
+          "title": "Model Dir",
+          "type": "string"
+        },
+        "master_file": {
+          "default": "master.dss",
+          "description": "Master DSS file name",
+          "title": "Master File",
+          "type": "string"
+        },
+        "output_dir": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output directory for anonymized OpenDSS files",
+          "title": "Output Dir"
+        },
+        "in_place": {
+          "default": false,
+          "description": "Modify OpenDSS model in place",
+          "title": "In Place",
+          "type": "boolean"
+        },
+        "noise_level": {
+          "default": 0.05,
+          "description": "Relative noise level for physical parameters (0.05 = +/-5%)",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Noise Level",
+          "type": "number"
+        },
+        "epsilon": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Differential Privacy epsilon parameter",
+          "title": "Epsilon"
+        },
+        "salt": {
+          "default": "oedisi_anon_dp",
+          "description": "Salt string for deterministic SHA-256 pseudonymization",
+          "title": "Salt",
+          "type": "string"
+        },
+        "seed": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional random seed for reproducible noise generation",
+          "title": "Seed"
+        },
+        "anonymize_names": {
+          "default": true,
+          "description": "Pseudonymize bus and element names",
+          "title": "Anonymize Names",
+          "type": "boolean"
+        },
+        "anonymize_values": {
+          "default": true,
+          "description": "Inject noise into physical parameters",
+          "title": "Anonymize Values",
+          "type": "boolean"
+        },
+        "anonymize_loadshapes": {
+          "default": true,
+          "description": "Pseudonymize and perturb loadshape profiles",
+          "title": "Anonymize Loadshapes",
+          "type": "boolean"
+        },
+        "validate_powerflow": {
+          "default": true,
+          "description": "Verify power flow convergence after anonymization",
+          "title": "Validate Powerflow",
+          "type": "boolean"
+        },
+        "save_mapping": {
+          "default": true,
+          "description": "Save original-to-anonymized name mapping table",
+          "title": "Save Mapping",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "model_dir"
+      ],
+      "title": "ComponentParameters",
+      "type": "object"
+    }
+  },
+  {
+    "id": "PnnlImputationFfnnComponent",
+    "name": "PNNL Imputation Ffnn",
+    "description": "PNNL Imputation Ffnn component",
+    "definitionFile": "pnnl_imputation_ffnn.json",
+    "definition": {
+      "directory": "imputation_federate",
+      "execute_function": "imputation-sim",
+      "static_inputs": [
+        {
+          "type": "",
+          "port_id": "name"
+        },
+        {
+          "type": "",
+          "port_id": "model_name"
+        },
+        {
+          "type": "",
+          "port_id": "model_path"
+        },
+        {
+          "type": "",
+          "port_id": "deltat"
+        },
+        {
+          "type": "",
+          "port_id": "end_time"
+        }
+      ],
+      "dynamic_inputs": [
+        {
+          "type": "Topology",
+          "port_id": "topology"
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_magnitude"
+        },
+        {
+          "type": "Injection",
+          "port_id": "injections",
+          "optional": true
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real",
+          "optional": true
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imag",
+          "optional": true
+        }
+      ],
+      "dynamic_outputs": [
+        {
+          "type": "Injection",
+          "port_id": "injections"
+        },
+        {
+          "type": "VoltagesMagnitude",
+          "port_id": "voltages_magnitude"
+        },
+        {
+          "type": "PowersReal",
+          "port_id": "powers_real"
+        },
+        {
+          "type": "PowersImaginary",
+          "port_id": "powers_imag"
+        }
+      ]
+    },
+    "inputSchema": {
+      "description": "Static configuration parameters for the Imputation Federate.",
+      "properties": {
+        "name": {
+          "description": "Unique identifier for the federate instance",
+          "title": "Name",
+          "type": "string"
+        },
+        "model_name": {
+          "default": "ieee123",
+          "description": "Model architecture/feeder key (e.g. 'ieee123')",
+          "title": "Model Name",
+          "type": "string"
+        },
+        "model_path": {
+          "default": "",
+          "description": "Optional custom directory path to trained model and params",
+          "title": "Model Path",
+          "type": "string"
+        },
+        "deltat": {
+          "default": 0.1,
+          "description": "HELICS time step delta in seconds",
+          "minimum": 0.0,
+          "title": "Deltat",
+          "type": "number"
+        },
+        "end_time": {
+          "default": 86400.0,
+          "description": "Maximum simulation end time in seconds",
+          "minimum": 0.0,
+          "title": "End Time",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "StaticInputs",
+      "type": "object"
+    }
+  },
+  {
+    "id": "PnnlProfilerSdvComponent",
+    "name": "PNNL Profiler Sdv",
+    "description": "PNNL Profiler Sdv component",
+    "definitionFile": "pnnl_profiler_sdv.json",
+    "definition": {
+      "directory": "pnnl-profiler-sdv",
+      "execute_function": "python -m pnnl_profiler_sdv.cli",
+      "static_inputs": [
+        {
+          "port_id": "model_dir",
+          "type": "str",
+          "description": "Path to OpenDSS model directory"
+        },
+        {
+          "port_id": "master_file",
+          "type": "str",
+          "description": "Master DSS file name",
+          "default": "master.dss"
+        },
+        {
+          "port_id": "profile_dir",
+          "type": "str",
+          "description": "Optional directory containing CSV profiles",
+          "optional": true
+        },
+        {
+          "port_id": "output_dir",
+          "type": "str",
+          "description": "Output directory for modified OpenDSS model and synthetic profiles",
+          "optional": true
+        },
+        {
+          "port_id": "in_place",
+          "type": "bool",
+          "description": "Modify OpenDSS model in place",
+          "default": false
+        },
+        {
+          "port_id": "synthesizer_spec",
+          "type": "SynthesizerSpec",
+          "description": "SDV synthesizer hyperparameters and model selection"
+        },
+        {
+          "port_id": "profile_filter",
+          "type": "ProfileFilterSpec",
+          "description": "Profile filtering and slicing configuration"
+        },
+        {
+          "port_id": "model_cache_dir",
+          "type": "str",
+          "description": "Optional directory to save and load trained SDV checkpoints",
+          "optional": true
+        },
+        {
+          "port_id": "evaluate_metrics",
+          "type": "bool",
+          "description": "Compute statistical and discrepancy metrics",
+          "default": true
+        },
+        {
+          "port_id": "plot_results",
+          "type": "bool",
+          "description": "Generate diagnostic plots",
+          "default": true
+        }
+      ],
+      "dynamic_inputs": [],
+      "dynamic_outputs": []
+    },
+    "inputSchema": {
+      "$defs": {
+        "ProfileFilterSpec": {
+          "description": "Specification for filtering, grouping, and slicing profiles.\n\nAttributes:\n    selected_profiles: Optional list of specific profile names or CSV filenames to process.\n    group_by: Grouping strategy ('loadshape', 'voltage_class', 'all').\n    scaling_factor: Linear multiplier applied to generated profiles.\n    clip_negative: Whether to clamp negative values to zero (true for load & solar).\n    sample_start_idx: Starting index in profile time-series (default 0).\n    sample_length: Number of time steps to extract (if None, extract entire profile).",
+          "properties": {
+            "selected_profiles": {
+              "anyOf": [
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Optional list of specific profile/loadshape names to process",
+              "title": "Selected Profiles"
+            },
+            "group_by": {
+              "default": "loadshape",
+              "description": "Strategy for grouping load profiles during training",
+              "enum": [
+                "loadshape",
+                "voltage_class",
+                "all"
+              ],
+              "title": "Group By",
+              "type": "string"
+            },
+            "scaling_factor": {
+              "default": 1.0,
+              "description": "Multiplier for synthetic profiles",
+              "exclusiveMinimum": 0,
+              "title": "Scaling Factor",
+              "type": "number"
+            },
+            "clip_negative": {
+              "default": true,
+              "description": "Clip negative values to zero",
+              "title": "Clip Negative",
+              "type": "boolean"
+            },
+            "sample_start_idx": {
+              "default": 0,
+              "description": "Start index for profile window",
+              "minimum": 0,
+              "title": "Sample Start Idx",
+              "type": "integer"
+            },
+            "sample_length": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Length of profile slice to extract and synthesize (e.g. 96 or 35040)",
+              "title": "Sample Length"
+            }
+          },
+          "title": "ProfileFilterSpec",
+          "type": "object"
+        },
+        "SynthesizerSpec": {
+          "description": "Specification of the SDV synthesizer model and training hyperparameters.\n\nAttributes:\n    synthesizer_type: Model type ('PARSynthesizer', 'GaussianCopulaSynthesizer',\n        'CTGANSynthesizer', 'TVAESynthesizer').\n    epochs: Number of training epochs.\n    sequence_length: Length of each sequence slice for sequential synthesizers.\n    num_sequences: Number of sequences to sample per profile group (if None, inferred).\n    enforce_min_max_values: Clip synthesized values to min/max observed during training.\n    verbose: Verbose progress reporting during training.\n    cuda: Whether to use CUDA/GPU if available.",
+          "properties": {
+            "synthesizer_type": {
+              "default": "PARSynthesizer",
+              "description": "SDV synthesizer model type",
+              "enum": [
+                "PARSynthesizer",
+                "GaussianCopulaSynthesizer",
+                "CTGANSynthesizer",
+                "TVAESynthesizer"
+              ],
+              "title": "Synthesizer Type",
+              "type": "string"
+            },
+            "epochs": {
+              "default": 100,
+              "description": "Number of training epochs",
+              "exclusiveMinimum": 0,
+              "title": "Epochs",
+              "type": "integer"
+            },
+            "sequence_length": {
+              "default": 96,
+              "description": "Sequence length for sequential models",
+              "exclusiveMinimum": 0,
+              "title": "Sequence Length",
+              "type": "integer"
+            },
+            "num_sequences": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "description": "Number of sequences to sample (inferred from data if omitted)",
+              "title": "Num Sequences"
+            },
+            "enforce_min_max_values": {
+              "default": true,
+              "description": "Enforce min and max bounds from original data",
+              "title": "Enforce Min Max Values",
+              "type": "boolean"
+            },
+            "verbose": {
+              "default": false,
+              "description": "Enable verbose synthesizer progress",
+              "title": "Verbose",
+              "type": "boolean"
+            },
+            "cuda": {
+              "default": false,
+              "description": "Enable CUDA acceleration for neural synthesizers",
+              "title": "Cuda",
+              "type": "boolean"
+            }
+          },
+          "title": "SynthesizerSpec",
+          "type": "object"
+        }
+      },
+      "description": "Primary configuration model and OEDISI ComponentParameters for pnnl-profiler-sdv.\n\nAttributes:\n    name: Optional component or scenario name.\n    model_dir: Directory containing OpenDSS model files.\n    master_file: Name of the master OpenDSS file.\n    profile_dir: Optional explicit directory containing CSV profiles.\n    output_dir: Optional destination directory for modified OpenDSS files and synthetic profiles.\n    in_place: Whether to modify source files in place (mutually exclusive with output_dir).\n    synthesizer_spec: SDV synthesizer hyperparameters and model selection.\n    profile_filter: Profile selection and slicing configuration.\n    model_cache_dir: Optional directory to store or load trained SDV model checkpoints (.pkl).\n    evaluate_metrics: Whether to compute fidelity and discrepancy metrics.\n    plot_results: Whether to generate visualization plots.",
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional component/scenario name",
+          "title": "Name"
+        },
+        "model_dir": {
+          "description": "Path to OpenDSS model directory",
+          "format": "path",
+          "title": "Model Dir",
+          "type": "string"
+        },
+        "master_file": {
+          "default": "master.dss",
+          "description": "Master DSS file name",
+          "title": "Master File",
+          "type": "string"
+        },
+        "profile_dir": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional directory containing CSV profiles",
+          "title": "Profile Dir"
+        },
+        "output_dir": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output directory for modified OpenDSS model and synthetic profiles",
+          "title": "Output Dir"
+        },
+        "in_place": {
+          "default": false,
+          "description": "Modify OpenDSS model in place",
+          "title": "In Place",
+          "type": "boolean"
+        },
+        "synthesizer_spec": {
+          "$ref": "#/$defs/SynthesizerSpec",
+          "description": "Synthesizer configuration"
+        },
+        "profile_filter": {
+          "$ref": "#/$defs/ProfileFilterSpec",
+          "description": "Profile filtering and slicing configuration"
+        },
+        "model_cache_dir": {
+          "anyOf": [
+            {
+              "format": "path",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional directory to save and load trained SDV model checkpoints (.pkl)",
+          "title": "Model Cache Dir"
+        },
+        "evaluate_metrics": {
+          "default": true,
+          "description": "Compute statistical and discrepancy metrics",
+          "title": "Evaluate Metrics",
+          "type": "boolean"
+        },
+        "plot_results": {
+          "default": true,
+          "description": "Generate diagnostic plots",
+          "title": "Plot Results",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "model_dir"
+      ],
+      "title": "ComponentParameters",
+      "type": "object"
+    }
   }
 ]
