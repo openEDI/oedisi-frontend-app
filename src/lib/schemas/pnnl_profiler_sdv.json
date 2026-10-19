@@ -1,0 +1,238 @@
+{
+  "$defs": {
+    "ProfileFilterSpec": {
+      "description": "Specification for filtering, grouping, and slicing profiles.\n\nAttributes:\n    selected_profiles: Optional list of specific profile names or CSV filenames to process.\n    group_by: Grouping strategy ('loadshape', 'voltage_class', 'all').\n    scaling_factor: Linear multiplier applied to generated profiles.\n    clip_negative: Whether to clamp negative values to zero (true for load & solar).\n    sample_start_idx: Starting index in profile time-series (default 0).\n    sample_length: Number of time steps to extract (if None, extract entire profile).",
+      "properties": {
+        "selected_profiles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list of specific profile/loadshape names to process",
+          "title": "Selected Profiles"
+        },
+        "group_by": {
+          "default": "loadshape",
+          "description": "Strategy for grouping load profiles during training",
+          "enum": [
+            "loadshape",
+            "voltage_class",
+            "all"
+          ],
+          "title": "Group By",
+          "type": "string"
+        },
+        "scaling_factor": {
+          "default": 1.0,
+          "description": "Multiplier for synthetic profiles",
+          "exclusiveMinimum": 0,
+          "title": "Scaling Factor",
+          "type": "number"
+        },
+        "clip_negative": {
+          "default": true,
+          "description": "Clip negative values to zero",
+          "title": "Clip Negative",
+          "type": "boolean"
+        },
+        "sample_start_idx": {
+          "default": 0,
+          "description": "Start index for profile window",
+          "minimum": 0,
+          "title": "Sample Start Idx",
+          "type": "integer"
+        },
+        "sample_length": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Length of profile slice to extract and synthesize (e.g. 96 or 35040)",
+          "title": "Sample Length"
+        }
+      },
+      "title": "ProfileFilterSpec",
+      "type": "object"
+    },
+    "SynthesizerSpec": {
+      "description": "Specification of the SDV synthesizer model and training hyperparameters.\n\nAttributes:\n    synthesizer_type: Model type ('PARSynthesizer', 'GaussianCopulaSynthesizer',\n        'CTGANSynthesizer', 'TVAESynthesizer').\n    epochs: Number of training epochs.\n    sequence_length: Length of each sequence slice for sequential synthesizers.\n    num_sequences: Number of sequences to sample per profile group (if None, inferred).\n    enforce_min_max_values: Clip synthesized values to min/max observed during training.\n    verbose: Verbose progress reporting during training.\n    cuda: Whether to use CUDA/GPU if available.",
+      "properties": {
+        "synthesizer_type": {
+          "default": "PARSynthesizer",
+          "description": "SDV synthesizer model type",
+          "enum": [
+            "PARSynthesizer",
+            "GaussianCopulaSynthesizer",
+            "CTGANSynthesizer",
+            "TVAESynthesizer"
+          ],
+          "title": "Synthesizer Type",
+          "type": "string"
+        },
+        "epochs": {
+          "default": 100,
+          "description": "Number of training epochs",
+          "exclusiveMinimum": 0,
+          "title": "Epochs",
+          "type": "integer"
+        },
+        "sequence_length": {
+          "default": 96,
+          "description": "Sequence length for sequential models",
+          "exclusiveMinimum": 0,
+          "title": "Sequence Length",
+          "type": "integer"
+        },
+        "num_sequences": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of sequences to sample (inferred from data if omitted)",
+          "title": "Num Sequences"
+        },
+        "enforce_min_max_values": {
+          "default": true,
+          "description": "Enforce min and max bounds from original data",
+          "title": "Enforce Min Max Values",
+          "type": "boolean"
+        },
+        "verbose": {
+          "default": false,
+          "description": "Enable verbose synthesizer progress",
+          "title": "Verbose",
+          "type": "boolean"
+        },
+        "cuda": {
+          "default": false,
+          "description": "Enable CUDA acceleration for neural synthesizers",
+          "title": "Cuda",
+          "type": "boolean"
+        }
+      },
+      "title": "SynthesizerSpec",
+      "type": "object"
+    }
+  },
+  "description": "Primary configuration model and OEDISI ComponentParameters for pnnl-profiler-sdv.\n\nAttributes:\n    name: Optional component or scenario name.\n    model_dir: Directory containing OpenDSS model files.\n    master_file: Name of the master OpenDSS file.\n    profile_dir: Optional explicit directory containing CSV profiles.\n    output_dir: Optional destination directory for modified OpenDSS files and synthetic profiles.\n    in_place: Whether to modify source files in place (mutually exclusive with output_dir).\n    synthesizer_spec: SDV synthesizer hyperparameters and model selection.\n    profile_filter: Profile selection and slicing configuration.\n    model_cache_dir: Optional directory to store or load trained SDV model checkpoints (.pkl).\n    evaluate_metrics: Whether to compute fidelity and discrepancy metrics.\n    plot_results: Whether to generate visualization plots.",
+  "properties": {
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional component/scenario name",
+      "title": "Name"
+    },
+    "model_dir": {
+      "description": "Path to OpenDSS model directory",
+      "format": "path",
+      "title": "Model Dir",
+      "type": "string"
+    },
+    "master_file": {
+      "default": "master.dss",
+      "description": "Master DSS file name",
+      "title": "Master File",
+      "type": "string"
+    },
+    "profile_dir": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional directory containing CSV profiles",
+      "title": "Profile Dir"
+    },
+    "output_dir": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Output directory for modified OpenDSS model and synthetic profiles",
+      "title": "Output Dir"
+    },
+    "in_place": {
+      "default": false,
+      "description": "Modify OpenDSS model in place",
+      "title": "In Place",
+      "type": "boolean"
+    },
+    "synthesizer_spec": {
+      "$ref": "#/$defs/SynthesizerSpec",
+      "description": "Synthesizer configuration"
+    },
+    "profile_filter": {
+      "$ref": "#/$defs/ProfileFilterSpec",
+      "description": "Profile filtering and slicing configuration"
+    },
+    "model_cache_dir": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional directory to save and load trained SDV model checkpoints (.pkl)",
+      "title": "Model Cache Dir"
+    },
+    "evaluate_metrics": {
+      "default": true,
+      "description": "Compute statistical and discrepancy metrics",
+      "title": "Evaluate Metrics",
+      "type": "boolean"
+    },
+    "plot_results": {
+      "default": true,
+      "description": "Generate diagnostic plots",
+      "title": "Plot Results",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "model_dir"
+  ],
+  "title": "ComponentParameters",
+  "type": "object"
+}

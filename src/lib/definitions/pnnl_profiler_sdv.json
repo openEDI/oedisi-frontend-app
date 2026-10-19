@@ -1,0 +1,65 @@
+{
+  "directory": "pnnl-profiler-sdv",
+  "execute_function": "python -m pnnl_profiler_sdv.cli",
+  "static_inputs": [
+    {
+      "port_id": "model_dir",
+      "type": "str",
+      "description": "Path to OpenDSS model directory"
+    },
+    {
+      "port_id": "master_file",
+      "type": "str",
+      "description": "Master DSS file name",
+      "default": "master.dss"
+    },
+    {
+      "port_id": "profile_dir",
+      "type": "str",
+      "description": "Optional directory containing CSV profiles",
+      "optional": true
+    },
+    {
+      "port_id": "output_dir",
+      "type": "str",
+      "description": "Output directory for modified OpenDSS model and synthetic profiles",
+      "optional": true
+    },
+    {
+      "port_id": "in_place",
+      "type": "bool",
+      "description": "Modify OpenDSS model in place",
+      "default": false
+    },
+    {
+      "port_id": "synthesizer_spec",
+      "type": "SynthesizerSpec",
+      "description": "SDV synthesizer hyperparameters and model selection"
+    },
+    {
+      "port_id": "profile_filter",
+      "type": "ProfileFilterSpec",
+      "description": "Profile filtering and slicing configuration"
+    },
+    {
+      "port_id": "model_cache_dir",
+      "type": "str",
+      "description": "Optional directory to save and load trained SDV checkpoints",
+      "optional": true
+    },
+    {
+      "port_id": "evaluate_metrics",
+      "type": "bool",
+      "description": "Compute statistical and discrepancy metrics",
+      "default": true
+    },
+    {
+      "port_id": "plot_results",
+      "type": "bool",
+      "description": "Generate diagnostic plots",
+      "default": true
+    }
+  ],
+  "dynamic_inputs": [],
+  "dynamic_outputs": []
+}

@@ -1,0 +1,126 @@
+{
+  "description": "Configuration schema and OEDISI ComponentParameters for model anonymization.\n\nAttributes:\n    name: Optional component or scenario name.\n    model_dir: Path to OpenDSS model directory.\n    master_file: Name of the master DSS file (e.g. 'master.dss' or 'IEEE123Master.dss').\n    output_dir: Optional destination directory for anonymized OpenDSS files.\n    in_place: Whether to modify source files in place (mutually exclusive with output_dir).\n    noise_level: Relative noise level for numerical parameters (default: 0.05 = +/-5%).\n    epsilon: Optional Differential Privacy epsilon parameter.\n    salt: Salt string for deterministic SHA-256 pseudonymization.\n    seed: Optional integer random seed for reproducible noise generation.\n    anonymize_names: Whether to pseudonymize bus and element names.\n    anonymize_values: Whether to inject noise into physical parameters (kW, kvar, length, etc.).\n    anonymize_loadshapes: Whether to pseudonymize and perturb loadshape profiles.\n    validate_powerflow: Whether to verify power flow convergence after anonymization.\n    save_mapping: Whether to save name_mapping.json containing original-to-anonymized map.",
+  "properties": {
+    "name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional component or scenario name",
+      "title": "Name"
+    },
+    "model_dir": {
+      "description": "Path to OpenDSS model directory",
+      "format": "path",
+      "title": "Model Dir",
+      "type": "string"
+    },
+    "master_file": {
+      "default": "master.dss",
+      "description": "Master DSS file name",
+      "title": "Master File",
+      "type": "string"
+    },
+    "output_dir": {
+      "anyOf": [
+        {
+          "format": "path",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Output directory for anonymized OpenDSS files",
+      "title": "Output Dir"
+    },
+    "in_place": {
+      "default": false,
+      "description": "Modify OpenDSS model in place",
+      "title": "In Place",
+      "type": "boolean"
+    },
+    "noise_level": {
+      "default": 0.05,
+      "description": "Relative noise level for physical parameters (0.05 = +/-5%)",
+      "maximum": 1.0,
+      "minimum": 0.0,
+      "title": "Noise Level",
+      "type": "number"
+    },
+    "epsilon": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional Differential Privacy epsilon parameter",
+      "title": "Epsilon"
+    },
+    "salt": {
+      "default": "oedisi_anon_dp",
+      "description": "Salt string for deterministic SHA-256 pseudonymization",
+      "title": "Salt",
+      "type": "string"
+    },
+    "seed": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Optional random seed for reproducible noise generation",
+      "title": "Seed"
+    },
+    "anonymize_names": {
+      "default": true,
+      "description": "Pseudonymize bus and element names",
+      "title": "Anonymize Names",
+      "type": "boolean"
+    },
+    "anonymize_values": {
+      "default": true,
+      "description": "Inject noise into physical parameters",
+      "title": "Anonymize Values",
+      "type": "boolean"
+    },
+    "anonymize_loadshapes": {
+      "default": true,
+      "description": "Pseudonymize and perturb loadshape profiles",
+      "title": "Anonymize Loadshapes",
+      "type": "boolean"
+    },
+    "validate_powerflow": {
+      "default": true,
+      "description": "Verify power flow convergence after anonymization",
+      "title": "Validate Powerflow",
+      "type": "boolean"
+    },
+    "save_mapping": {
+      "default": true,
+      "description": "Save original-to-anonymized name mapping table",
+      "title": "Save Mapping",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "model_dir"
+  ],
+  "title": "ComponentParameters",
+  "type": "object"
+}

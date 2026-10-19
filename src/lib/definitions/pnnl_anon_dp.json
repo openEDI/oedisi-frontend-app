@@ -1,0 +1,85 @@
+{
+  "directory": "pnnl-anon-dp",
+  "execute_function": "python -m pnnl_anon_dp.cli",
+  "static_inputs": [
+    {
+      "port_id": "model_dir",
+      "type": "str",
+      "description": "Path to OpenDSS model directory"
+    },
+    {
+      "port_id": "master_file",
+      "type": "str",
+      "description": "Master DSS file name",
+      "default": "master.dss"
+    },
+    {
+      "port_id": "output_dir",
+      "type": "str",
+      "description": "Output directory for anonymized OpenDSS files",
+      "optional": true
+    },
+    {
+      "port_id": "in_place",
+      "type": "bool",
+      "description": "Modify OpenDSS model in place",
+      "default": false
+    },
+    {
+      "port_id": "noise_level",
+      "type": "float",
+      "description": "Relative noise level for physical parameters (e.g. 0.05 = +/-5%)",
+      "default": 0.05
+    },
+    {
+      "port_id": "epsilon",
+      "type": "float",
+      "description": "Optional Differential Privacy epsilon parameter",
+      "optional": true
+    },
+    {
+      "port_id": "salt",
+      "type": "str",
+      "description": "Salt string for deterministic SHA-256 pseudonymization",
+      "default": "oedisi_anon_dp"
+    },
+    {
+      "port_id": "seed",
+      "type": "int",
+      "description": "Optional random seed for reproducible noise generation",
+      "optional": true
+    },
+    {
+      "port_id": "anonymize_names",
+      "type": "bool",
+      "description": "Pseudonymize bus and element names",
+      "default": true
+    },
+    {
+      "port_id": "anonymize_values",
+      "type": "bool",
+      "description": "Inject noise into physical parameters",
+      "default": true
+    },
+    {
+      "port_id": "anonymize_loadshapes",
+      "type": "bool",
+      "description": "Pseudonymize and perturb loadshape profiles",
+      "default": true
+    },
+    {
+      "port_id": "validate_powerflow",
+      "type": "bool",
+      "description": "Verify power flow convergence after anonymization",
+      "default": true
+    },
+    {
+      "port_id": "save_mapping",
+      "type": "bool",
+      "description": "Save original-to-anonymized name mapping table",
+      "default": true
+    }
+  ],
+  "dynamic_inputs": [],
+  "dynamic_outputs": []
+}
