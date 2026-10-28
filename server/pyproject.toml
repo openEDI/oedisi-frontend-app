@@ -31,3 +31,6 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
+
+[tool.uv.sources]
+oedisi = { git = "https://github.com/openEDI/oedisi.git", rev = "f08e47660dffe3c3d30ecf1047913cbf5e9ebf47" }
