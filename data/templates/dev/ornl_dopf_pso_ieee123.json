@@ -53,7 +53,7 @@
       },
       "data": {
         "label": "Feeder",
-        "componentType": "LocalFeeder",
+        "componentType": "Feeder",
         "config": {
           "use_smartds": false,
           "user_uploads_model": false,
@@ -64,7 +64,9 @@
           "number_of_timesteps": 96,
           "run_freq_sec": 900,
           "topology_output": "../../outputs/topology.json",
-          "name": "feeder"
+          "name": "feeder",
+          "start_time_index": 0,
+          "use_sparse_admittance": false
         }
       },
       "events": {}
@@ -406,7 +408,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -655,7 +657,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -742,7 +744,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -887,7 +889,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -1032,7 +1034,7 @@
         },
         "data": {
           "label": "Feeder",
-          "componentType": "LocalFeeder",
+          "componentType": "Feeder",
           "config": {
             "use_smartds": false,
             "user_uploads_model": false,
@@ -1112,5 +1114,6 @@
       "targetY": 104.0,
       "selected": false
     }
-  ]
+  ],
+  "config_version": "1"
 }

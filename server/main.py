@@ -10,15 +10,20 @@ groups:
 See `CLAUDE.md` in this folder for the design rationale.
 """
 
-from __future__ import annotations
-
 import asyncio
 import json
+import logging
+import nbformat
 import os
 import re
+import shutil
+import signal
+import socket
 import sys
+import tempfile
 import uuid
 from contextlib import asynccontextmanager
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -26,11 +31,18 @@ from typing import Annotated, Any
 
 import psutil
 import pyarrow.feather as pa_feather
-import pyarrow.types as pa_types
 import uvicorn
-from fastapi import FastAPI, HTTPException, Path as PathParam
+from fastapi import (
+    BackgroundTasks,
+    Depends,
+    FastAPI,
+    Header,
+    HTTPException,
+    Path as PathParam,
+)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from jupyter_server.services.contents.filemanager import FileContentsManager
 from oedisi.componentframework.basic_component import (
     ComponentDescription,
     basic_component,
@@ -40,6 +52,9 @@ from oedisi.componentframework.system_configuration import (
     generate_runner_config,
 )
 from pydantic import ConfigDict
+from tornado.web import HTTPError
+
+from output_annotations import OutputsList, annotate_outputs
 
 
 class AppWiringDiagram(WiringDiagram):
@@ -64,12 +79,67 @@ DATA_DIR = SERVER_DIR.parent / "data"
 TEMPLATES_DIR = DATA_DIR / "templates"
 RUNS_DIR = SERVER_DIR / "runs"
 COMPONENTS_JSON_PATH = SERVER_DIR / "components.json"
+CATALOG_JSON_PATH = SERVER_DIR.parent / "src" / "lib" / "catalog.json"
+
+# Templates without a config_version predate default-filling at node creation
+# and get missing defaults filled in at startup (_migrate_templates).
+CONFIG_VERSION = "1"
 
 TEMPLATE_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
 
 # Accept any sane directory-name shape. Most runs are UUID hex,
 # but we accept potential new ones.
 RunId = Annotated[str, PathParam(pattern=r"^[a-zA-Z0-9_-]{1,64}$")]
+
+
+# ---------------------------------------------------------------------------
+# Per-user identity
+# ---------------------------------------------------------------------------
+#
+# Single-user by default: every request resolves to DEFAULT_USER, so a local
+# `npm run dev:server` (and CI) needs no auth setup. Set OEDISI_MULTI_USER to
+# opt into per-user mode, where nginx authenticates via HTTP Basic and injects
+# the username as the `X-Remote-User` header (see deploy/nginx.conf). The
+# backend trusts that header *because* it only listens on localhost — nginx is
+# the only caller. Every request's data is namespaced under the resolved user,
+# so a username that could escape its directory (`..`, `/`) must never reach
+# the filesystem.
+
+DEFAULT_USER = "dev"
+
+# Same shape as a template id: directory-safe, no traversal characters.
+USER_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
+
+
+def current_user(
+    x_remote_user: Annotated[str | None, Header()] = None,
+) -> str:
+    """Resolve the user for this request.
+
+    Single-user mode (default): always DEFAULT_USER; the header is ignored.
+
+    Multi-user mode (OEDISI_MULTI_USER set): resolve from the nginx-injected
+    header and fail closed on a missing/invalid identity, which forces nginx to
+    always sit in front of the backend in production.
+    """
+    if not os.environ.get("OEDISI_MULTI_USER"):
+        return DEFAULT_USER
+    if x_remote_user is None:
+        raise HTTPException(status_code=401)
+    if not USER_ID_PATTERN.match(x_remote_user):
+        raise HTTPException(status_code=400, detail="Invalid user")
+    return x_remote_user
+
+
+CurrentUser = Annotated[str, Depends(current_user)]
+
+
+def _user_templates_dir(user: str) -> Path:
+    return TEMPLATES_DIR / user
+
+
+def _user_runs_dir(user: str) -> Path:
+    return RUNS_DIR / user
 
 
 # ---------------------------------------------------------------------------
@@ -96,6 +166,111 @@ def _check_components_env() -> None:
         )
 
 
+# ---------------------------------------------------------------------------
+# Jupyter server lifecycle
+# ---------------------------------------------------------------------------
+
+JUPYTER_PORT = int(os.environ.get("OEDISI_JUPYTER_PORT", "8888"))
+VOILA_PORT = int(os.environ.get("OEDISI_VOILA_PORT", "8866"))
+
+
+class ReadOnlyContentsManager(FileContentsManager):
+    """Prevent notebook and file mutations when JupyterLab is used."""
+
+    def _reject_write(self, *args: Any, **kwargs: Any) -> None:
+        raise HTTPError(403, "Jupyter contents are read-only in multi-user mode")
+
+    save = _reject_write
+    delete_file = _reject_write
+    rename_file = _reject_write
+    copy = _reject_write
+    new_untitled = _reject_write
+
+
+def _is_multi_user() -> bool:
+    """True when running in multi-user (cloud) mode."""
+    return bool(os.environ.get("OEDISI_MULTI_USER"))
+
+
+def _notebook_server_command() -> list[str]:
+    """Build the notebook-server subprocess command.
+
+    Single-user (default): JupyterLab, editable.
+    Multi-user (OEDISI_MULTI_USER set): Voilà, read-only — users can view/run
+    notebooks but cannot edit them.
+    """
+    if _is_multi_user():
+        return [
+            sys.executable,
+            "-m",
+            "voila",
+            f"--port={VOILA_PORT}",
+            "--Voila.ip=127.0.0.1",
+            "--no-browser",
+            f"--Voila.root_dir={RUNS_DIR}",
+            "--Voila.tornado_settings",
+            "allow_origin=*",
+            "--Voila.tornado_settings",
+            "disable_check_xsrf=true",
+        ]
+    return [
+        sys.executable,
+        "-m",
+        "jupyterlab",
+        f"--port={JUPYTER_PORT}",
+        "--ip=127.0.0.1",
+        "--no-browser",
+        f"--notebook-dir={RUNS_DIR}",
+        "--IdentityProvider.token=",
+        "--ServerApp.allow_origin=*",
+        "--ServerApp.base_url=/jupyter/",
+        "--ServerApp.disable_check_xsrf=True",
+    ]
+
+
+async def _start_jupyter() -> asyncio.subprocess.Process | None:
+    """Start the notebook server (JupyterLab or Voilà) as a background subprocess.
+
+    Rooted at the RUNS_DIR so notebooks can access run data via relative paths.
+    Token-less mode is used because access is gated by localhost binding and
+    nginx authentication in multi-user deployments.
+    """
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+
+    cmd = _notebook_server_command()
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+        print(
+            f"[notebook] started on port "
+            f"{VOILA_PORT if _is_multi_user() else JUPYTER_PORT} "
+            f"(pid={proc.pid}, root={RUNS_DIR})",
+            file=sys.stderr,
+        )
+        return proc
+    except Exception as exc:  # noqa: BLE001
+        print(
+            f"[notebook] failed to start: {exc}\n"
+            "Notebook features will be unavailable.",
+            file=sys.stderr,
+        )
+        return None
+
+
+async def _stop_jupyter(proc: asyncio.subprocess.Process | None) -> None:
+    if proc is None:
+        return
+    try:
+        proc.terminate()
+        await asyncio.wait_for(proc.wait(), timeout=5)
+    except (ProcessLookupError, asyncio.TimeoutError):
+        proc.kill()
+    print("[jupyter] stopped", file=sys.stderr)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     try:
@@ -105,8 +280,13 @@ async def lifespan(app: FastAPI):
         # error is the first thing the user sees in `npm run dev:server`.
         print(f"\n[startup error] {exc}\n", file=sys.stderr)
         raise
+    _migrate_templates()
     _restore_runs()
-    yield
+    jupyter_proc = await _start_jupyter()
+    try:
+        yield
+    finally:
+        await _stop_jupyter(jupyter_proc)
 
 
 # ---------------------------------------------------------------------------
@@ -134,9 +314,23 @@ def _validate_template_id(template_id: str) -> None:
         raise HTTPException(status_code=400, detail="Invalid template id format")
 
 
-def _template_path(template_id: str) -> Path:
+def _template_path(user: str, template_id: str) -> Path:
     _validate_template_id(template_id)
-    return TEMPLATES_DIR / f"{template_id}.json"
+    # First try the canonical path (filename == id)
+    canonical = _user_templates_dir(user) / f"{template_id}.json"
+    if canonical.exists():
+        return canonical
+    # Fall back to searching by internal id (handles human-named files)
+    user_dir = _user_templates_dir(user)
+    if user_dir.is_dir():
+        for path in user_dir.glob("*.json"):
+            try:
+                data = json.loads(path.read_text(encoding="utf-8"))
+                if data.get("id") == template_id:
+                    return path
+            except (json.JSONDecodeError, OSError):
+                continue
+    return canonical  # return canonical path (will 404 naturally)
 
 
 def _validate_template_payload(template: dict[str, Any]) -> None:
@@ -166,11 +360,64 @@ def _read_template(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _catalog_defaults() -> dict[str, dict[str, Any]]:
+    """Component id -> default config from its inputSchema.
+
+    Mirrors makeDefaults in ../src/lib/componentCatalog.ts: top-level
+    properties with an explicit `default`, nothing recursive.
+    """
+    catalog = json.loads(CATALOG_JSON_PATH.read_text(encoding="utf-8"))
+    return {
+        comp["id"]: {
+            key: prop["default"]
+            for key, prop in ((comp.get("inputSchema") or {}).get("properties") or {}).items()
+            if isinstance(prop, dict) and "default" in prop
+        }
+        for comp in catalog
+    }
+
+
+def _migrate_template(template: dict[str, Any], defaults: dict[str, dict[str, Any]]) -> bool:
+    """Stamp CONFIG_VERSION, filling missing defaulted config keys on the way.
+
+    Pre-version templates relied on Ajv useDefaults injecting these at render
+    time; the values were never persisted. Returns False if already stamped.
+    """
+    if template.get("config_version") is not None:
+        return False
+    for node in template.get("nodes", []):
+        data = node.get("data")
+        if not isinstance(data, dict):
+            continue
+        node_defaults = defaults.get(data.get("componentType"), {})
+        if node_defaults:
+            config = data.setdefault("config", {})
+            for key, value in node_defaults.items():
+                config.setdefault(key, deepcopy(value))
+    template["config_version"] = CONFIG_VERSION
+    return True
+
+
+def _migrate_templates() -> None:
+    """One-time per file, run at startup; stamped templates are never touched again."""
+    defaults = _catalog_defaults()
+    for path in sorted(TEMPLATES_DIR.rglob("*.json")) if TEMPLATES_DIR.exists() else []:
+        try:
+            template = _read_template(path)
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"[migrate] skipping unreadable template {path}: {exc}", file=sys.stderr)
+            continue
+        if isinstance(template, dict) and _migrate_template(template, defaults):
+            _atomic_write_json(path, template)
+            print(f"[migrate] filled defaults in {path}", file=sys.stderr)
+
+
 @app.get("/api/templates")
-def list_templates() -> list[dict[str, Any]]:
-    TEMPLATES_DIR.mkdir(parents=True, exist_ok=True)
+def list_templates(user: CurrentUser) -> list[dict[str, Any]]:
+    user_dir = _user_templates_dir(user)
+    user_dir.mkdir(parents=True, exist_ok=True)
     templates: list[dict[str, Any]] = []
-    for path in TEMPLATES_DIR.glob("*.json"):
+    for path in user_dir.glob("*.json"):
         try:
             templates.append(_read_template(path))
         except json.JSONDecodeError:
@@ -181,15 +428,15 @@ def list_templates() -> list[dict[str, Any]]:
 
 
 @app.get("/api/templates/{template_id}")
-def get_template(template_id: str) -> dict[str, Any]:
-    path = _template_path(template_id)
+def get_template(template_id: str, user: CurrentUser) -> dict[str, Any]:
+    path = _template_path(user, template_id)
     if not path.exists():
         raise HTTPException(status_code=404, detail="Template not found")
     return _read_template(path)
 
 
 @app.post("/api/templates")
-def create_template(template: dict[str, Any]) -> dict[str, Any]:
+def create_template(template: dict[str, Any], user: CurrentUser) -> dict[str, Any]:
     if not template.get("id"):
         # Match the JS server: millisecond timestamp string.
         template["id"] = str(int(__import__("time").time() * 1000))
@@ -197,7 +444,7 @@ def create_template(template: dict[str, Any]) -> dict[str, Any]:
         template["createdAt"] = _iso(datetime.now(timezone.utc))
 
     _validate_template_payload(template)
-    _atomic_write_json(_template_path(template["id"]), template)
+    _atomic_write_json(_template_path(user, template["id"]), template)
     return {
         "success": True,
         "id": template["id"],
@@ -206,10 +453,12 @@ def create_template(template: dict[str, Any]) -> dict[str, Any]:
 
 
 @app.put("/api/templates/{template_id}")
-def update_template(template_id: str, template: dict[str, Any]) -> dict[str, Any]:
+def update_template(
+    template_id: str, template: dict[str, Any], user: CurrentUser
+) -> dict[str, Any]:
     template["id"] = template_id
 
-    path = _template_path(template_id)
+    path = _template_path(user, template_id)
     if path.exists():
         existing = _read_template(path)
         if existing.get("createdAt"):
@@ -221,11 +470,14 @@ def update_template(template_id: str, template: dict[str, Any]) -> dict[str, Any
 
 
 @app.delete("/api/templates/{template_id}")
-def delete_template(template_id: str) -> dict[str, Any]:
-    path = _template_path(template_id)
+def delete_template(template_id: str, user: CurrentUser) -> dict[str, Any]:
+    path = _template_path(user, template_id)
     if not path.exists():
         raise HTTPException(status_code=404, detail="Template not found")
     path.unlink()
+    template_notebook_dir = _template_notebook_path(user, template_id).parent
+    if template_notebook_dir.exists():
+        shutil.rmtree(template_notebook_dir)
     return {"success": True, "message": "Template deleted successfully"}
 
 
@@ -257,29 +509,39 @@ def _resolve_component_path(raw: str) -> str:
     return os.path.expanduser(raw)
 
 
-def load_component_types() -> dict[str, Any]:
-    """Load the component-name → BasicComponent mapping from components.json."""
+def load_component_descriptions() -> dict[str, ComponentDescription]:
+    """Load the component-name → ComponentDescription mapping from components.json."""
     with open(COMPONENTS_JSON_PATH) as f:
         mapping = json.load(f)
 
-    types: dict[str, Any] = {}
+    descriptions: dict[str, ComponentDescription] = {}
     for name, component_def_path in mapping.items():
         path = _resolve_component_path(component_def_path)
         with open(path) as f:
             comp_desc = ComponentDescription.model_validate(json.load(f))
         comp_desc.directory = os.path.dirname(path)
-        types[name] = basic_component(comp_desc, _bad_type_checker)
-    return types
+        descriptions[name] = comp_desc
+    return descriptions
 
 
 def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
-    component_types = load_component_types()
+    descriptions = load_component_descriptions()
+    component_types = {
+        name: basic_component(desc, _bad_type_checker)
+        for name, desc in descriptions.items()
+    }
     runner_config = generate_runner_config(
         wiring_diagram, component_types, target_directory=str(build_dir)
     )
     build_dir.mkdir(parents=True, exist_ok=True)
     (build_dir / "system_runner.json").write_text(
         runner_config.model_dump_json(indent=2), encoding="utf-8"
+    )
+    (build_dir / "outputs_list.json").write_text(
+        annotate_outputs(wiring_diagram, descriptions).model_dump_json(
+            indent=2, exclude_none=True
+        ),
+        encoding="utf-8",
     )
 
 
@@ -291,6 +553,7 @@ def build_runner(wiring_diagram: WiringDiagram, build_dir: Path) -> None:
 @dataclass
 class RunRecord:
     pid: int
+    user: str
     started_at: datetime
     template_id: str | None
     run_dir: Path
@@ -325,9 +588,7 @@ def _write_run_start(run_dir: Path, record: RunRecord) -> None:
 
 def _write_run_finish(record: RunRecord) -> None:
     try:
-        data = json.loads(
-            _run_json_path(record.run_dir).read_text(encoding="utf-8")
-        )
+        data = json.loads(_run_json_path(record.run_dir).read_text(encoding="utf-8"))
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
     data["exit_code"] = record.exit_code
@@ -335,17 +596,43 @@ def _write_run_finish(record: RunRecord) -> None:
     _atomic_write_json(_run_json_path(record.run_dir), data)
 
 
-async def _watch_proc(
-    run_id: str, proc: asyncio.subprocess.Process
-) -> None:
+DEFAULT_MAX_RUN_SECONDS = 7200.0  # 2 hours
+
+
+def _max_run_seconds() -> float | None:
+    """Watchdog cap for a run, in seconds, from OEDISI_MAX_TIME.
+
+    A backstop for a hung broker/federate, not a normal limit. Non-positive or
+    unparseable disables it (returns None → the watchdog waits forever).
+    """
+    raw = os.environ.get("OEDISI_MAX_TIME")
+    if raw is None:
+        return DEFAULT_MAX_RUN_SECONDS
+    try:
+        seconds = float(raw)
+    except ValueError:
+        print(f"[config] ignoring invalid OEDISI_MAX_TIME={raw!r}", file=sys.stderr)
+        return DEFAULT_MAX_RUN_SECONDS
+    return seconds if seconds > 0 else None
+
+
+async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     """Await process exit, update the RunRecord, and persist completion.
 
     Sole writer of `exit_code`/`ended_at`/terminal `status` on the record —
     `_serialize_run` only reads, so no synchronization is needed. If the
     server exits before this resumes, the subprocess keeps going on its own;
     we just don't record the outcome, and the boot scan marks it "unknown".
+
+    Enforces the OEDISI_MAX_TIME watchdog: if the run outlives the cap we
+    tree-kill it, and the SIGKILL (-9) exit falls through to "failed" below.
     """
-    code = await proc.wait()
+    try:
+        code = await asyncio.wait_for(proc.wait(), timeout=_max_run_seconds())
+    except asyncio.TimeoutError:
+        print(f"[run {run_id}] exceeded OEDISI_MAX_TIME; killing", file=sys.stderr)
+        _tree_kill(proc.pid)
+        code = await proc.wait()  # reap the killed process so it isn't left a zombie
     record = runs.get(run_id)
     if record is None:
         return  # run was deleted while we waited
@@ -361,9 +648,22 @@ async def _watch_proc(
 def _tree_kill(pid: int) -> None:
     """Kill the process and all its descendants.
 
-    `helics run` spawns a broker plus one federate per component; signalling
-    only the parent orphans the broker, which then lingers holding its port.
+    `helics run` spawns a broker plus one federate per component. We start it
+    in its own session (`start_new_session=True`), so on POSIX every descendant
+    shares a process group whose id equals `pid`, and one `killpg` reaches all
+    of them at once — including a broker spawned in the split second between an
+    enumeration and the kill, which a `children()` snapshot would miss and
+    orphan (it then lingers holding the ZMQ port). Windows has no such groups,
+    so fall back to a psutil tree walk there.
     """
+    if pid <= 0:  # sentinel pid (-1) before proc.pid is filled in; killpg(-1) is catastrophic
+        return
+    if os.name == "posix":
+        try:
+            os.killpg(os.getpgid(pid), signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+        return
     try:
         parent = psutil.Process(pid)
     except psutil.NoSuchProcess:
@@ -389,12 +689,10 @@ def _restore_runs() -> None:
     """
     if not RUNS_DIR.exists():
         return
-    for run_dir in RUNS_DIR.iterdir():
-        if not run_dir.is_dir():
-            continue
-        path = _run_json_path(run_dir)
-        if not path.is_file():
-            continue
+    # Each run.json now sits at runs/<user>/<run_id>/run.json.
+    for path in RUNS_DIR.glob("*/*/run.json"):
+        run_dir = path.parent
+        user = run_dir.parent.name
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
@@ -422,6 +720,7 @@ def _restore_runs() -> None:
             status = "unknown"
         runs[run_dir.name] = RunRecord(
             pid=pid,
+            user=user,
             started_at=started_at,
             template_id=data.get("template_id"),
             run_dir=run_dir,
@@ -432,13 +731,56 @@ def _restore_runs() -> None:
         )
 
 
+# oedisi/HELICS can only host one simulation at a time: the ZMQ broker binds a
+# fixed pair of ports, so a second concurrent `helics run` collides on them.
+# Default ZMQ broker port (23404) plus its reply channel (23405).
+HELICS_BROKER_PORTS: tuple[int, ...] = (23404, 23405)
+
+
+def _port_in_use(port: int) -> bool:
+    """True if something is listening on 127.0.0.1:port.
+
+    Uses a TCP connect rather than psutil.net_connections() — the latter raises
+    AccessDenied without root on macOS. connect_ex returns 0 when the connection
+    succeeds, i.e. a broker is already bound here.
+    """
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.settimeout(0.05)
+        return sock.connect_ex(("127.0.0.1", port)) == 0
+
+
+def _assert_no_run_in_progress() -> None:
+    """Reject the request (409) if a simulation is already running.
+
+    Two layers: the in-process check catches a rapid double-submit before the
+    broker has bound its port; the port check catches brokers started outside
+    this server or left alive (`"unknown"`) across a restart.
+    """
+    for run_id, record in runs.items():
+        if record.status == "running":
+            raise HTTPException(
+                status_code=409,
+                detail=f"A simulation is already running ({record.name or run_id}).",
+            )
+    busy = [p for p in HELICS_BROKER_PORTS if _port_in_use(p)]
+    if busy:
+        ports = ", ".join(str(p) for p in busy)
+        raise HTTPException(
+            status_code=409,
+            detail=f"HELICS broker port {ports} in use; a simulation is already running.",
+        )
+
+
 @app.post("/api/runs")
 async def start_run(
     wiring_diagram: AppWiringDiagram,
+    user: CurrentUser,
     template_id: str | None = None,
 ) -> dict[str, str]:
+    _assert_no_run_in_progress()
+
     run_id = uuid.uuid4().hex
-    run_dir = RUNS_DIR / run_id
+    run_dir = _user_runs_dir(user) / run_id
     build_dir = run_dir / "build"
 
     try:
@@ -454,14 +796,17 @@ async def start_run(
         wiring_diagram.model_dump_json(indent=2), encoding="utf-8"
     )
 
-    proc = await asyncio.create_subprocess_exec(
-        "helics",
-        "run",
-        f"--path={build_dir / 'system_runner.json'}",
-        cwd=build_dir,
-    )
+    # Copy template notebook into the run if one exists.
+    if template_id:
+        _copy_template_notebook_to_run(user, template_id, run_dir)
+
+    # Reserve the slot *before* awaiting the subprocess spawn. The await is the
+    # first yield point in this handler, so a concurrent start_run could
+    # otherwise slip past _assert_no_run_in_progress() here — no record exists
+    # yet and the broker hasn't bound its port. pid is filled in once we have it.
     record = RunRecord(
-        pid=proc.pid,
+        pid=-1,
+        user=user,
         started_at=datetime.now(timezone.utc),
         template_id=template_id,
         run_dir=run_dir,
@@ -469,6 +814,25 @@ async def start_run(
         status="running",
     )
     runs[run_id] = record
+
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            "helics",
+            "run",
+            f"--path={build_dir / 'system_runner.json'}",
+            cwd=build_dir,
+            # Own session/process group so _tree_kill can killpg the broker +
+            # every federate atomically, regardless of spawn timing. POSIX-only;
+            # ignored on Windows, which uses the psutil fallback in _tree_kill.
+            start_new_session=True,
+        )
+    except Exception as exc:  # noqa: BLE001
+        del runs[run_id]  # release the slot — nothing is running
+        raise HTTPException(
+            status_code=500, detail=f"Failed to launch helics: {exc}"
+        ) from exc
+
+    record.pid = proc.pid
     _write_run_start(run_dir, record)
     task = asyncio.create_task(_watch_proc(run_id, proc))
     _watcher_tasks.add(task)
@@ -493,128 +857,459 @@ def _serialize_run(run_id: str, record: RunRecord) -> dict[str, Any]:
 
 
 @app.get("/api/runs")
-def list_runs() -> list[dict[str, Any]]:
+def list_runs(user: CurrentUser) -> list[dict[str, Any]]:
     return sorted(
-        (_serialize_run(rid, rec) for rid, rec in runs.items()),
+        (_serialize_run(rid, rec) for rid, rec in runs.items() if rec.user == user),
         key=lambda r: r["started_at"],
         reverse=True,
     )
 
 
-@app.get("/api/runs/{run_id}")
-def run_status(run_id: RunId) -> dict[str, Any]:
+def _get_owned_run(run_id: str, user: str) -> RunRecord:
+    """Fetch a run only if it belongs to `user`, else 404.
+
+    The `runs` dict is keyed by globally-unique run_id, so it holds every
+    user's runs. 404 rather than 403 keeps another user's run ids unguessable.
+    """
     record = runs.get(run_id)
-    if record is None:
+    if record is None or record.user != user:
         raise HTTPException(status_code=404, detail="Run not found")
+    return record
+
+
+@app.get("/api/runs/{run_id}")
+def run_status(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    record = _get_owned_run(run_id, user)
     return _serialize_run(run_id, record)
 
 
 @app.get("/api/runs/{run_id}/wiring")
-def run_wiring(run_id: RunId) -> FileResponse:
+def run_wiring(run_id: RunId, user: CurrentUser) -> FileResponse:
     """Ship the snapshotted wiring.json straight from disk.
 
     Read from disk rather than `runs[run_id]` so this works for restored runs
     where we never held the diagram in memory.
     """
-    wiring_path = RUNS_DIR / run_id / "wiring.json"
+    wiring_path = _user_runs_dir(user) / run_id / "wiring.json"
     if not wiring_path.exists():
         raise HTTPException(status_code=404, detail="Wiring not found")
     return FileResponse(wiring_path, media_type="application/json")
 
 
+@app.get("/api/runs/{run_id}/download")
+def download_run(
+    run_id: RunId, user: CurrentUser, background_tasks: BackgroundTasks
+) -> FileResponse:
+    """Zip the run directory so a remote user can download its outputs."""
+    run_dir = _user_runs_dir(user) / run_id
+    if not run_dir.is_dir():
+        raise HTTPException(status_code=404, detail="Run not found")
+
+    tmp_dir = Path(tempfile.mkdtemp())
+    # base_dir=run_id nests the contents under a run_id/ folder in the zip.
+    archive_base = tmp_dir / run_id
+    shutil.make_archive(
+        str(archive_base), "zip", root_dir=run_dir.parent, base_dir=run_id
+    )
+
+    background_tasks.add_task(shutil.rmtree, tmp_dir)
+    return FileResponse(
+        archive_base.with_suffix(".zip"),
+        media_type="application/zip",
+        filename=f"{run_id}.zip",
+    )
+
+
 @app.get("/api/runs/{run_id}/logs/{component}")
-def run_log(run_id: RunId, component: str) -> FileResponse:
+def run_log(run_id: RunId, component: str, user: CurrentUser) -> FileResponse:
     # Guard against path traversal — component name is a filename segment only.
     if "/" in component or "\\" in component or ".." in component:
         raise HTTPException(status_code=400, detail="Invalid component name")
 
-    log_path = RUNS_DIR / run_id / "build" / f"{component}.log"
+    log_path = _user_runs_dir(user) / run_id / "build" / f"{component}.log"
     if not log_path.exists():
         raise HTTPException(status_code=404, detail="Log not found")
     return FileResponse(log_path, media_type="text/plain; charset=utf-8")
 
 
-def _load_run_wiring(run_id: str) -> dict[str, Any]:
-    wiring_path = RUNS_DIR / run_id / "wiring.json"
+def _load_run_wiring(user: str, run_id: str) -> dict[str, Any]:
+    wiring_path = _user_runs_dir(user) / run_id / "wiring.json"
     if not wiring_path.exists():
         raise HTTPException(status_code=404, detail="Run wiring not found")
     return json.loads(wiring_path.read_text())
 
 
-def _recorder_feather_path(run_id: str, component: dict[str, Any]) -> Path | None:
+def _load_run_outputs(user: str, run_id: str) -> OutputsList:
+    """Read the build's outputs_list.json; compute on the fly for older runs."""
+    path = _user_runs_dir(user) / run_id / "build" / "outputs_list.json"
+    if path.exists():
+        return OutputsList.model_validate_json(path.read_text())
+    try:
+        wiring = WiringDiagram.model_validate(_load_run_wiring(user, run_id))
+        return annotate_outputs(wiring, load_component_descriptions())
+    except Exception:  # noqa: BLE001 — annotations are optional; never break listing
+        logging.exception("Could not backfill output annotations for run %s", run_id)
+        return OutputsList()
+
+
+def _recorder_feather_path(
+    user: str, run_id: str, component: dict[str, Any]
+) -> Path | None:
     """Path to the feather a Recorder writes, or None if it's not on disk yet."""
     name = component.get("name")
     params = component.get("parameters") or {}
     feather_name = params.get("feather_filename")
     if not name or not feather_name:
         return None
-    path = RUNS_DIR / run_id / "build" / name / feather_name
+    path = _user_runs_dir(user) / run_id / "build" / name / feather_name
     return path if path.exists() else None
 
 
-def _infer_field(name: str, arrow_type: Any) -> dict[str, str]:
-    """Map an Arrow column to a graphic-walker IMutField."""
-    if name == "time" or pa_types.is_temporal(arrow_type):
-        semantic, analytic = "temporal", "dimension"
-    elif pa_types.is_integer(arrow_type) or pa_types.is_floating(arrow_type):
-        semantic, analytic = "quantitative", "measure"
-    else:
-        semantic, analytic = "nominal", "dimension"
-    return {
-        "fid": name,
-        "name": name,
-        "semanticType": semantic,
-        "analyticType": analytic,
-    }
-
-
 @app.get("/api/runs/{run_id}/results")
-def list_results(run_id: RunId) -> list[dict[str, Any]]:
+def list_results(run_id: RunId, user: CurrentUser) -> list[dict[str, Any]]:
     """Manifest of datasets available for a run. v1: Recorder outputs only."""
-    wiring = _load_run_wiring(run_id)
+    wiring = _load_run_wiring(user, run_id)
+    outputs = _load_run_outputs(user, run_id)
     entries: list[dict[str, Any]] = []
     for component in wiring.get("components", []):
         if component.get("type") != "Recorder":
             continue
-        path = _recorder_feather_path(run_id, component)
+        path = _recorder_feather_path(user, run_id, component)
         if path is None:
             continue
-        entries.append({
+        annotations = outputs.components.get(component["name"], {})
+        feather_name = (component.get("parameters") or {}).get("feather_filename")
+        annotation = annotations.get(feather_name)
+        entry = {
             "id": component["name"],
             "label": component["name"],
             "type": "Recorder",
             "size_bytes": path.stat().st_size,
-        })
+        }
+        if annotation is not None and annotation.type is not None:
+            entry["quantity"] = annotation.model_dump(exclude_none=True)
+        entries.append(entry)
     return entries
 
 
-@app.get("/api/runs/{run_id}/results/{dataset_id}")
-def get_result(run_id: RunId, dataset_id: str) -> dict[str, Any]:
+def _read_result_table(user: str, run_id: str, dataset_id: str):
+    """Load a Recorder dataset's feather table, or raise 400/404."""
     if "/" in dataset_id or "\\" in dataset_id or ".." in dataset_id:
         raise HTTPException(status_code=400, detail="Invalid dataset id")
-    wiring = _load_run_wiring(run_id)
+    wiring = _load_run_wiring(user, run_id)
     component = next(
-        (c for c in wiring.get("components", [])
-         if c.get("type") == "Recorder" and c.get("name") == dataset_id),
+        (
+            c
+            for c in wiring.get("components", [])
+            if c.get("type") == "Recorder" and c.get("name") == dataset_id
+        ),
         None,
     )
     if component is None:
         raise HTTPException(status_code=404, detail="Dataset not found")
-    path = _recorder_feather_path(run_id, component)
+    path = _recorder_feather_path(user, run_id, component)
     if path is None:
         raise HTTPException(status_code=404, detail="Dataset file missing")
+    return pa_feather.read_table(path)
 
-    table = pa_feather.read_table(path)
-    fields = [_infer_field(f.name, f.type) for f in table.schema]
-    data = table.to_pylist()
-    return {"fields": fields, "data": data}
+
+@app.get("/api/runs/{run_id}/results/{dataset_id}")
+def get_result(run_id: RunId, dataset_id: str, user: CurrentUser) -> dict[str, Any]:
+    table = _read_result_table(user, run_id, dataset_id)
+    columns = [name for name in table.column_names if name != "time"]
+    return {"columns": columns, "data": table.to_pylist()}
+
+
+def _rows_by_time(table) -> dict[Any, dict[str, Any]]:
+    """Index rows by time, insertion-ordered; duplicate times keep the last row."""
+    return {row["time"]: row for row in table.to_pylist() if "time" in row}
+
+
+@app.get("/api/runs/{run_id}/metrics")
+def get_metrics(
+    run_id: RunId, primary: str, comparison: str, user: CurrentUser
+) -> dict[str, Any]:
+    """Per-timestep mean absolute relative error between two datasets.
+
+    ``primary`` is the reference: value = mean over shared buses of
+    ``|comparison - primary| / |primary|``, skipping zero-valued buses.
+
+    See oedisi library for the "definitive" calculation.
+    """
+    primary_table = _read_result_table(user, run_id, primary)
+    comparison_table = _read_result_table(user, run_id, comparison)
+    shared_columns = [
+        name
+        for name in primary_table.column_names
+        if name != "time" and name in set(comparison_table.column_names)
+    ]
+    comparison_rows = _rows_by_time(comparison_table)
+    data: list[dict[str, Any]] = []
+    for time, row in _rows_by_time(primary_table).items():
+        other = comparison_rows.get(time)
+        if other is None:
+            continue
+        errors = [
+            abs(other[name] - row[name]) / abs(row[name])
+            for name in shared_columns
+            if isinstance(row[name], (int, float))
+            and isinstance(other[name], (int, float))
+            and row[name] != 0
+        ]
+        if errors:
+            data.append({"time": time, "value": sum(errors) / len(errors)})
+    return {"metric": "MARE", "columns": shared_columns, "data": data}
+
+
+@app.get("/api/runs/{run_id}/topology")
+def get_topology(run_id: RunId, user: CurrentUser) -> dict[str, Any] | None:
+    """Feeder topology minus the bulky admittance matrix.
+
+    Dropping ``admittance`` cuts ~99% of the ~1 MB file, which matters
+    when the server isn't on localhost.
+    """
+    run_dir = _user_runs_dir(user) / run_id
+    # Shallow globs only: component .venvs and state_estimator test fixtures
+    # deeper in the tree also contain topology.json files.
+    topo_files = sorted(run_dir.glob("*/topology.json")) or sorted(
+        run_dir.glob("build/*/topology.json")
+    )
+    if not topo_files:
+        return
+    topo = json.loads(topo_files[0].read_text())
+    topo.pop("admittance", None)
+    return topo
+
+
+# ---------------------------------------------------------------------------
+# Notebook CRUD
+# ---------------------------------------------------------------------------
+
+NOTEBOOK_FILENAME = "notebook.ipynb"
+
+
+def _notebook_path(user: str, run_id: str) -> Path:
+    return _user_runs_dir(user) / run_id / NOTEBOOK_FILENAME
+
+
+def _template_notebook_path(user: str, template_id: str) -> Path:
+    _validate_template_id(template_id)
+    return _user_runs_dir(user) / "_notebooks" / template_id / NOTEBOOK_FILENAME
+
+
+def _make_blank_notebook(data_dir: Path) -> nbformat.NotebookNode:
+    """Create a minimal .ipynb pre-populated with a data path."""
+    nb = nbformat.v4.new_notebook()
+    nb.cells = [
+        nbformat.v4.new_markdown_cell(f"# Analysis\n\nData directory: `{data_dir}`"),
+        nbformat.v4.new_code_cell(
+            "import pyarrow.feather as pf\n"
+            "import pandas as pd\n"
+            "import matplotlib.pyplot as plt\n\n"
+            f'DATA_DIR = r"{data_dir}"\n'
+        ),
+    ]
+    return nb
+
+
+def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -> bool:
+    """Copy the template notebook into a run directory, updating DATA_DIR.
+
+    Returns True if a template notebook was found and copied.
+    """
+    src = _template_notebook_path(user, template_id)
+    if not src.exists():
+        return False
+    dest = run_dir / NOTEBOOK_FILENAME
+    nb = nbformat.read(str(src), as_version=4)
+    data_dir = run_dir
+    for cell in nb.cells:
+        if cell.cell_type == "code" and "DATA_DIR" in cell.source:
+            cell.source = re.sub(
+                r'DATA_DIR\s*=\s*r?"[^"]*"',
+                f'DATA_DIR = r"{data_dir}"',
+                cell.source,
+            )
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(dest))
+    return True
+
+
+def _notebook_url_prefix() -> str:
+    """URL prefix for notebook rendering.
+
+    Multi-user: read-only Voilà render. Single-user: editable JupyterLab tree.
+    """
+    if _is_multi_user():
+        return "/voila/render"
+    return "/jupyter/lab/tree"
+
+
+def _jupyter_notebook_url(user: str, run_id: str) -> str:
+    """Return the notebook URL path for a run."""
+    return f"{_notebook_url_prefix()}/{user}/{run_id}/{NOTEBOOK_FILENAME}"
+
+
+def _jupyter_template_notebook_url(user: str, template_id: str) -> str:
+    """Return the notebook URL path for a template."""
+    return f"{_notebook_url_prefix()}/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
+
+
+@app.post("/api/runs/{run_id}/notebook")
+def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    """Create an analysis notebook for the run.
+
+    Tries to copy from the originating template first; falls back to a blank notebook.
+    """
+    record = _get_owned_run(run_id, user)
+    path = _notebook_path(user, run_id)
+    if path.exists():
+        return {
+            "exists": True,
+            "created": False,
+            "jupyter_url": _jupyter_notebook_url(user, run_id),
+        }
+    run_dir = _user_runs_dir(user) / run_id
+    # Try copying from template notebook
+    if record.template_id and _copy_template_notebook_to_run(user, record.template_id, run_dir):
+        return {
+            "exists": True,
+            "created": True,
+            "jupyter_url": _jupyter_notebook_url(user, run_id),
+        }
+    # Fallback: create blank
+    nb = _make_blank_notebook(run_dir)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(path))
+    return {
+        "exists": True,
+        "created": True,
+        "jupyter_url": _jupyter_notebook_url(user, run_id),
+    }
+
+
+@app.get("/api/runs/{run_id}/notebook")
+def get_notebook_status(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    """Check whether a notebook exists for this run."""
+    _get_owned_run(run_id, user)
+    path = _notebook_path(user, run_id)
+    return {
+        "exists": path.exists(),
+        "jupyter_url": _jupyter_notebook_url(user, run_id),
+    }
+
+
+@app.post("/api/runs/{run_id}/notebook/save-to-template")
+def save_notebook_to_template(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
+    """Copy the run's notebook back to its originating template."""
+    record = _get_owned_run(run_id, user)
+    if not record.template_id:
+        raise HTTPException(status_code=400, detail="Run has no associated template")
+    src = _notebook_path(user, run_id)
+    if not src.exists():
+        raise HTTPException(status_code=404, detail="Run notebook not found")
+    if not _template_path(user, record.template_id).exists():
+        raise HTTPException(status_code=404, detail="Template no longer exists")
+    dest = _template_notebook_path(user, record.template_id)
+    nb = nbformat.read(str(src), as_version=4)
+    # Strip run-specific DATA_DIR so template stays generic
+    for cell in nb.cells:
+        if cell.cell_type == "code" and "DATA_DIR" in cell.source:
+            cell.source = re.sub(
+                r'DATA_DIR\s*=\s*r?"[^"]*"',
+                'DATA_DIR = r""',
+                cell.source,
+            )
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(dest))
+    return {"success": True, "template_id": record.template_id}
+
+
+@app.delete("/api/runs/{run_id}/notebook")
+def delete_notebook(run_id: RunId, user: CurrentUser) -> dict[str, bool]:
+    """Delete the notebook file for this run."""
+    _get_owned_run(run_id, user)
+    path = _notebook_path(user, run_id)
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Notebook not found")
+    path.unlink()
+    return {"success": True}
+
+
+# ---------------------------------------------------------------------------
+# Template Notebook CRUD
+# ---------------------------------------------------------------------------
+
+
+@app.post("/api/templates/{template_id}/notebook")
+def create_template_notebook(
+    template_id: str, user: CurrentUser
+) -> dict[str, Any]:
+    """Create a blank notebook for a template."""
+    # Verify template exists
+    if not _template_path(user, template_id).exists():
+        raise HTTPException(status_code=404, detail="Template not found")
+    path = _template_notebook_path(user, template_id)
+    if path.exists():
+        return {
+            "exists": True,
+            "created": False,
+            "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+        }
+    nb = _make_blank_notebook(Path("<run data will appear here>"))
+    # Replace the placeholder with a generic comment for templates
+    nb.cells[0] = nbformat.v4.new_markdown_cell(
+        "# Analysis Notebook\n\n"
+        "This notebook is attached to a simulation template.\n"
+        "When a simulation runs, `DATA_DIR` will be updated to point to the run's output."
+    )
+    nb.cells[1] = nbformat.v4.new_code_cell(
+        "import pyarrow.feather as pf\n"
+        "import pandas as pd\n"
+        "import matplotlib.pyplot as plt\n\n"
+        '# DATA_DIR will be set automatically when copied to a run\n'
+        'DATA_DIR = r""\n'
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(nb, str(path))
+    return {
+        "exists": True,
+        "created": True,
+        "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+    }
+
+
+@app.get("/api/templates/{template_id}/notebook")
+def get_template_notebook_status(
+    template_id: str, user: CurrentUser
+) -> dict[str, Any]:
+    """Check whether a notebook exists for this template."""
+    if not _template_path(user, template_id).exists():
+        raise HTTPException(status_code=404, detail="Template not found")
+    path = _template_notebook_path(user, template_id)
+    return {
+        "exists": path.exists(),
+        "jupyter_url": _jupyter_template_notebook_url(user, template_id),
+    }
+
+
+@app.delete("/api/templates/{template_id}/notebook")
+def delete_template_notebook(
+    template_id: str, user: CurrentUser
+) -> dict[str, bool]:
+    """Delete the notebook file for this template."""
+    if not _template_path(user, template_id).exists():
+        raise HTTPException(status_code=404, detail="Template not found")
+    path = _template_notebook_path(user, template_id)
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Notebook not found")
+    path.unlink()
+    return {"success": True}
 
 
 @app.delete("/api/runs/{run_id}")
-def kill_run(run_id: RunId) -> dict[str, bool]:
-    record = runs.get(run_id)
-    if record is None:
-        raise HTTPException(status_code=404, detail="Run not found")
+def kill_run(run_id: RunId, user: CurrentUser) -> dict[str, bool]:
+    record = _get_owned_run(run_id, user)
     # Only kill runs we launched in this process. "unknown" runs have a pid
     # from a previous boot; the OS may have reassigned it.
     if record.status == "running":

@@ -1806,5 +1806,6 @@
       "selected": false
     }
   ],
-  "createdAt": "2026-06-25T02:26:17.276Z"
+  "createdAt": "2026-06-25T02:26:17.276Z",
+  "config_version": "1"
 }

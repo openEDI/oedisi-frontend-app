@@ -1,0 +1,39 @@
+# systemd unit for the OEDISI backend.
+#
+# Install (Operator, as root):
+#   cp deploy/oedisi-backend.service /etc/systemd/system/
+#   # fill in the TODO(operator) fields below, then:
+#   systemctl daemon-reload
+#   systemctl enable --now oedisi-backend
+#   systemctl status oedisi-backend     # check it came up
+#   journalctl -u oedisi-backend -f     # follow logs
+#
+# The backend binds 127.0.0.1:3001 only.
+
+[Unit]
+Description=oedisi-frontend-app's backend server
+After=network.target
+
+[Service]
+# Run as an unprivileged service account.
+User=TODO
+Group=TODO
+
+# Directory containing main.py (the server/ folder of the checkout).
+WorkingDirectory=TODO   # e.g. /srv/oedisi-frontend-app/server
+
+# OEDISI_COMPONENTS points at the oedisi-components checkout.
+Environment=OEDISI_MULTI_USER=1
+Environment=OEDISI_COMPONENTS=TODO
+
+# helics and the Python deps live in server/'s venv (installed by `uv sync`),
+# and `uv run` puts them on PATH automatically. `uv` must be absolute since
+# systemd does not resolve bare command names.
+ExecStart=TODO run uvicorn main:app --host 127.0.0.1 --port 3001
+# e.g. /usr/local/bin/uv
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

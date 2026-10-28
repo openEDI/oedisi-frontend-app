@@ -28,4 +28,5 @@ export interface TemplateData {
   nodes: Node<NodeData>[]
   edges: Edge<EdgeData>[]
   createdAt: string
+  config_version: string
 }
