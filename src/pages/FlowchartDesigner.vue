@@ -47,8 +47,14 @@
             :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
+      <div class="relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize
+            before:absolute before:inset-y-0 before:left-1/2 before:w-px
+            before:bg-border hover:before:bg-primary touch-none"
+        @pointerdown="startDragProperty" @pointermove="setDragWidthProperty">
+      </div>
 
-      <div class="w-72 bg-card border-l p-6 overflow-y-auto">
+      <div class="bg-card p-6 overflow-y-auto"
+        :style="`width: ${propertiesWidth}px`">
         <h2 class="text-lg font-semibold mb-6">Properties</h2>
         <div v-if="!selectedNode && !selectedEdge"
           class="text-muted-foreground text-center py-8">
@@ -266,7 +272,24 @@ const templateDescription = ref('')
 const selectedWireOption = ref('')
 const { screenToFlowCoordinate } = useVueFlow()
 
+const propertiesWidth = ref(288)
+let startX = 0
+let startWidth = 0
 
+const startDragProperty = (event: PointerEvent) => {
+  startX = event.clientX
+  startWidth = propertiesWidth.value
+
+  const elem = event.currentTarget as HTMLElement
+  elem.setPointerCapture(event.pointerId)
+}
+
+const setDragWidthProperty = (event: PointerEvent) => {
+  const elem = event.currentTarget as HTMLElement
+  if (elem.hasPointerCapture(event.pointerId)) {
+    propertiesWidth.value = Math.min(Math.max(0, startX - event.clientX + startWidth), window.innerWidth * 0.7)
+  }
+}
 
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)
