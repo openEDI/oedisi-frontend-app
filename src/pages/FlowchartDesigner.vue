@@ -47,8 +47,14 @@
             :style="{ background: 'var(--card)' }" />
         </VueFlow>
       </div>
+      <div class="relative z-10 -mx-1 w-2 shrink-0 cursor-col-resize
+            before:absolute before:inset-y-0 before:left-1/2 before:w-px
+            before:bg-border hover:before:bg-primary touch-none"
+        @pointerdown="startDragProperty" @pointermove="setDragWidthProperty">
+      </div>
 
-      <div class="w-72 bg-card border-l p-6 overflow-y-auto">
+      <div class="bg-card p-6 overflow-y-auto"
+        :style="`width: ${propertiesWidth}px`">
         <h2 class="text-lg font-semibold mb-6">Properties</h2>
         <div v-if="!selectedNode && !selectedEdge"
           class="text-muted-foreground text-center py-8">
@@ -58,14 +64,14 @@
         <!-- Node Properties -->
         <div v-else-if="selectedNode" class="space-y-4">
           <div class="space-y-2">
-            <label class="text-sm font-semibold">Static Inputs</label>
             <div v-if="selectedNodeSchema" class="space-y-2">
               <JsonForms :data="nodeConfig" :schema="selectedNodeSchema"
                 :renderers="renderers" :ajv="ajv"
-                :validation-mode="'ValidateAndHide'"
-                @change="updateNodeConfig" />
+                :validation-mode="'ValidateAndHide'" :config="{
+                  showUnfocusedDescription: true
+                }" @change="updateNodeConfig" />
             </div>
-            <p v-else class="text-sm text-muted-foreground">No static inputs for
+            <p v-else class="text-sm text-muted-foreground">No configuration for
               this component.</p>
           </div>
           <div class="space-y-2">
@@ -205,27 +211,32 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogDescription, DialogTitle, DialogHeader, DialogContent, DialogFooter } from '@/components/ui/dialog'
 import { isCompatible } from '@/lib/portCompatibility'
 import { JsonForms } from '@jsonforms/vue'
-import { vanillaRenderers, defaultStyles, mergeStyles } from '@jsonforms/vue-vanilla'
+import { defaultStyles, mergeStyles, vanillaRenderers, controlRenderers as vanillaControlRenderers } from '@jsonforms/vue-vanilla'
 import { createAjv, JsonSchema } from '@jsonforms/core'
 import { toWiringDiagram, WiringDiagram } from '@/lib/wiringDiagram'
+import { controlRenderers } from '@/components/custom_json_controllers'
 
-const renderers = markRaw(vanillaRenderers)
+const renderers = markRaw([
+  ...controlRenderers,
+  ...vanillaRenderers.filter((value) => !vanillaControlRenderers.includes(value))
+])
 const ajv = createAjv({ coerceTypes: true })
 
 const nodePropertyStyles = mergeStyles(defaultStyles, {
   control: {
     root: 'mb-3',
-    label: 'text-xs font-medium text-muted-foreground mb-1',
+    label: 'text-sm font-medium mb-1',
     input: 'flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm',
     asterisk: 'text-red-500 ml-0.5',
+    description: 'text-sm text-muted-foreground'
   },
   arrayList: {
     root: 'mb-3',
-    label: 'text-xs font-medium text-muted-foreground mb-1',
-    addButton: 'text-xs px-2 py-1 border border-input rounded-md mt-1 hover:bg-muted cursor-pointer',
+    label: 'text-sm font-medium mb-1',
+    addButton: 'text-sm px-2 py-1 border border-input rounded-md mt-1 hover:bg-muted cursor-pointer',
     itemWrapper: 'flex items-center gap-2 mb-1',
-    itemDelete: 'text-xs text-red-500 cursor-pointer hover:text-red-700',
-    noData: 'text-xs text-muted-foreground',
+    itemDelete: 'text-sm text-red-500 cursor-pointer hover:text-red-700',
+    noData: 'text-sm text-muted-foreground',
   },
 })
 
@@ -261,7 +272,24 @@ const templateDescription = ref('')
 const selectedWireOption = ref('')
 const { screenToFlowCoordinate } = useVueFlow()
 
+const propertiesWidth = ref(288)
+let startX = 0
+let startWidth = 0
 
+const startDragProperty = (event: PointerEvent) => {
+  startX = event.clientX
+  startWidth = propertiesWidth.value
+
+  const elem = event.currentTarget as HTMLElement
+  elem.setPointerCapture(event.pointerId)
+}
+
+const setDragWidthProperty = (event: PointerEvent) => {
+  const elem = event.currentTarget as HTMLElement
+  if (elem.hasPointerCapture(event.pointerId)) {
+    propertiesWidth.value = Math.min(Math.max(0, startX - event.clientX + startWidth), window.innerWidth * 0.7)
+  }
+}
 
 const addNode = (type: string, position: { x: number; y: number }) => {
   const component = components.find(c => c.id === type)

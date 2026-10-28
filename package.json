@@ -13,7 +13,8 @@
     "lint": "eslint src/ scripts/",
     "lint:fix": "eslint src/ scripts/ --fix",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@jsonforms/core": "^3.7.0",
@@ -24,18 +25,19 @@
     "@vue-flow/controls": "^1.1.3",
     "@vue-flow/core": "^1.48.1",
     "@vue-flow/minimap": "^1.5.4",
-    "@vueuse/core": "^14.2.1",
+    "@vueuse/core": "^14.4.0",
     "autoprefixer": "^10.4.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^0.428.0",
-    "reka-ui": "^2.9.6",
+    "reka-ui": "^2.11.0",
     "tailwind-merge": "^2.6.1",
     "tailwindcss": "^4.1.12",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.1.12",
     "@types/node": "^25.3.0",
     "@vitejs/plugin-vue": "^5.0.4",

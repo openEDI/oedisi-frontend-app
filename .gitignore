@@ -33,3 +33,8 @@ data/templates/*.json
 !data/.gitkeep
 !data/templates/.gitkeep
 !data/templates/ornl_*.json
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
