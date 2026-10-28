@@ -64,6 +64,14 @@
                 :renderers="renderers" :ajv="ajv"
                 :validation-mode="'ValidateAndHide'"
                 @change="updateNodeConfig" />
+              <div v-if="selectedNodeIsSwitchableOrnlEvFeeder"
+                class="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-950">
+                <p>
+                  <strong>Feeder preset:</strong> changing the feeder also
+                  applies its matched profiles, simulation date, EV buses,
+                  assignments, and sensitivity settings.
+                </p>
+              </div>
             </div>
             <p v-else class="text-sm text-muted-foreground">No static inputs for
               this component.</p>
@@ -196,6 +204,15 @@ import { MiniMap } from '@vue-flow/minimap'
 import { api, StartError } from '@/lib/api'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
+import {
+  buildOrnlEvFeederPresetUpdate,
+  hasOrnlEvConfigChange,
+  isSwitchableOrnlEvComponent,
+  isSwitchableOrnlEvFeeder,
+  normalizeOrnlEvFeederFormConfig,
+  withOrnlEvControlModeDropdown,
+  withOrnlEvFeederDropdown,
+} from '@/lib/ornlEvFeederPresets'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
@@ -255,6 +272,20 @@ const selectedNode = computed<Node | null>(() => {
 const selectedEdge = computed<Edge | null>(() => {
   return (edges.value as Edge[]).find((edge) => edge.id === selectedEdgeId.value) ?? null
 })
+const selectedNodeIsSwitchableOrnlEvFeeder = computed(
+  () => selectedNodeId.value !== null && isSwitchableOrnlEvFeeder(
+    selectedNodeId.value,
+    nodes.value as Node[],
+    edges.value as Edge[],
+  ),
+)
+const selectedNodeIsSwitchableOrnlEvComponent = computed(
+  () => selectedNodeId.value !== null && isSwitchableOrnlEvComponent(
+    selectedNodeId.value,
+    nodes.value as Node[],
+    edges.value as Edge[],
+  ),
+)
 const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
@@ -446,7 +477,14 @@ const selectedNodeSchema = computed<JsonSchema | null>(() => {
   if (!component.inputSchema) {
     return null
   }
-  return component.inputSchema ?? {}
+  const schema = component.inputSchema
+  if (selectedNodeIsSwitchableOrnlEvFeeder.value) {
+    return withOrnlEvFeederDropdown(schema) as JsonSchema
+  }
+  if (selectedNodeIsSwitchableOrnlEvComponent.value) {
+    return withOrnlEvControlModeDropdown(schema) as JsonSchema
+  }
+  return schema
 })
 
 const nodeConfig = computed(() => {
@@ -460,6 +498,59 @@ const updateNodeConfig = (event: { data: unknown }) => {
     return
   }
   const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
+  const submittedConfig = event.data && typeof event.data === 'object' && !Array.isArray(event.data)
+    ? event.data as Record<string, unknown>
+    : {}
+  const currentConfig = currentData.config ?? {}
+
+  if (selectedNodeIsSwitchableOrnlEvFeeder.value) {
+    const normalizedConfig = normalizeOrnlEvFeederFormConfig(submittedConfig)
+    if (!hasOrnlEvConfigChange(currentConfig, normalizedConfig)) {
+      return
+    }
+    const feederChanged =
+      normalizedConfig.opendss_location !== currentConfig.opendss_location
+    if (feederChanged) {
+      const update = buildOrnlEvFeederPresetUpdate(
+        node.id,
+        currentConfig,
+        normalizedConfig,
+        nodes.value as Node[],
+        edges.value as Edge[],
+      )
+      if (update) {
+        node.data = { ...currentData, config: update.feederConfig }
+        for (const evNodeId of update.evNodeIds) {
+          const evNode = nodes.value.find((candidate) => candidate.id === evNodeId)
+          if (!evNode) continue
+          const evData = (evNode.data as NodeData | undefined) ?? { label: evNode.id }
+          evNode.data = {
+            ...evData,
+            config: update.evConfig(evData.config ?? {}),
+          }
+        }
+        return
+      }
+    }
+
+    node.data = {
+      ...currentData,
+      config: { ...currentConfig, ...normalizedConfig },
+    }
+    return
+  }
+
+  if (selectedNodeIsSwitchableOrnlEvComponent.value) {
+    if (!hasOrnlEvConfigChange(currentConfig, submittedConfig)) {
+      return
+    }
+    node.data = {
+      ...currentData,
+      config: { ...currentConfig, ...submittedConfig },
+    }
+    return
+  }
+
   node.data = { ...currentData, config: event.data }
 }
 
