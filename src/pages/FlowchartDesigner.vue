@@ -71,6 +71,19 @@
                 :renderers="renderers" :ajv="ajv"
                 :validation-mode="'ValidateAndHide'"
                 @change="updateNodeConfig" />
+              <div v-if="selectedNodeIsOrnlOdPlayer"
+                class="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-950">
+                <p>
+                  <strong>Dataset preset:</strong> changing the input
+                  dataset also applies its matched playback length, sample rate,
+                  detector settings, and ground truth.
+                </p>
+                <p v-if="selectedOrnlOdPreset?.longRun"
+                  class="mt-2 font-semibold">
+                  This dataset is approximately 30.5 minutes of recorded data
+                  and may take substantially longer to run.
+                </p>
+              </div>
             </div>
             <p v-else class="text-sm text-muted-foreground">No static inputs for
               this component.</p>
@@ -206,6 +219,14 @@ import { api, StartError } from '@/lib/api'
 import { RUN_BUSY_MESSAGE, runAvailability } from '@/lib/runAvailability'
 import type { PortDefinition, EdgeWire, EdgeData, NodeData, TemplateData } from '@/lib/flowTypes'
 import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
+import {
+  buildOrnlOdPresetUpdate,
+  hasOrnlOdPlayerConfigChange,
+  isOrnlOdPlayer,
+  mergeOrnlOdPlayerConfig,
+  ornlOdPresetForFilename,
+  withOrnlOdDatasetDropdown,
+} from '@/lib/ornlOdDatasets'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
@@ -265,6 +286,18 @@ const selectedNode = computed<Node | null>(() => {
 const selectedEdge = computed<Edge | null>(() => {
   return (edges.value as Edge[]).find((edge) => edge.id === selectedEdgeId.value) ?? null
 })
+const selectedNodeIsOrnlOdPlayer = computed(
+  () => selectedNodeId.value !== null && isOrnlOdPlayer(
+    selectedNodeId.value,
+    nodes.value as Node[],
+    edges.value as Edge[],
+  ),
+)
+const selectedOrnlOdPreset = computed(() => selectedNodeIsOrnlOdPlayer.value
+  ? ornlOdPresetForFilename(
+    (selectedNode.value?.data as NodeData | undefined)?.config?.filename,
+  )
+  : undefined)
 const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
@@ -456,7 +489,11 @@ const selectedNodeSchema = computed<JsonSchema | null>(() => {
   if (!component.inputSchema) {
     return null
   }
-  return component.inputSchema ?? {}
+  const schema = component.inputSchema
+  if (selectedNodeIsOrnlOdPlayer.value) {
+    return withOrnlOdDatasetDropdown(schema) as JsonSchema
+  }
+  return schema
 })
 
 const nodeConfig = computed(() => {
@@ -470,6 +507,47 @@ const updateNodeConfig = (event: { data: unknown }) => {
     return
   }
   const currentData = (node.data as NodeData | undefined) ?? { label: node.id }
+  const submittedConfig = event.data && typeof event.data === 'object' && !Array.isArray(event.data)
+    ? event.data as Record<string, unknown>
+    : {}
+  const currentConfig = currentData.config ?? {}
+
+  if (selectedNodeIsOrnlOdPlayer.value) {
+    if (!hasOrnlOdPlayerConfigChange(currentConfig, submittedConfig)) {
+      return
+    }
+    const filenameChanged = submittedConfig.filename !== currentConfig.filename
+    if (filenameChanged) {
+      const update = buildOrnlOdPresetUpdate(
+        node.id,
+        currentConfig,
+        submittedConfig,
+        nodes.value as Node[],
+        edges.value as Edge[],
+      )
+      if (update) {
+        node.data = { ...currentData, config: update.playerConfig }
+        for (const odNodeId of update.odNodeIds) {
+          const odNode = nodes.value.find((candidate) => candidate.id === odNodeId)
+          if (!odNode) continue
+          const odData = (odNode.data as NodeData | undefined) ?? { label: odNode.id }
+          odNode.data = {
+            ...odData,
+            config: update.odConfig(odData.config ?? {}),
+          }
+        }
+        return
+      }
+    }
+
+    // Preserve runtime fields omitted by the Player form schema.
+    node.data = {
+      ...currentData,
+      config: mergeOrnlOdPlayerConfig(currentConfig, submittedConfig),
+    }
+    return
+  }
+
   node.data = { ...currentData, config: event.data }
 }
 
