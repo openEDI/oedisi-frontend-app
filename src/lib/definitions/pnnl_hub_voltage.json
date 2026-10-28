@@ -1,10 +1,14 @@
 {
     "directory": "hub_voltage",
-    "execute_function": "python hub_federate.py",
+    "execute_function": "python -m src.pnnl-hub-voltage.hub_federate",
     "static_inputs": [
         {
             "type": "",
             "port_id": "max_itr"
+        },
+        {
+            "type": "",
+            "port_id": "number_of_timesteps"
         }
     ],
     "dynamic_inputs": [

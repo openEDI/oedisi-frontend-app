@@ -10,8 +10,6 @@ groups:
 See `CLAUDE.md` in this folder for the design rationale.
 """
 
-from __future__ import annotations
-
 import asyncio
 import json
 import logging
@@ -19,11 +17,13 @@ import nbformat
 import os
 import re
 import shutil
+import signal
 import socket
 import sys
 import tempfile
 import uuid
 from contextlib import asynccontextmanager
+from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -42,6 +42,7 @@ from fastapi import (
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from jupyter_server.services.contents.filemanager import FileContentsManager
 from oedisi.componentframework.basic_component import (
     ComponentDescription,
     basic_component,
@@ -51,6 +52,7 @@ from oedisi.componentframework.system_configuration import (
     generate_runner_config,
 )
 from pydantic import ConfigDict
+from tornado.web import HTTPError
 
 from output_annotations import OutputsList, annotate_outputs
 
@@ -77,6 +79,11 @@ DATA_DIR = SERVER_DIR.parent / "data"
 TEMPLATES_DIR = DATA_DIR / "templates"
 RUNS_DIR = SERVER_DIR / "runs"
 COMPONENTS_JSON_PATH = SERVER_DIR / "components.json"
+CATALOG_JSON_PATH = SERVER_DIR.parent / "src" / "lib" / "catalog.json"
+
+# Templates without a config_version predate default-filling at node creation
+# and get missing defaults filled in at startup (_migrate_templates).
+CONFIG_VERSION = "1"
 
 TEMPLATE_ID_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
 
@@ -164,18 +171,49 @@ def _check_components_env() -> None:
 # ---------------------------------------------------------------------------
 
 JUPYTER_PORT = int(os.environ.get("OEDISI_JUPYTER_PORT", "8888"))
+VOILA_PORT = int(os.environ.get("OEDISI_VOILA_PORT", "8866"))
 
 
-async def _start_jupyter() -> asyncio.subprocess.Process | None:
-    """Start a JupyterLab server as a background subprocess.
+class ReadOnlyContentsManager(FileContentsManager):
+    """Prevent notebook and file mutations when JupyterLab is used."""
 
-    Rooted at the RUNS_DIR so notebooks can access run data via relative paths.
-    Token-less mode is used because access is gated by localhost binding and
-    nginx authentication in multi-user deployments.
+    def _reject_write(self, *args: Any, **kwargs: Any) -> None:
+        raise HTTPError(403, "Jupyter contents are read-only in multi-user mode")
+
+    save = _reject_write
+    delete_file = _reject_write
+    rename_file = _reject_write
+    copy = _reject_write
+    new_untitled = _reject_write
+
+
+def _is_multi_user() -> bool:
+    """True when running in multi-user (cloud) mode."""
+    return bool(os.environ.get("OEDISI_MULTI_USER"))
+
+
+def _notebook_server_command() -> list[str]:
+    """Build the notebook-server subprocess command.
+
+    Single-user (default): JupyterLab, editable.
+    Multi-user (OEDISI_MULTI_USER set): Voilà, read-only — users can view/run
+    notebooks but cannot edit them.
     """
-    RUNS_DIR.mkdir(parents=True, exist_ok=True)
-
-    cmd = [
+    if _is_multi_user():
+        return [
+            sys.executable,
+            "-m",
+            "voila",
+            f"--port={VOILA_PORT}",
+            "--Voila.ip=127.0.0.1",
+            "--no-browser",
+            f"--Voila.root_dir={RUNS_DIR}",
+            "--Voila.tornado_settings",
+            "allow_origin=*",
+            "--Voila.tornado_settings",
+            "disable_check_xsrf=true",
+        ]
+    return [
         sys.executable,
         "-m",
         "jupyterlab",
@@ -188,6 +226,18 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
         "--ServerApp.base_url=/jupyter/",
         "--ServerApp.disable_check_xsrf=True",
     ]
+
+
+async def _start_jupyter() -> asyncio.subprocess.Process | None:
+    """Start the notebook server (JupyterLab or Voilà) as a background subprocess.
+
+    Rooted at the RUNS_DIR so notebooks can access run data via relative paths.
+    Token-less mode is used because access is gated by localhost binding and
+    nginx authentication in multi-user deployments.
+    """
+    RUNS_DIR.mkdir(parents=True, exist_ok=True)
+
+    cmd = _notebook_server_command()
     try:
         proc = await asyncio.create_subprocess_exec(
             *cmd,
@@ -195,14 +245,15 @@ async def _start_jupyter() -> asyncio.subprocess.Process | None:
             stderr=asyncio.subprocess.DEVNULL,
         )
         print(
-            f"[jupyter] started on port {JUPYTER_PORT} "
+            f"[notebook] started on port "
+            f"{VOILA_PORT if _is_multi_user() else JUPYTER_PORT} "
             f"(pid={proc.pid}, root={RUNS_DIR})",
             file=sys.stderr,
         )
         return proc
     except Exception as exc:  # noqa: BLE001
         print(
-            f"[jupyter] failed to start JupyterLab: {exc}\n"
+            f"[notebook] failed to start: {exc}\n"
             "Notebook features will be unavailable.",
             file=sys.stderr,
         )
@@ -229,6 +280,7 @@ async def lifespan(app: FastAPI):
         # error is the first thing the user sees in `npm run dev:server`.
         print(f"\n[startup error] {exc}\n", file=sys.stderr)
         raise
+    _migrate_templates()
     _restore_runs()
     jupyter_proc = await _start_jupyter()
     try:
@@ -306,6 +358,58 @@ def _iso(dt: datetime) -> str:
 
 def _read_template(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _catalog_defaults() -> dict[str, dict[str, Any]]:
+    """Component id -> default config from its inputSchema.
+
+    Mirrors makeDefaults in ../src/lib/componentCatalog.ts: top-level
+    properties with an explicit `default`, nothing recursive.
+    """
+    catalog = json.loads(CATALOG_JSON_PATH.read_text(encoding="utf-8"))
+    return {
+        comp["id"]: {
+            key: prop["default"]
+            for key, prop in ((comp.get("inputSchema") or {}).get("properties") or {}).items()
+            if isinstance(prop, dict) and "default" in prop
+        }
+        for comp in catalog
+    }
+
+
+def _migrate_template(template: dict[str, Any], defaults: dict[str, dict[str, Any]]) -> bool:
+    """Stamp CONFIG_VERSION, filling missing defaulted config keys on the way.
+
+    Pre-version templates relied on Ajv useDefaults injecting these at render
+    time; the values were never persisted. Returns False if already stamped.
+    """
+    if template.get("config_version") is not None:
+        return False
+    for node in template.get("nodes", []):
+        data = node.get("data")
+        if not isinstance(data, dict):
+            continue
+        node_defaults = defaults.get(data.get("componentType"), {})
+        if node_defaults:
+            config = data.setdefault("config", {})
+            for key, value in node_defaults.items():
+                config.setdefault(key, deepcopy(value))
+    template["config_version"] = CONFIG_VERSION
+    return True
+
+
+def _migrate_templates() -> None:
+    """One-time per file, run at startup; stamped templates are never touched again."""
+    defaults = _catalog_defaults()
+    for path in sorted(TEMPLATES_DIR.rglob("*.json")) if TEMPLATES_DIR.exists() else []:
+        try:
+            template = _read_template(path)
+        except (OSError, json.JSONDecodeError) as exc:
+            print(f"[migrate] skipping unreadable template {path}: {exc}", file=sys.stderr)
+            continue
+        if isinstance(template, dict) and _migrate_template(template, defaults):
+            _atomic_write_json(path, template)
+            print(f"[migrate] filled defaults in {path}", file=sys.stderr)
 
 
 @app.get("/api/templates")
@@ -492,6 +596,26 @@ def _write_run_finish(record: RunRecord) -> None:
     _atomic_write_json(_run_json_path(record.run_dir), data)
 
 
+DEFAULT_MAX_RUN_SECONDS = 7200.0  # 2 hours
+
+
+def _max_run_seconds() -> float | None:
+    """Watchdog cap for a run, in seconds, from OEDISI_MAX_TIME.
+
+    A backstop for a hung broker/federate, not a normal limit. Non-positive or
+    unparseable disables it (returns None → the watchdog waits forever).
+    """
+    raw = os.environ.get("OEDISI_MAX_TIME")
+    if raw is None:
+        return DEFAULT_MAX_RUN_SECONDS
+    try:
+        seconds = float(raw)
+    except ValueError:
+        print(f"[config] ignoring invalid OEDISI_MAX_TIME={raw!r}", file=sys.stderr)
+        return DEFAULT_MAX_RUN_SECONDS
+    return seconds if seconds > 0 else None
+
+
 async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     """Await process exit, update the RunRecord, and persist completion.
 
@@ -499,8 +623,16 @@ async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
     `_serialize_run` only reads, so no synchronization is needed. If the
     server exits before this resumes, the subprocess keeps going on its own;
     we just don't record the outcome, and the boot scan marks it "unknown".
+
+    Enforces the OEDISI_MAX_TIME watchdog: if the run outlives the cap we
+    tree-kill it, and the SIGKILL (-9) exit falls through to "failed" below.
     """
-    code = await proc.wait()
+    try:
+        code = await asyncio.wait_for(proc.wait(), timeout=_max_run_seconds())
+    except asyncio.TimeoutError:
+        print(f"[run {run_id}] exceeded OEDISI_MAX_TIME; killing", file=sys.stderr)
+        _tree_kill(proc.pid)
+        code = await proc.wait()  # reap the killed process so it isn't left a zombie
     record = runs.get(run_id)
     if record is None:
         return  # run was deleted while we waited
@@ -516,9 +648,22 @@ async def _watch_proc(run_id: str, proc: asyncio.subprocess.Process) -> None:
 def _tree_kill(pid: int) -> None:
     """Kill the process and all its descendants.
 
-    `helics run` spawns a broker plus one federate per component; signalling
-    only the parent orphans the broker, which then lingers holding its port.
+    `helics run` spawns a broker plus one federate per component. We start it
+    in its own session (`start_new_session=True`), so on POSIX every descendant
+    shares a process group whose id equals `pid`, and one `killpg` reaches all
+    of them at once — including a broker spawned in the split second between an
+    enumeration and the kill, which a `children()` snapshot would miss and
+    orphan (it then lingers holding the ZMQ port). Windows has no such groups,
+    so fall back to a psutil tree walk there.
     """
+    if pid <= 0:  # sentinel pid (-1) before proc.pid is filled in; killpg(-1) is catastrophic
+        return
+    if os.name == "posix":
+        try:
+            os.killpg(os.getpgid(pid), signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+        return
     try:
         parent = psutil.Process(pid)
     except psutil.NoSuchProcess:
@@ -676,6 +821,10 @@ async def start_run(
             "run",
             f"--path={build_dir / 'system_runner.json'}",
             cwd=build_dir,
+            # Own session/process group so _tree_kill can killpg the broker +
+            # every federate atomically, regardless of spawn timing. POSIX-only;
+            # ignored on Windows, which uses the psutil fallback in _tree_kill.
+            start_new_session=True,
         )
     except Exception as exc:  # noqa: BLE001
         del runs[run_id]  # release the slot — nothing is running
@@ -973,12 +1122,12 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
         return False
     dest = run_dir / NOTEBOOK_FILENAME
     nb = nbformat.read(str(src), as_version=4)
-    build_dir = run_dir / "build"
+    data_dir = run_dir
     for cell in nb.cells:
         if cell.cell_type == "code" and "DATA_DIR" in cell.source:
             cell.source = re.sub(
                 r'DATA_DIR\s*=\s*r?"[^"]*"',
-                f'DATA_DIR = r"{build_dir}"',
+                f'DATA_DIR = r"{data_dir}"',
                 cell.source,
             )
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -986,14 +1135,24 @@ def _copy_template_notebook_to_run(user: str, template_id: str, run_dir: Path) -
     return True
 
 
+def _notebook_url_prefix() -> str:
+    """URL prefix for notebook rendering.
+
+    Multi-user: read-only Voilà render. Single-user: editable JupyterLab tree.
+    """
+    if _is_multi_user():
+        return "/voila/render"
+    return "/jupyter/lab/tree"
+
+
 def _jupyter_notebook_url(user: str, run_id: str) -> str:
-    """Return the JupyterLab URL path for a run's notebook."""
-    return f"/jupyter/lab/tree/{user}/{run_id}/{NOTEBOOK_FILENAME}"
+    """Return the notebook URL path for a run."""
+    return f"{_notebook_url_prefix()}/{user}/{run_id}/{NOTEBOOK_FILENAME}"
 
 
 def _jupyter_template_notebook_url(user: str, template_id: str) -> str:
-    """Return the JupyterLab URL path for a template's notebook."""
-    return f"/jupyter/lab/tree/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
+    """Return the notebook URL path for a template."""
+    return f"{_notebook_url_prefix()}/{user}/_notebooks/{template_id}/{NOTEBOOK_FILENAME}"
 
 
 @app.post("/api/runs/{run_id}/notebook")
@@ -1019,7 +1178,7 @@ def create_notebook(run_id: RunId, user: CurrentUser) -> dict[str, Any]:
             "jupyter_url": _jupyter_notebook_url(user, run_id),
         }
     # Fallback: create blank
-    nb = _make_blank_notebook(run_dir / "build")
+    nb = _make_blank_notebook(run_dir)
     path.parent.mkdir(parents=True, exist_ok=True)
     nbformat.write(nb, str(path))
     return {

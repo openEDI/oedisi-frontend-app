@@ -11,6 +11,7 @@ function makeTemplate(overrides = {}): TemplateData {
     nodes: [],
     edges: [],
     createdAt: 'test-time',
+    config_version: '1',
     ...overrides,
   }
 }
@@ -78,8 +79,8 @@ describe('toWiringDiagram', () => {
               },
             },
           ],
-        }),
-      ),
+        })
+      )
     ).toEqual({
       name: 'name',
       components: [
@@ -112,8 +113,8 @@ describe('toWiringDiagram', () => {
       toWiringDiagram(
         makeTemplate({
           nodes: [makeNode('node1', { componentType: undefined })],
-        }),
-      ),
+        })
+      )
     ).toThrow()
   })
 
@@ -127,8 +128,8 @@ describe('toWiringDiagram', () => {
               position: { x: 0, y: 0 },
             },
           ],
-        }),
-      ),
+        })
+      )
     ).toThrow()
   })
 
@@ -148,8 +149,8 @@ describe('toWiringDiagram', () => {
               data: { wires: [] },
             },
           ],
-        }),
-      ),
+        })
+      )
     ).toThrow()
   })
 })
