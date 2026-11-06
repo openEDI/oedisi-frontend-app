@@ -5,107 +5,29 @@
   "properties": {
     "name": {
       "title": "Name",
-      "description": "Component instance name. Also used as the HELICS federate name, so publications are named <name>/<stream>.",
+      "description": "Component instance name.",
       "type": "string"
     },
     "powerflow": {
-      "$ref": "#/$defs/PowerFlowParameters",
-      "default": {
-        "systemN": 7.3
-      }
+      "$ref": "#/$defs/PowerFlowParameters"
     },
     "simulation": {
-      "$ref": "#/$defs/SimulationParameters",
-      "default": {
-        "systemN": 7.3,
-        "ts": 5e-05,
-        "t_end": 2.0,
-        "DSrate": 20,
-        "netMod": "lu",
-        "dump_all": false,
-        "show_progress": false,
-        "save_results_csv": false,
-        "N_row": 1,
-        "N_col": 1,
-        "SimMod": 0,
-        "save_snapshot": 1,
-        "save_snapshot_mode": 0,
-        "t_release_f": 0.0,
-        "loadmodel_option": 1,
-        "EMT_N": 1,
-        "kts": 333,
-        "stepk": 332,
-        "record4cosim": false,
-        "playback_voltphasor": false,
-        "playback_enable": false,
-        "flag_changeKp": false,
-        "Kp_new": 7,
-        "helics_live_enable": true,
-        "helics_period": 0.001
-      }
+      "$ref": "#/$defs/SimulationParameters"
     },
     "forced_oscillation": {
-      "$ref": "#/$defs/ForcedOscillationParameters",
-      "default": {
-        "enabled": true,
-        "start_time": 1.0,
-        "target_gen": 1,
-        "flag_exc_gov_fo": 1,
-        "magnitude": 2.0,
-        "frequency_hz": 5.0,
-        "lock_ini": 0,
-        "lock_value": 0
-      }
+      "$ref": "#/$defs/ForcedOscillationParameters"
     },
     "gen_trip": {
-      "$ref": "#/$defs/GeneratorTripParameters",
-      "default": {
-        "enabled": true,
-        "time": 100,
-        "target_gen": 33,
-        "flag_reinit": 0
-      }
+      "$ref": "#/$defs/GeneratorTripParameters"
     },
     "bus_fault": {
-      "$ref": "#/$defs/BusFaultParameters",
-      "default": {
-        "enabled": false,
-        "time": 100.0,
-        "fault_bus_idx": 0,
-        "duration": 0.0666666667,
-        "fault_type": 7,
-        "fault_r": [
-          1e-05,
-          1e-05,
-          1e-05,
-          1e-05,
-          1e-05,
-          1e-05
-        ],
-        "trip_line": 0,
-        "fault_line_idx": 0
-      }
+      "$ref": "#/$defs/BusFaultParameters"
     },
     "state_perturbation": {
-      "$ref": "#/$defs/StatePerturbationParameters",
-      "default": {
-        "enabled": false,
-        "time": 1000.0,
-        "dx": 0.1,
-        "type": 1,
-        "device_index": 4,
-        "state_index": 1
-      }
+      "$ref": "#/$defs/StatePerturbationParameters"
     },
     "step_change": {
-      "$ref": "#/$defs/StepChangeParameters",
-      "default": {
-        "enabled": false,
-        "time": 0.0,
-        "target_gen": 44,
-        "flag_exc_gov": 0,
-        "magnitude": 0.3
-      }
+      "$ref": "#/$defs/StepChangeParameters"
     }
   },
   "required": [
@@ -127,28 +49,44 @@
       "properties": {
         "systemN": {
           "title": "System Identifier",
-          "description": "Identifier or version number of the power-system case used for power-flow initialization.",
-          "type": "string",
+          "description": "Select the power-system case.",
+          "type": "number",
+          "default": 7.3,
+          "enum": [1, 2, 3, 4.8, 5, 6, 7.3],
           "oneOf": [
-              {
-              "const": "foo",
-              "title": "Foo"
+            {
+              "const": 1,
+              "title": "Two-generator system"
             },
             {
-              "const": "bar",
-              "title": "Bar"
+              "const": 2,
+              "title": "3-bus IBR benchmark"
             },
             {
-                "const": "7.3",
-                "title": "WECC"
+              "const": 3,
+              "title": "IEEE 9-bus system"
+            },
+            {
+              "const": 4.8,
+              "title": "Kundur two-area system"
+            },
+            {
+              "const": 5,
+              "title": "IEEE 39-bus system"
+            },
+            {
+              "const": 6,
+              "title": "WECC 179-bus system"
+            },
+            {
+              "const": 7.3,
+              "title": "WECC 240-bus system"
             }
           ],
-          "default": 7.3
+          "x-ui-category": "User-facing"
         }
       },
-      "required": [
-        "systemN"
-      ],
+      "required": ["systemN"],
       "additionalProperties": false,
       "default": {
         "systemN": 7.3
@@ -161,30 +99,65 @@
       "properties": {
         "systemN": {
           "title": "System Identifier",
-          "description": "Identifier or version number of the system case used by the EMT simulation.",
+          "description": "Select the power-system case.",
           "type": "number",
-          "default": 7.3
+          "default": 7.3,
+          "enum": [1, 2, 3, 4.8, 5, 6, 7.3],
+          "oneOf": [
+            {
+              "const": 1,
+              "title": "Two-generator system"
+            },
+            {
+              "const": 2,
+              "title": "3-bus IBR benchmark"
+            },
+            {
+              "const": 3,
+              "title": "IEEE 9-bus system"
+            },
+            {
+              "const": 4.8,
+              "title": "Kundur two-area system"
+            },
+            {
+              "const": 5,
+              "title": "IEEE 39-bus system"
+            },
+            {
+              "const": 6,
+              "title": "WECC 179-bus system"
+            },
+            {
+              "const": 7.3,
+              "title": "WECC 240-bus system"
+            }
+          ],
+          "x-ui-category": "User-facing"
         },
         "ts": {
           "title": "Simulation Time Step",
-          "description": "EMT simulation time step in seconds.",
+          "description": "EMT simulation time step, in seconds.",
           "type": "number",
           "exclusiveMinimum": 0,
-          "default": 5e-05
+          "default": 5e-5,
+          "x-ui-category": "User-facing"
         },
         "t_end": {
           "title": "Simulation End Time",
-          "description": "Total simulation duration in seconds.",
+          "description": "Total EMT simulation duration, in seconds.",
           "type": "number",
           "exclusiveMinimum": 0,
-          "default": 2.0
+          "default": 5.0,
+          "x-ui-category": "User-facing"
         },
         "DSrate": {
           "title": "Downsampling Rate",
-          "description": "Number of simulation steps between recorded or published output samples.",
+          "description": "Desampling rate for output channels, the number of simulation steps between sampled outputs; for ts=0.00005 and DSrate=20, output sample rate is 0.001 s (1 kHz)",
           "type": "integer",
           "minimum": 1,
-          "default": 20
+          "default": 20,
+          "x-ui-category": "User-facing"
         },
         "netMod": {
           "title": "Network Solution Mode",
@@ -192,149 +165,209 @@
           "type": "string",
           "minLength": 1,
           "default": "lu",
-          "examples": [
-            "lu"
-          ]
+          "examples": ["lu"],
+          "x-ui-category": "Internal / Debugging"
         },
         "dump_all": {
           "title": "Dump All Results",
           "description": "Whether to dump all available simulation results.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "Internal / Debugging"
         },
         "show_progress": {
           "title": "Show Progress",
-          "description": "Whether to display simulation progress during execution.",
+          "description": "Display simulation progress.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "User-facing"
         },
         "save_results_csv": {
           "title": "Save Results as CSV",
-          "description": "Whether to save simulation results in CSV format.",
+          "description": "Save simulation results as CSV files.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "User-facing"
         },
         "N_row": {
           "title": "Partition Rows",
           "description": "Number of row partitions used by the simulation layout or decomposition.",
           "type": "integer",
           "minimum": 1,
-          "default": 1
+          "default": 1,
+          "x-ui-category": "Internal / Debugging"
         },
         "N_col": {
           "title": "Partition Columns",
           "description": "Number of column partitions used by the simulation layout or decomposition.",
           "type": "integer",
           "minimum": 1,
-          "default": 1
+          "default": 1,
+          "x-ui-category": "Internal / Debugging"
         },
         "SimMod": {
           "title": "Simulation Mode",
-          "description": "Integer code selecting the ParaEMT simulation mode.",
+          "description": "Select the simulation initialization mode.",
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 1,
+          "enum": [0, 1],
+          "oneOf": [
+            {
+              "const": 0,
+              "title": "Standard initialization"
+            },
+            {
+              "const": 1,
+              "title": "Initialize from snapshot"
+            }
+          ],
+          "maximum": 1,
+          "x-ui-category": "User-facing"
         },
         "save_snapshot": {
           "title": "Save Snapshot",
-          "description": "Integer flag controlling whether a simulation snapshot is saved.",
+          "description": "Save a snapshot at the end of the simulation.",
           "type": "integer",
-          "enum": [
-            0,
-            1
+          "enum": [0, 1],
+          "default": 0,
+          "oneOf": [
+            {
+              "const": 0,
+              "title": "Do not save snapshot"
+            },
+            {
+              "const": 1,
+              "title": "Save snapshot"
+            }
           ],
-          "default": 1
+          "x-ui-category": "User-facing"
         },
         "save_snapshot_mode": {
           "title": "Snapshot Mode",
-          "description": "Integer code selecting the snapshot-saving mode.",
+          "description": "Select snapshot/result output.",
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "enum": [0, 1, 2],
+          "oneOf": [
+            {
+              "const": 0,
+              "title": "One-point snapshot"
+            },
+            {
+              "const": 1,
+              "title": "Whole simulation result"
+            },
+            {
+              "const": 2,
+              "title": "Both"
+            }
+          ],
+          "maximum": 2,
+          "x-ui-category": "User-facing"
         },
         "t_release_f": {
           "title": "Release Time",
-          "description": "Release or switching time used by the selected simulation mode, in seconds.",
+          "description": "Time when PLL frequency is released from the fixed synchronous-frequency value, in seconds.",
           "type": "number",
           "minimum": 0,
-          "default": 0.0
+          "default": 0.0,
+          "x-ui-category": "User-facing"
         },
         "loadmodel_option": {
           "title": "Load Model Option",
-          "description": "Integer code selecting the load-model option.",
+          "description": "Select the load model.",
           "type": "integer",
-          "minimum": 0,
-          "default": 1
+          "minimum": 1,
+          "default": 1,
+          "enum": [1, 2],
+          "oneOf": [
+            {
+              "const": 1,
+              "title": "Constant RLC"
+            },
+            {
+              "const": 2,
+              "title": "Constant impedance (Z)"
+            }
+          ],
+          "maximum": 2,
+          "x-ui-category": "User-facing"
         },
         "EMT_N": {
           "title": "EMT Model Count or Index",
           "description": "Integer parameter identifying the EMT model count, partition, or selected EMT subsystem.",
           "type": "integer",
           "minimum": 0,
-          "default": 1
+          "default": 1,
+          "x-ui-category": "Internal / Debugging"
         },
         "kts": {
           "title": "Time-Step Index",
           "description": "Integer time-step-related index used internally by the simulation.",
           "type": "integer",
           "minimum": 0,
-          "default": 333
+          "default": 333,
+          "x-ui-category": "Internal / Debugging"
         },
         "stepk": {
           "title": "Simulation Step Index",
           "description": "Integer simulation-step index used internally by the simulation.",
           "type": "integer",
           "minimum": 0,
-          "default": 332
+          "default": 332,
+          "x-ui-category": "Internal / Debugging"
         },
         "record4cosim": {
           "title": "Record for Co-simulation",
           "description": "Whether to record data intended for co-simulation.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "Internal / Debugging"
         },
         "playback_voltphasor": {
           "title": "Playback Voltage Phasor",
           "description": "Whether voltage-phasor playback is enabled.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "Internal / Debugging"
         },
         "playback_enable": {
           "title": "Enable Playback",
           "description": "Whether the playback workflow is enabled.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "Internal / Debugging"
         },
         "flag_changeKp": {
           "title": "Enable Kp Change",
           "description": "Whether the controller proportional gain is changed during the simulation.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "Internal / Debugging"
         },
         "Kp_new": {
           "title": "New Kp Value",
           "description": "Replacement proportional gain used when flag_changeKp is enabled.",
           "type": "number",
-          "default": 7
+          "default": 7,
+          "x-ui-category": "Internal / Debugging"
         },
         "helics_live_enable": {
           "title": "Enable HELICS Live Publishing",
-          "description": "Whether simulation data are published live through HELICS. Must be enabled when running under OEDISI, otherwise no streams are published.",
+          "description": "Enable live publishing of simulation data through HELICS.",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "x-ui-category": "User-facing"
         },
         "helics_period": {
           "title": "HELICS Publishing Period",
-          "description": "Requested HELICS publication period in seconds.",
+          "description": "Time interval between HELICS data publications, in seconds. The runtime rounds helics_period / ts to a whole number of EMT steps.",
           "type": "number",
           "exclusiveMinimum": 0,
-          "default": 0.001
-        },
-        "oedi_start_timestamp": {
-          "title": "OEDI Start Timestamp",
-          "description": "ISO 8601 timestamp of simulation time zero, used for the time field of published HELICS payloads.",
-          "type": "string",
-          "default": "2026-01-01 00:00:00"
+          "default": 0.001,
+          "x-ui-category": "User-facing"
         }
       },
       "required": [
@@ -367,8 +400,8 @@
       "additionalProperties": false,
       "default": {
         "systemN": 7.3,
-        "ts": 5e-05,
-        "t_end": 2.0,
+        "ts": 5e-5,
+        "t_end": 5.0,
         "DSrate": 20,
         "netMod": "lu",
         "dump_all": false,
@@ -376,8 +409,8 @@
         "save_results_csv": false,
         "N_row": 1,
         "N_col": 1,
-        "SimMod": 0,
-        "save_snapshot": 1,
+        "SimMod": 1,
+        "save_snapshot": 0,
         "save_snapshot_mode": 0,
         "t_release_f": 0.0,
         "loadmodel_option": 1,
@@ -400,59 +433,77 @@
       "properties": {
         "enabled": {
           "title": "Enable Forced Oscillation",
-          "description": "Whether the forced-oscillation event is active.",
+          "description": "Enable sinusoidal forced-oscillation injection.",
           "type": "boolean",
-          "default": true
+          "default": false,
+          "x-ui-category": "User-facing"
         },
         "start_time": {
           "title": "Start Time",
-          "description": "Forced-oscillation start time in seconds.",
+          "description": "Time when forced-oscillation injection starts, in seconds.",
           "type": "number",
           "minimum": 0,
-          "default": 1.0
+          "default": 1000.0,
+          "x-ui-category": "User-facing"
         },
         "target_gen": {
           "title": "Target Generator",
-          "description": "Generator identifier or index to which the oscillation is applied.",
+          "description": "Generator receiving the injected signal, selected by generator index, not bus number.",
           "type": "integer",
-          "minimum": 0,
-          "default": 1
+          "minimum": 1,
+          "default": 1,
+          "x-ui-category": "User-facing"
         },
         "flag_exc_gov_fo": {
           "title": "Exciter or Governor Selection",
-          "description": "Integer flag selecting whether the forced oscillation is applied through the exciter or governor.",
+          "description": "Select the controller reference for forced-oscillation injection.",
           "type": "integer",
           "minimum": 0,
-          "default": 1
+          "default": 1,
+          "enum": [0, 1],
+          "oneOf": [
+            {
+              "const": 0,
+              "title": "Exciter (Vref)"
+            },
+            {
+              "const": 1,
+              "title": "Governor (Pref)"
+            }
+          ],
+          "maximum": 1,
+          "x-ui-category": "User-facing"
         },
         "magnitude": {
           "title": "Oscillation Magnitude",
-          "description": "Amplitude of the injected forced oscillation.",
+          "description": "Amplitude of the injected oscillation.",
           "type": "number",
-          "default": 2.0
+          "default": 2.0,
+          "x-ui-category": "User-facing"
         },
         "frequency_hz": {
           "title": "Oscillation Frequency",
-          "description": "Frequency of the injected forced oscillation in hertz.",
+          "description": "Frequency of the injected oscillation, in Hz.",
           "type": "number",
           "minimum": 0,
-          "default": 5.0
+          "default": 5.0,
+          "exclusiveMinimum": 0,
+          "x-ui-category": "User-facing"
         },
         "lock_ini": {
           "title": "Lock Initial Value",
           "description": "Integer flag controlling whether an initial value is locked.",
           "type": "integer",
-          "enum": [
-            0,
-            1
-          ],
-          "default": 0
+          "enum": [0, 1],
+          "default": 0,
+          "x-ui-category": "Internal / Debugging"
         },
         "lock_value": {
           "title": "Locked Value",
           "description": "Value used when lock_ini is enabled.",
           "type": "number",
-          "default": 0
+          "default": 0,
+          "x-ui-category": "Internal / Debugging"
         }
       },
       "required": [
@@ -467,8 +518,8 @@
       ],
       "additionalProperties": false,
       "default": {
-        "enabled": true,
-        "start_time": 1.0,
+        "enabled": false,
+        "start_time": 1000.0,
         "target_gen": 1,
         "flag_exc_gov_fo": 1,
         "magnitude": 2.0,
@@ -484,45 +535,41 @@
       "properties": {
         "enabled": {
           "title": "Enable Generator Trip",
-          "description": "Whether the generator-trip event is active.",
+          "description": "Enable generator tripping.",
           "type": "boolean",
-          "default": true
+          "default": true,
+          "x-ui-category": "User-facing"
         },
         "time": {
           "title": "Trip Time",
-          "description": "Generator-trip time in seconds.",
+          "description": "Time when the selected generator trips, in seconds.",
           "type": "number",
           "minimum": 0,
-          "default": 100
+          "default": 1.0,
+          "x-ui-category": "User-facing"
         },
         "target_gen": {
           "title": "Target Generator",
-          "description": "Generator identifier or index to trip.",
+          "description": "Generator to trip, selected by generator index, not bus number.",
           "type": "integer",
-          "minimum": 0,
-          "default": 33
+          "minimum": 1,
+          "default": 33,
+          "x-ui-category": "User-facing"
         },
         "flag_reinit": {
           "title": "Reinitialization Flag",
           "description": "Integer flag controlling model reinitialization after the trip.",
           "type": "integer",
-          "enum": [
-            0,
-            1
-          ],
-          "default": 0
+          "enum": [0, 1],
+          "default": 0,
+          "x-ui-category": "Internal / Debugging"
         }
       },
-      "required": [
-        "enabled",
-        "time",
-        "target_gen",
-        "flag_reinit"
-      ],
+      "required": ["enabled", "time", "target_gen", "flag_reinit"],
       "additionalProperties": false,
       "default": {
         "enabled": true,
-        "time": 100,
+        "time": 1.0,
         "target_gen": 33,
         "flag_reinit": 0
       }
@@ -534,41 +581,47 @@
       "properties": {
         "enabled": {
           "title": "Enable Bus Fault",
-          "description": "Whether the bus-fault event is active.",
+          "description": "Enable a bus fault.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "User-facing"
         },
         "time": {
           "title": "Fault Start Time",
-          "description": "Bus-fault start time in seconds.",
+          "description": "Time when the bus fault starts, in seconds.",
           "type": "number",
           "minimum": 0,
-          "default": 100.0
+          "default": 100.0,
+          "x-ui-category": "User-facing"
         },
         "fault_bus_idx": {
           "title": "Faulted Bus Index",
-          "description": "Index of the bus at which the fault is applied.",
+          "description": "Bus fault location, specified by bus-array index, not physical bus number.",
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "x-ui-category": "User-facing"
         },
         "duration": {
           "title": "Fault Duration",
-          "description": "Fault duration in seconds.",
+          "description": "Duration of the bus fault, in seconds. [range: 0 < duration ≤ t_end - time; default: 5/60 s]",
           "type": "number",
           "minimum": 0,
-          "default": 0.0666666667
+          "default": 0.06666666666666667,
+          "exclusiveMinimum": 0,
+          "x-ui-category": "User-facing"
         },
         "fault_type": {
           "title": "Fault Type",
-          "description": "Integer code identifying the electrical fault type.",
+          "description": "Electrical fault type code defined by the fault routine.",
           "type": "integer",
           "minimum": 0,
-          "default": 7
+          "default": 7,
+          "x-ui-category": "User-facing"
         },
         "fault_r": {
           "title": "Fault Resistance Parameters",
-          "description": "Six numerical fault-resistance or conductance-related values used by the fault model.",
+          "description": "Six fault-resistance parameters used by the fault model. [range: exactly six nonnegative numbers; default: six values of 0.00001]",
           "type": "array",
           "items": {
             "type": "number",
@@ -576,31 +629,34 @@
           },
           "minItems": 6,
           "maxItems": 6,
-          "default": [
-            1e-05,
-            1e-05,
-            1e-05,
-            1e-05,
-            1e-05,
-            1e-05
-          ]
+          "default": [1e-5, 1e-5, 1e-5, 1e-5, 1e-5, 1e-5],
+          "x-ui-category": "User-facing"
         },
         "trip_line": {
           "title": "Trip Line",
-          "description": "Integer flag controlling whether a line is tripped in association with the fault.",
+          "description": "Whether to trip a line during the fault sequence.",
           "type": "integer",
-          "enum": [
-            0,
-            1
+          "enum": [0, 1],
+          "default": 0,
+          "oneOf": [
+            {
+              "const": 0,
+              "title": "Do not trip line"
+            },
+            {
+              "const": 1,
+              "title": "Trip selected line"
+            }
           ],
-          "default": 0
+          "x-ui-category": "User-facing"
         },
         "fault_line_idx": {
           "title": "Faulted Line Index",
-          "description": "Index of the line associated with the fault or post-fault trip.",
+          "description": "Line-array index associated with the fault or line trip, not a bus number. [range: case-dependent line-array index; default: 0]",
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "x-ui-category": "User-facing"
         }
       },
       "required": [
@@ -618,16 +674,9 @@
         "enabled": false,
         "time": 100.0,
         "fault_bus_idx": 0,
-        "duration": 0.0666666667,
+        "duration": 0.06666666666666667,
         "fault_type": 7,
-        "fault_r": [
-          1e-05,
-          1e-05,
-          1e-05,
-          1e-05,
-          1e-05,
-          1e-05
-        ],
+        "fault_r": [1e-5, 1e-5, 1e-5, 1e-5, 1e-5, 1e-5],
         "trip_line": 0,
         "fault_line_idx": 0
       }
@@ -639,43 +688,65 @@
       "properties": {
         "enabled": {
           "title": "Enable State Perturbation",
-          "description": "Whether the state-perturbation event is active.",
+          "description": "Enable perturbation of a device internal state.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "User-facing"
         },
         "time": {
           "title": "Perturbation Time",
-          "description": "State-perturbation time in seconds.",
+          "description": "Time when the state perturbation is applied, in seconds. [range: 0 ≤ time < t_end]",
           "type": "number",
           "minimum": 0,
-          "default": 1000.0
+          "default": 1000.0,
+          "x-ui-category": "User-facing"
         },
         "dx": {
           "title": "State Perturbation Magnitude",
-          "description": "Increment applied to the selected state.",
+          "description": "Amount added to the selected internal state variable.",
           "type": "number",
-          "default": 0.1
+          "default": 0.1,
+          "x-ui-category": "User-facing"
         },
         "type": {
           "title": "Device Type",
-          "description": "Integer code identifying the device category whose state is perturbed.",
+          "description": "Select the device model whose state is perturbed.",
           "type": "integer",
           "minimum": 0,
-          "default": 1
+          "default": 1,
+          "enum": [0, 1, 2],
+          "oneOf": [
+            {
+              "const": 0,
+              "title": "Synchronous generator (SG)"
+            },
+            {
+              "const": 1,
+              "title": "WECC IBR"
+            },
+            {
+              "const": 2,
+              "title": "EPRI IBR"
+            }
+          ],
+          "x-ui-category": "User-facing"
         },
         "device_index": {
           "title": "Device Index",
-          "description": "Index of the device whose state is perturbed.",
+          "description": "Device selected by index, not bus number. [range: 1..N_SG for SG or 1..N_IBR for the selected IBR model, case-dependent; default: 4]",
           "type": "integer",
-          "minimum": 0,
-          "default": 4
+          "minimum": 1,
+          "default": 4,
+          "x-ui-category": "User-facing"
         },
         "state_index": {
           "title": "State Index",
-          "description": "Index of the state variable to perturb.",
+          "description": "Internal state selected by 1-based index. [range: SG 1..18; WECC IBR 1..41; EPRI IBR 1..13; default: 1]",
           "type": "integer",
-          "minimum": 0,
-          "default": 1
+          "minimum": 1,
+          "default": 1,
+          "maximum": 41,
+          "x-ui-category": "User-facing"
         }
       },
       "required": [
@@ -703,36 +774,52 @@
       "properties": {
         "enabled": {
           "title": "Enable Step Change",
-          "description": "Whether the step-change event is active.",
+          "description": "Enable a controller reference step change.",
           "type": "boolean",
-          "default": false
+          "default": false,
+          "x-ui-category": "User-facing"
         },
         "time": {
           "title": "Step Time",
-          "description": "Step-change application time in seconds.",
+          "description": "Time when the controller step is applied, in seconds. [range: 0 ≤ time < t_end;]",
           "type": "number",
           "minimum": 0,
-          "default": 0.0
+          "default": 0.0,
+          "x-ui-category": "User-facing"
         },
         "target_gen": {
           "title": "Target Generator",
-          "description": "Generator identifier or index to which the step change is applied.",
+          "description": "Generator receiving the controller step, selected by generator index, not bus number. [range: 1..N_SG, case-dependent]",
           "type": "integer",
-          "minimum": 0,
-          "default": 44
+          "minimum": 1,
+          "default": 44,
+          "x-ui-category": "User-facing"
         },
         "flag_exc_gov": {
           "title": "Exciter or Governor Selection",
-          "description": "Integer flag selecting whether the step change is applied through the exciter or governor.",
+          "description": "Select the generator controller receiving the step.",
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "enum": [0, 1],
+          "oneOf": [
+            {
+              "const": 0,
+              "title": "Exciter"
+            },
+            {
+              "const": 1,
+              "title": "Governor"
+            }
+          ],
+          "x-ui-category": "User-facing"
         },
         "magnitude": {
           "title": "Step Magnitude",
-          "description": "Magnitude of the applied step change.",
+          "description": "Size of the controller step change.",
           "type": "number",
-          "default": 0.3
+          "default": 0.3,
+          "x-ui-category": "User-facing"
         }
       },
       "required": [
@@ -750,6 +837,79 @@
         "flag_exc_gov": 0,
         "magnitude": 0.3
       }
+    }
+  },
+  "default": {
+    "powerflow": {
+      "systemN": 7.3
+    },
+    "simulation": {
+      "systemN": 7.3,
+      "ts": 5e-5,
+      "t_end": 5.0,
+      "DSrate": 20,
+      "netMod": "lu",
+      "dump_all": false,
+      "show_progress": false,
+      "save_results_csv": false,
+      "N_row": 1,
+      "N_col": 1,
+      "SimMod": 1,
+      "save_snapshot": 0,
+      "save_snapshot_mode": 0,
+      "t_release_f": 0.0,
+      "loadmodel_option": 1,
+      "EMT_N": 1,
+      "kts": 333,
+      "stepk": 332,
+      "record4cosim": false,
+      "playback_voltphasor": false,
+      "playback_enable": false,
+      "flag_changeKp": false,
+      "Kp_new": 7,
+      "helics_live_enable": true,
+      "helics_period": 0.001
+    },
+    "forced_oscillation": {
+      "enabled": false,
+      "start_time": 1000.0,
+      "target_gen": 1,
+      "flag_exc_gov_fo": 1,
+      "magnitude": 2.0,
+      "frequency_hz": 5.0,
+      "lock_ini": 0,
+      "lock_value": 0
+    },
+    "gen_trip": {
+      "enabled": true,
+      "time": 1.0,
+      "target_gen": 33,
+      "flag_reinit": 0
+    },
+    "bus_fault": {
+      "enabled": false,
+      "time": 100.0,
+      "fault_bus_idx": 0,
+      "duration": 0.06666666666666667,
+      "fault_type": 7,
+      "fault_r": [1e-5, 1e-5, 1e-5, 1e-5, 1e-5, 1e-5],
+      "trip_line": 0,
+      "fault_line_idx": 0
+    },
+    "state_perturbation": {
+      "enabled": false,
+      "time": 1000.0,
+      "dx": 0.1,
+      "type": 1,
+      "device_index": 4,
+      "state_index": 1
+    },
+    "step_change": {
+      "enabled": false,
+      "time": 0.0,
+      "target_gen": 44,
+      "flag_exc_gov": 0,
+      "magnitude": 0.3
     }
   }
 }
