@@ -1,0 +1,20 @@
+{
+  "directory": "inertia_estimator",
+  "execute_function": "python inertia_federate.py",
+  "static_inputs": [
+    {"type": "string", "port_id": "region"},
+    {"type": "float", "port_id": "window_sec"}
+  ],
+  "dynamic_inputs": [
+    {"type": "MeasurementArray", "port_id": "frequency"},
+    {"type": "MeasurementArray", "port_id": "generator_electrical_power"},
+    {"type": "MeasurementArray", "port_id": "tie_line_flow"}
+  ],
+  "dynamic_outputs": [
+    {"type": "MeasurementArray", "port_id": "regional_signal"},
+    {"type": "MeasurementArray", "port_id": "inertia"}
+  ],
+  "capabilities": {
+    "broker_config": true
+  }
+}

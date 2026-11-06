@@ -22,5 +22,6 @@
     "ParaemtHelicsComponent": "${OEDISI_COMPONENTS}/paraemt-helics/component_definition.json",
     "PnnlAnonDpComponent": "${OEDISI_COMPONENTS}/pnnl-anon-dp/component_definition.json",
     "PnnlImputationFfnnComponent": "${OEDISI_COMPONENTS}/pnnl-imputation-ffnn/component_definition.json",
-    "PnnlProfilerSdvComponent": "${OEDISI_COMPONENTS}/pnnl-profiler-sdv/component_definition.json"
+    "PnnlProfilerSdvComponent": "${OEDISI_COMPONENTS}/pnnl-profiler-sdv/component_definition.json",
+    "InertiaEstimatorComponent": "${OEDISI_COMPONENTS}/oedisi-inertia/inertia_estimator/component_definition.json"
 }

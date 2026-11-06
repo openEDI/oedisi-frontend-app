@@ -1,0 +1,28 @@
+{
+  "title": "Inertia Estimator Configuration",
+  "description": "Regional inertia estimation (DEMO2 regional aggregation + Kalman filter). Subscribes to ParaEMT-shaped frequency, generator_electrical_power and tie_line_flow streams; publishes the regional signal per sample and one inertia estimate per window.",
+  "type": "object",
+  "properties": {
+    "name": {
+      "title": "Name",
+      "description": "Component instance name.",
+      "type": "string"
+    },
+    "region": {
+      "title": "Region",
+      "description": "WECC region to aggregate (fixed DEMO2 region definitions). The bundled day 6 hour 1 Player data only contains CA1 channels.",
+      "type": "string",
+      "default": "CA1",
+      "enum": ["CA1", "CA2", "WY", "ID", "AZ", "CO", "OR", "NM", "WA", "NV", "MON", "UT"]
+    },
+    "window_sec": {
+      "title": "Window Length (s)",
+      "description": "An estimate is published once the buffered samples span this many seconds of payload time. Windows do not overlap, and a partial window at the end of the input is discarded. 16.01 puts the whole 16 s DEMO2 snapshot in one window.",
+      "type": "number",
+      "default": 16.01,
+      "exclusiveMinimum": 0
+    }
+  },
+  "required": ["name", "region", "window_sec"],
+  "additionalProperties": false
+}
