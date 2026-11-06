@@ -1,69 +1,10 @@
 {
-  "id": "1793038598575",
-  "name": "ParaEMT Demo 1",
-  "description": "",
+  "id": "1793930946211",
+  "name": "ParaEMT Demo 1: Generator Trip",
+  "description": "WECC 240-bus (system 7.3), 5 s run. A generator is tripped at 1 s.",
   "nodes": [
     {
-      "id": "Recorder-1792435683158",
-      "type": "custom",
-      "dimensions": {
-        "width": 120,
-        "height": 64
-      },
-      "computedPosition": {
-        "x": 200.5,
-        "y": 213.5,
-        "z": 0
-      },
-      "handleBounds": {
-        "source": [
-          {
-            "id": null,
-            "type": "source",
-            "nodeId": "Recorder-1792435683158",
-            "position": "right",
-            "x": 113.0999755859375,
-            "y": 26.899993896484375,
-            "width": 10,
-            "height": 10
-          }
-        ],
-        "target": [
-          {
-            "id": null,
-            "type": "target",
-            "nodeId": "Recorder-1792435683158",
-            "position": "left",
-            "x": -3.100006103515625,
-            "y": 26.899993896484375,
-            "width": 10,
-            "height": 10
-          }
-        ]
-      },
-      "selected": false,
-      "dragging": false,
-      "resizing": false,
-      "initialized": false,
-      "isParent": false,
-      "position": {
-        "x": 200.5,
-        "y": 213.5
-      },
-      "data": {
-        "label": "Recorder",
-        "componentType": "Recorder",
-        "config": {
-          "name": "power",
-          "csv_filename": "power.csv",
-          "feather_filename": "power.feather",
-          "time_delta": 0.001
-        }
-      },
-      "events": {}
-    },
-    {
-      "id": "ParaemtHelicsComponent-1792435686495",
+      "id": "ParaemtHelicsComponent-1793930947210",
       "type": "custom",
       "dimensions": {
         "width": 120,
@@ -79,9 +20,9 @@
           {
             "id": null,
             "type": "source",
-            "nodeId": "ParaemtHelicsComponent-1792435686495",
+            "nodeId": "ParaemtHelicsComponent-1793930947210",
             "position": "right",
-            "x": 113.10000610351562,
+            "x": 113.1,
             "y": 26.899993896484375,
             "width": 10,
             "height": 10
@@ -91,7 +32,7 @@
           {
             "id": null,
             "type": "target",
-            "nodeId": "ParaemtHelicsComponent-1792435686495",
+            "nodeId": "ParaemtHelicsComponent-1793930947210",
             "position": "left",
             "x": -3.100006103515625,
             "y": 26.899993896484375,
@@ -119,7 +60,7 @@
           "simulation": {
             "systemN": 7.3,
             "ts": 5e-05,
-            "t_end": 10,
+            "t_end": 5.0,
             "DSrate": 20,
             "netMod": "lu",
             "dump_all": false,
@@ -127,10 +68,10 @@
             "save_results_csv": false,
             "N_row": 1,
             "N_col": 1,
-            "SimMod": 0,
-            "save_snapshot": 1,
+            "SimMod": 1,
+            "save_snapshot": 0,
             "save_snapshot_mode": 0,
-            "t_release_f": 0,
+            "t_release_f": 0.0,
             "loadmodel_option": 1,
             "EMT_N": 1,
             "kts": 333,
@@ -144,24 +85,24 @@
             "helics_period": 0.001
           },
           "forced_oscillation": {
-            "enabled": true,
-            "start_time": 500,
+            "enabled": false,
+            "start_time": 1000.0,
             "target_gen": 1,
             "flag_exc_gov_fo": 1,
-            "magnitude": 2,
-            "frequency_hz": 5,
+            "magnitude": 2.0,
+            "frequency_hz": 5.0,
             "lock_ini": 0,
             "lock_value": 0
           },
           "gen_trip": {
             "enabled": true,
-            "time": 1,
-            "target_gen": 30,
+            "time": 1.0,
+            "target_gen": 33,
             "flag_reinit": 0
           },
           "bus_fault": {
             "enabled": false,
-            "time": 100,
+            "time": 100.0,
             "fault_bus_idx": 0,
             "duration": 0.0666666667,
             "fault_type": 7,
@@ -178,7 +119,7 @@
           },
           "state_perturbation": {
             "enabled": false,
-            "time": 1000,
+            "time": 1000.0,
             "dx": 0.1,
             "type": 1,
             "device_index": 4,
@@ -186,7 +127,7 @@
           },
           "step_change": {
             "enabled": false,
-            "time": 0,
+            "time": 0.0,
             "target_gen": 44,
             "flag_exc_gov": 0,
             "magnitude": 0.3
@@ -197,74 +138,15 @@
       "events": {}
     },
     {
-      "id": "Recorder-1792435691261",
-      "type": "custom",
-      "dimensions": {
-        "width": 120,
-        "height": 64
-      },
-      "computedPosition": {
-        "x": 269,
-        "y": 102.25,
-        "z": 0
-      },
-      "handleBounds": {
-        "source": [
-          {
-            "id": null,
-            "type": "source",
-            "nodeId": "Recorder-1792435691261",
-            "position": "right",
-            "x": 113.0999755859375,
-            "y": 26.900009155273438,
-            "width": 10,
-            "height": 10
-          }
-        ],
-        "target": [
-          {
-            "id": null,
-            "type": "target",
-            "nodeId": "Recorder-1792435691261",
-            "position": "left",
-            "x": -3.0999755859375,
-            "y": 26.900009155273438,
-            "width": 10,
-            "height": 10
-          }
-        ]
-      },
-      "selected": false,
-      "dragging": false,
-      "resizing": false,
-      "initialized": false,
-      "isParent": false,
-      "position": {
-        "x": 269,
-        "y": 102.25
-      },
-      "data": {
-        "label": "Recorder",
-        "componentType": "Recorder",
-        "config": {
-          "name": "voltage",
-          "csv_filename": "voltage.csv",
-          "feather_filename": "voltage.feather",
-          "time_delta": 0.001
-        }
-      },
-      "events": {}
-    },
-    {
-      "id": "Recorder-1793037765319",
+      "id": "Recorder-1793930947211",
       "type": "custom",
       "dimensions": {
         "width": 188,
         "height": 64
       },
       "computedPosition": {
-        "x": 237.02303262955854,
-        "y": -41.31210710814726,
+        "x": 260.0,
+        "y": 58.75,
         "z": 0
       },
       "handleBounds": {
@@ -272,10 +154,10 @@
           {
             "id": null,
             "type": "source",
-            "nodeId": "Recorder-1793037765319",
+            "nodeId": "Recorder-1793930947211",
             "position": "right",
-            "x": 181.45001220703125,
-            "y": 26.883331298828125,
+            "x": 181.1,
+            "y": 26.899993896484375,
             "width": 10,
             "height": 10
           }
@@ -284,10 +166,10 @@
           {
             "id": null,
             "type": "target",
-            "nodeId": "Recorder-1793037765319",
+            "nodeId": "Recorder-1793930947211",
             "position": "left",
             "x": -3.100006103515625,
-            "y": 26.883331298828125,
+            "y": 26.899993896484375,
             "width": 10,
             "height": 10
           }
@@ -299,31 +181,90 @@
       "initialized": false,
       "isParent": false,
       "position": {
-        "x": 237.02303262955854,
-        "y": -41.31210710814726
+        "x": 260.0,
+        "y": 58.75
       },
       "data": {
         "label": "Recorder",
         "componentType": "Recorder",
         "config": {
-          "time_delta": 0.001,
-          "name": "generator_rotor_speed",
+          "name": "recorder_generator_rotor_speed",
+          "feather_filename": "generator_rotor_speed.feather",
           "csv_filename": "generator_rotor_speed.csv",
-          "feather_filename": "generator_rotor_speed.feather"
+          "time_delta": 0.001
         }
       },
       "events": {}
     },
     {
-      "id": "Recorder-1793037766486",
+      "id": "Recorder-1793930947212",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 260.0,
+        "y": 168.75,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1793930947212",
+            "position": "right",
+            "x": 113.1,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1793930947212",
+            "position": "left",
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 260.0,
+        "y": 168.75
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_generator_electrical_power",
+          "feather_filename": "generator_electrical_power.feather",
+          "csv_filename": "generator_electrical_power.csv",
+          "time_delta": 0.001
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1793930947213",
       "type": "custom",
       "dimensions": {
         "width": 128,
         "height": 64
       },
       "computedPosition": {
-        "x": 383,
-        "y": 41.05833435058594,
+        "x": 260.0,
+        "y": 278.75,
         "z": 0
       },
       "handleBounds": {
@@ -331,10 +272,10 @@
           {
             "id": null,
             "type": "source",
-            "nodeId": "Recorder-1793037766486",
+            "nodeId": "Recorder-1793930947213",
             "position": "right",
-            "x": 120.9000244140625,
-            "y": 26.883331298828125,
+            "x": 121.1,
+            "y": 26.899993896484375,
             "width": 10,
             "height": 10
           }
@@ -343,10 +284,10 @@
           {
             "id": null,
             "type": "target",
-            "nodeId": "Recorder-1793037766486",
+            "nodeId": "Recorder-1793930947213",
             "position": "left",
-            "x": -3.0999755859375,
-            "y": 26.883331298828125,
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
             "width": 10,
             "height": 10
           }
@@ -358,17 +299,17 @@
       "initialized": false,
       "isParent": false,
       "position": {
-        "x": 383,
-        "y": 41.05833435058594
+        "x": 260.0,
+        "y": 278.75
       },
       "data": {
         "label": "Recorder",
         "componentType": "Recorder",
         "config": {
-          "time_delta": 0.001,
-          "name": "ibr_frequency",
+          "name": "recorder_ibr_frequency",
+          "feather_filename": "ibr_frequency.feather",
           "csv_filename": "ibr_frequency.csv",
-          "feather_filename": "ibr_frequency.feather"
+          "time_delta": 0.001
         }
       },
       "events": {}
@@ -376,440 +317,10 @@
   ],
   "edges": [
     {
-      "id": "edge-ParaemtHelicsComponent-1792435686495-Recorder-1792435683158-1792435689031",
+      "id": "edge-ParaemtHelicsComponent-1793930947210-Recorder-1793930947211-1793930947310",
       "type": "wiring",
-      "source": "ParaemtHelicsComponent-1792435686495",
-      "target": "Recorder-1792435683158",
-      "data": {
-        "wires": [
-          {
-            "type": "MeasurementArray",
-            "sourcePortId": "generator_electrical_power",
-            "targetPortId": "subscription"
-          }
-        ]
-      },
-      "events": {},
-      "label": "MeasurementArray",
-      "sourceNode": {
-        "id": "ParaemtHelicsComponent-1792435686495",
-        "type": "custom",
-        "dimensions": {
-          "width": 120,
-          "height": 64
-        },
-        "computedPosition": {
-          "x": -18.5,
-          "y": 168.75,
-          "z": 0
-        },
-        "handleBounds": {
-          "source": [
-            {
-              "id": null,
-              "type": "source",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
-              "position": "right",
-              "x": 113.10000610351562,
-              "y": 26.899993896484375,
-              "width": 10,
-              "height": 10
-            }
-          ],
-          "target": [
-            {
-              "id": null,
-              "type": "target",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
-              "position": "left",
-              "x": -3.100006103515625,
-              "y": 26.899993896484375,
-              "width": 10,
-              "height": 10
-            }
-          ]
-        },
-        "selected": false,
-        "dragging": false,
-        "resizing": false,
-        "initialized": false,
-        "isParent": false,
-        "position": {
-          "x": -18.5,
-          "y": 168.75
-        },
-        "data": {
-          "label": "Paraemt Helics",
-          "componentType": "ParaemtHelicsComponent",
-          "config": {
-            "powerflow": {
-              "systemN": 7.3
-            },
-            "simulation": {
-              "systemN": 7.3,
-              "ts": 5e-05,
-              "t_end": 10,
-              "DSrate": 20,
-              "netMod": "lu",
-              "dump_all": false,
-              "show_progress": false,
-              "save_results_csv": false,
-              "N_row": 1,
-              "N_col": 1,
-              "SimMod": 0,
-              "save_snapshot": 1,
-              "save_snapshot_mode": 0,
-              "t_release_f": 0,
-              "loadmodel_option": 1,
-              "EMT_N": 1,
-              "kts": 333,
-              "stepk": 332,
-              "record4cosim": false,
-              "playback_voltphasor": false,
-              "playback_enable": false,
-              "flag_changeKp": false,
-              "Kp_new": 7,
-              "helics_live_enable": true,
-              "helics_period": 0.001
-            },
-            "forced_oscillation": {
-              "enabled": true,
-              "start_time": 500,
-              "target_gen": 1,
-              "flag_exc_gov_fo": 1,
-              "magnitude": 2,
-              "frequency_hz": 5,
-              "lock_ini": 0,
-              "lock_value": 0
-            },
-            "gen_trip": {
-              "enabled": true,
-              "time": 1,
-              "target_gen": 30,
-              "flag_reinit": 0
-            },
-            "bus_fault": {
-              "enabled": false,
-              "time": 100,
-              "fault_bus_idx": 0,
-              "duration": 0.0666666667,
-              "fault_type": 7,
-              "fault_r": [
-                1e-05,
-                1e-05,
-                1e-05,
-                1e-05,
-                1e-05,
-                1e-05
-              ],
-              "trip_line": 0,
-              "fault_line_idx": 0
-            },
-            "state_perturbation": {
-              "enabled": false,
-              "time": 1000,
-              "dx": 0.1,
-              "type": 1,
-              "device_index": 4,
-              "state_index": 1
-            },
-            "step_change": {
-              "enabled": false,
-              "time": 0,
-              "target_gen": 44,
-              "flag_exc_gov": 0,
-              "magnitude": 0.3
-            },
-            "name": "paraemt"
-          }
-        },
-        "events": {}
-      },
-      "targetNode": {
-        "id": "Recorder-1792435683158",
-        "type": "custom",
-        "dimensions": {
-          "width": 120,
-          "height": 64
-        },
-        "computedPosition": {
-          "x": 200.5,
-          "y": 213.5,
-          "z": 0
-        },
-        "handleBounds": {
-          "source": [
-            {
-              "id": null,
-              "type": "source",
-              "nodeId": "Recorder-1792435683158",
-              "position": "right",
-              "x": 113.0999755859375,
-              "y": 26.899993896484375,
-              "width": 10,
-              "height": 10
-            }
-          ],
-          "target": [
-            {
-              "id": null,
-              "type": "target",
-              "nodeId": "Recorder-1792435683158",
-              "position": "left",
-              "x": -3.100006103515625,
-              "y": 26.899993896484375,
-              "width": 10,
-              "height": 10
-            }
-          ]
-        },
-        "selected": false,
-        "dragging": false,
-        "resizing": false,
-        "initialized": false,
-        "isParent": false,
-        "position": {
-          "x": 200.5,
-          "y": 213.5
-        },
-        "data": {
-          "label": "Recorder",
-          "componentType": "Recorder",
-          "config": {
-            "name": "power",
-            "csv_filename": "power.csv",
-            "feather_filename": "power.feather",
-            "time_delta": 0.001
-          }
-        },
-        "events": {}
-      },
-      "sourceX": 104.60000610351562,
-      "sourceY": 200.64999389648438,
-      "targetX": 197.39999389648438,
-      "targetY": 245.39999389648438,
-      "selected": false
-    },
-    {
-      "id": "edge-ParaemtHelicsComponent-1792435686495-Recorder-1792435691261-1792435692815",
-      "type": "wiring",
-      "source": "ParaemtHelicsComponent-1792435686495",
-      "target": "Recorder-1792435691261",
-      "data": {
-        "wires": [
-          {
-            "type": "VoltagesReal",
-            "sourcePortId": "voltage",
-            "targetPortId": "subscription"
-          }
-        ]
-      },
-      "events": {},
-      "label": "VoltagesReal",
-      "sourceNode": {
-        "id": "ParaemtHelicsComponent-1792435686495",
-        "type": "custom",
-        "dimensions": {
-          "width": 120,
-          "height": 64
-        },
-        "computedPosition": {
-          "x": -18.5,
-          "y": 168.75,
-          "z": 0
-        },
-        "handleBounds": {
-          "source": [
-            {
-              "id": null,
-              "type": "source",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
-              "position": "right",
-              "x": 113.10000610351562,
-              "y": 26.899993896484375,
-              "width": 10,
-              "height": 10
-            }
-          ],
-          "target": [
-            {
-              "id": null,
-              "type": "target",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
-              "position": "left",
-              "x": -3.100006103515625,
-              "y": 26.899993896484375,
-              "width": 10,
-              "height": 10
-            }
-          ]
-        },
-        "selected": false,
-        "dragging": false,
-        "resizing": false,
-        "initialized": false,
-        "isParent": false,
-        "position": {
-          "x": -18.5,
-          "y": 168.75
-        },
-        "data": {
-          "label": "Paraemt Helics",
-          "componentType": "ParaemtHelicsComponent",
-          "config": {
-            "powerflow": {
-              "systemN": 7.3
-            },
-            "simulation": {
-              "systemN": 7.3,
-              "ts": 5e-05,
-              "t_end": 10,
-              "DSrate": 20,
-              "netMod": "lu",
-              "dump_all": false,
-              "show_progress": false,
-              "save_results_csv": false,
-              "N_row": 1,
-              "N_col": 1,
-              "SimMod": 0,
-              "save_snapshot": 1,
-              "save_snapshot_mode": 0,
-              "t_release_f": 0,
-              "loadmodel_option": 1,
-              "EMT_N": 1,
-              "kts": 333,
-              "stepk": 332,
-              "record4cosim": false,
-              "playback_voltphasor": false,
-              "playback_enable": false,
-              "flag_changeKp": false,
-              "Kp_new": 7,
-              "helics_live_enable": true,
-              "helics_period": 0.001
-            },
-            "forced_oscillation": {
-              "enabled": true,
-              "start_time": 500,
-              "target_gen": 1,
-              "flag_exc_gov_fo": 1,
-              "magnitude": 2,
-              "frequency_hz": 5,
-              "lock_ini": 0,
-              "lock_value": 0
-            },
-            "gen_trip": {
-              "enabled": true,
-              "time": 1,
-              "target_gen": 30,
-              "flag_reinit": 0
-            },
-            "bus_fault": {
-              "enabled": false,
-              "time": 100,
-              "fault_bus_idx": 0,
-              "duration": 0.0666666667,
-              "fault_type": 7,
-              "fault_r": [
-                1e-05,
-                1e-05,
-                1e-05,
-                1e-05,
-                1e-05,
-                1e-05
-              ],
-              "trip_line": 0,
-              "fault_line_idx": 0
-            },
-            "state_perturbation": {
-              "enabled": false,
-              "time": 1000,
-              "dx": 0.1,
-              "type": 1,
-              "device_index": 4,
-              "state_index": 1
-            },
-            "step_change": {
-              "enabled": false,
-              "time": 0,
-              "target_gen": 44,
-              "flag_exc_gov": 0,
-              "magnitude": 0.3
-            },
-            "name": "paraemt"
-          }
-        },
-        "events": {}
-      },
-      "targetNode": {
-        "id": "Recorder-1792435691261",
-        "type": "custom",
-        "dimensions": {
-          "width": 120,
-          "height": 64
-        },
-        "computedPosition": {
-          "x": 269,
-          "y": 102.25,
-          "z": 0
-        },
-        "handleBounds": {
-          "source": [
-            {
-              "id": null,
-              "type": "source",
-              "nodeId": "Recorder-1792435691261",
-              "position": "right",
-              "x": 113.0999755859375,
-              "y": 26.900009155273438,
-              "width": 10,
-              "height": 10
-            }
-          ],
-          "target": [
-            {
-              "id": null,
-              "type": "target",
-              "nodeId": "Recorder-1792435691261",
-              "position": "left",
-              "x": -3.0999755859375,
-              "y": 26.900009155273438,
-              "width": 10,
-              "height": 10
-            }
-          ]
-        },
-        "selected": false,
-        "dragging": false,
-        "resizing": false,
-        "initialized": false,
-        "isParent": false,
-        "position": {
-          "x": 269,
-          "y": 102.25
-        },
-        "data": {
-          "label": "Recorder",
-          "componentType": "Recorder",
-          "config": {
-            "name": "voltage",
-            "csv_filename": "voltage.csv",
-            "feather_filename": "voltage.feather",
-            "time_delta": 0.001
-          }
-        },
-        "events": {}
-      },
-      "sourceX": 104.60000610351562,
-      "sourceY": 200.64999389648438,
-      "targetX": 265.9000244140625,
-      "targetY": 134.15000915527344,
-      "selected": false
-    },
-    {
-      "id": "edge-ParaemtHelicsComponent-1792435686495-Recorder-1793037765319-1793037785379",
-      "type": "wiring",
-      "source": "ParaemtHelicsComponent-1792435686495",
-      "target": "Recorder-1793037765319",
+      "source": "ParaemtHelicsComponent-1793930947210",
+      "target": "Recorder-1793930947211",
       "data": {
         "wires": [
           {
@@ -822,7 +333,7 @@
       "events": {},
       "label": "MeasurementArray",
       "sourceNode": {
-        "id": "ParaemtHelicsComponent-1792435686495",
+        "id": "ParaemtHelicsComponent-1793930947210",
         "type": "custom",
         "dimensions": {
           "width": 120,
@@ -838,9 +349,9 @@
             {
               "id": null,
               "type": "source",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
+              "nodeId": "ParaemtHelicsComponent-1793930947210",
               "position": "right",
-              "x": 113.10000610351562,
+              "x": 113.1,
               "y": 26.899993896484375,
               "width": 10,
               "height": 10
@@ -850,7 +361,7 @@
             {
               "id": null,
               "type": "target",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
+              "nodeId": "ParaemtHelicsComponent-1793930947210",
               "position": "left",
               "x": -3.100006103515625,
               "y": 26.899993896484375,
@@ -878,7 +389,7 @@
             "simulation": {
               "systemN": 7.3,
               "ts": 5e-05,
-              "t_end": 10,
+              "t_end": 5.0,
               "DSrate": 20,
               "netMod": "lu",
               "dump_all": false,
@@ -886,10 +397,10 @@
               "save_results_csv": false,
               "N_row": 1,
               "N_col": 1,
-              "SimMod": 0,
-              "save_snapshot": 1,
+              "SimMod": 1,
+              "save_snapshot": 0,
               "save_snapshot_mode": 0,
-              "t_release_f": 0,
+              "t_release_f": 0.0,
               "loadmodel_option": 1,
               "EMT_N": 1,
               "kts": 333,
@@ -903,24 +414,24 @@
               "helics_period": 0.001
             },
             "forced_oscillation": {
-              "enabled": true,
-              "start_time": 500,
+              "enabled": false,
+              "start_time": 1000.0,
               "target_gen": 1,
               "flag_exc_gov_fo": 1,
-              "magnitude": 2,
-              "frequency_hz": 5,
+              "magnitude": 2.0,
+              "frequency_hz": 5.0,
               "lock_ini": 0,
               "lock_value": 0
             },
             "gen_trip": {
               "enabled": true,
-              "time": 1,
-              "target_gen": 30,
+              "time": 1.0,
+              "target_gen": 33,
               "flag_reinit": 0
             },
             "bus_fault": {
               "enabled": false,
-              "time": 100,
+              "time": 100.0,
               "fault_bus_idx": 0,
               "duration": 0.0666666667,
               "fault_type": 7,
@@ -937,7 +448,7 @@
             },
             "state_perturbation": {
               "enabled": false,
-              "time": 1000,
+              "time": 1000.0,
               "dx": 0.1,
               "type": 1,
               "device_index": 4,
@@ -945,7 +456,7 @@
             },
             "step_change": {
               "enabled": false,
-              "time": 0,
+              "time": 0.0,
               "target_gen": 44,
               "flag_exc_gov": 0,
               "magnitude": 0.3
@@ -956,15 +467,15 @@
         "events": {}
       },
       "targetNode": {
-        "id": "Recorder-1793037765319",
+        "id": "Recorder-1793930947211",
         "type": "custom",
         "dimensions": {
           "width": 188,
           "height": 64
         },
         "computedPosition": {
-          "x": 237.02303262955854,
-          "y": -41.31210710814726,
+          "x": 260.0,
+          "y": 58.75,
           "z": 0
         },
         "handleBounds": {
@@ -972,10 +483,10 @@
             {
               "id": null,
               "type": "source",
-              "nodeId": "Recorder-1793037765319",
+              "nodeId": "Recorder-1793930947211",
               "position": "right",
-              "x": 181.45001220703125,
-              "y": 26.883331298828125,
+              "x": 181.1,
+              "y": 26.899993896484375,
               "width": 10,
               "height": 10
             }
@@ -984,10 +495,10 @@
             {
               "id": null,
               "type": "target",
-              "nodeId": "Recorder-1793037765319",
+              "nodeId": "Recorder-1793930947211",
               "position": "left",
               "x": -3.100006103515625,
-              "y": 26.883331298828125,
+              "y": 26.899993896484375,
               "width": 10,
               "height": 10
             }
@@ -999,32 +510,247 @@
         "initialized": false,
         "isParent": false,
         "position": {
-          "x": 237.02303262955854,
-          "y": -41.31210710814726
+          "x": 260.0,
+          "y": 58.75
         },
         "data": {
           "label": "Recorder",
           "componentType": "Recorder",
           "config": {
-            "time_delta": 0.001,
-            "name": "generator_rotor_speed",
+            "name": "recorder_generator_rotor_speed",
+            "feather_filename": "generator_rotor_speed.feather",
             "csv_filename": "generator_rotor_speed.csv",
-            "feather_filename": "generator_rotor_speed.feather"
+            "time_delta": 0.001
           }
         },
         "events": {}
       },
-      "sourceX": 104.60000610351562,
-      "sourceY": 200.64999389648438,
-      "targetX": 233.92302652604292,
-      "targetY": -9.428775809319134,
-      "selected": true
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 90.65,
+      "selected": false
     },
     {
-      "id": "edge-ParaemtHelicsComponent-1792435686495-Recorder-1793037766486-1793037786970",
+      "id": "edge-ParaemtHelicsComponent-1793930947210-Recorder-1793930947212-1793930947311",
       "type": "wiring",
-      "source": "ParaemtHelicsComponent-1792435686495",
-      "target": "Recorder-1793037766486",
+      "source": "ParaemtHelicsComponent-1793930947210",
+      "target": "Recorder-1793930947212",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "generator_electrical_power",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "ParaemtHelicsComponent-1793930947210",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": -18.5,
+          "y": 168.75,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "ParaemtHelicsComponent-1793930947210",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "ParaemtHelicsComponent-1793930947210",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": -18.5,
+          "y": 168.75
+        },
+        "data": {
+          "label": "Paraemt Helics",
+          "componentType": "ParaemtHelicsComponent",
+          "config": {
+            "powerflow": {
+              "systemN": 7.3
+            },
+            "simulation": {
+              "systemN": 7.3,
+              "ts": 5e-05,
+              "t_end": 5.0,
+              "DSrate": 20,
+              "netMod": "lu",
+              "dump_all": false,
+              "show_progress": false,
+              "save_results_csv": false,
+              "N_row": 1,
+              "N_col": 1,
+              "SimMod": 1,
+              "save_snapshot": 0,
+              "save_snapshot_mode": 0,
+              "t_release_f": 0.0,
+              "loadmodel_option": 1,
+              "EMT_N": 1,
+              "kts": 333,
+              "stepk": 332,
+              "record4cosim": false,
+              "playback_voltphasor": false,
+              "playback_enable": false,
+              "flag_changeKp": false,
+              "Kp_new": 7,
+              "helics_live_enable": true,
+              "helics_period": 0.001
+            },
+            "forced_oscillation": {
+              "enabled": false,
+              "start_time": 1000.0,
+              "target_gen": 1,
+              "flag_exc_gov_fo": 1,
+              "magnitude": 2.0,
+              "frequency_hz": 5.0,
+              "lock_ini": 0,
+              "lock_value": 0
+            },
+            "gen_trip": {
+              "enabled": true,
+              "time": 1.0,
+              "target_gen": 33,
+              "flag_reinit": 0
+            },
+            "bus_fault": {
+              "enabled": false,
+              "time": 100.0,
+              "fault_bus_idx": 0,
+              "duration": 0.0666666667,
+              "fault_type": 7,
+              "fault_r": [
+                1e-05,
+                1e-05,
+                1e-05,
+                1e-05,
+                1e-05,
+                1e-05
+              ],
+              "trip_line": 0,
+              "fault_line_idx": 0
+            },
+            "state_perturbation": {
+              "enabled": false,
+              "time": 1000.0,
+              "dx": 0.1,
+              "type": 1,
+              "device_index": 4,
+              "state_index": 1
+            },
+            "step_change": {
+              "enabled": false,
+              "time": 0.0,
+              "target_gen": 44,
+              "flag_exc_gov": 0,
+              "magnitude": 0.3
+            },
+            "name": "paraemt"
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1793930947212",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 260.0,
+          "y": 168.75,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1793930947212",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1793930947212",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 260.0,
+          "y": 168.75
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_generator_electrical_power",
+            "feather_filename": "generator_electrical_power.feather",
+            "csv_filename": "generator_electrical_power.csv",
+            "time_delta": 0.001
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 200.65,
+      "selected": false
+    },
+    {
+      "id": "edge-ParaemtHelicsComponent-1793930947210-Recorder-1793930947213-1793930947312",
+      "type": "wiring",
+      "source": "ParaemtHelicsComponent-1793930947210",
+      "target": "Recorder-1793930947213",
       "data": {
         "wires": [
           {
@@ -1037,7 +763,7 @@
       "events": {},
       "label": "MeasurementArray",
       "sourceNode": {
-        "id": "ParaemtHelicsComponent-1792435686495",
+        "id": "ParaemtHelicsComponent-1793930947210",
         "type": "custom",
         "dimensions": {
           "width": 120,
@@ -1053,9 +779,9 @@
             {
               "id": null,
               "type": "source",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
+              "nodeId": "ParaemtHelicsComponent-1793930947210",
               "position": "right",
-              "x": 113.10000610351562,
+              "x": 113.1,
               "y": 26.899993896484375,
               "width": 10,
               "height": 10
@@ -1065,7 +791,7 @@
             {
               "id": null,
               "type": "target",
-              "nodeId": "ParaemtHelicsComponent-1792435686495",
+              "nodeId": "ParaemtHelicsComponent-1793930947210",
               "position": "left",
               "x": -3.100006103515625,
               "y": 26.899993896484375,
@@ -1093,7 +819,7 @@
             "simulation": {
               "systemN": 7.3,
               "ts": 5e-05,
-              "t_end": 10,
+              "t_end": 5.0,
               "DSrate": 20,
               "netMod": "lu",
               "dump_all": false,
@@ -1101,10 +827,10 @@
               "save_results_csv": false,
               "N_row": 1,
               "N_col": 1,
-              "SimMod": 0,
-              "save_snapshot": 1,
+              "SimMod": 1,
+              "save_snapshot": 0,
               "save_snapshot_mode": 0,
-              "t_release_f": 0,
+              "t_release_f": 0.0,
               "loadmodel_option": 1,
               "EMT_N": 1,
               "kts": 333,
@@ -1118,24 +844,24 @@
               "helics_period": 0.001
             },
             "forced_oscillation": {
-              "enabled": true,
-              "start_time": 500,
+              "enabled": false,
+              "start_time": 1000.0,
               "target_gen": 1,
               "flag_exc_gov_fo": 1,
-              "magnitude": 2,
-              "frequency_hz": 5,
+              "magnitude": 2.0,
+              "frequency_hz": 5.0,
               "lock_ini": 0,
               "lock_value": 0
             },
             "gen_trip": {
               "enabled": true,
-              "time": 1,
-              "target_gen": 30,
+              "time": 1.0,
+              "target_gen": 33,
               "flag_reinit": 0
             },
             "bus_fault": {
               "enabled": false,
-              "time": 100,
+              "time": 100.0,
               "fault_bus_idx": 0,
               "duration": 0.0666666667,
               "fault_type": 7,
@@ -1152,7 +878,7 @@
             },
             "state_perturbation": {
               "enabled": false,
-              "time": 1000,
+              "time": 1000.0,
               "dx": 0.1,
               "type": 1,
               "device_index": 4,
@@ -1160,7 +886,7 @@
             },
             "step_change": {
               "enabled": false,
-              "time": 0,
+              "time": 0.0,
               "target_gen": 44,
               "flag_exc_gov": 0,
               "magnitude": 0.3
@@ -1171,15 +897,15 @@
         "events": {}
       },
       "targetNode": {
-        "id": "Recorder-1793037766486",
+        "id": "Recorder-1793930947213",
         "type": "custom",
         "dimensions": {
           "width": 128,
           "height": 64
         },
         "computedPosition": {
-          "x": 383,
-          "y": 41.05833435058594,
+          "x": 260.0,
+          "y": 278.75,
           "z": 0
         },
         "handleBounds": {
@@ -1187,10 +913,10 @@
             {
               "id": null,
               "type": "source",
-              "nodeId": "Recorder-1793037766486",
+              "nodeId": "Recorder-1793930947213",
               "position": "right",
-              "x": 120.9000244140625,
-              "y": 26.883331298828125,
+              "x": 121.1,
+              "y": 26.899993896484375,
               "width": 10,
               "height": 10
             }
@@ -1199,10 +925,10 @@
             {
               "id": null,
               "type": "target",
-              "nodeId": "Recorder-1793037766486",
+              "nodeId": "Recorder-1793930947213",
               "position": "left",
-              "x": -3.0999755859375,
-              "y": 26.883331298828125,
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
               "width": 10,
               "height": 10
             }
@@ -1214,28 +940,28 @@
         "initialized": false,
         "isParent": false,
         "position": {
-          "x": 383,
-          "y": 41.05833435058594
+          "x": 260.0,
+          "y": 278.75
         },
         "data": {
           "label": "Recorder",
           "componentType": "Recorder",
           "config": {
-            "time_delta": 0.001,
-            "name": "ibr_frequency",
+            "name": "recorder_ibr_frequency",
+            "feather_filename": "ibr_frequency.feather",
             "csv_filename": "ibr_frequency.csv",
-            "feather_filename": "ibr_frequency.feather"
+            "time_delta": 0.001
           }
         },
         "events": {}
       },
-      "sourceX": 104.60000610351562,
-      "sourceY": 200.64999389648438,
-      "targetX": 379.9000244140625,
-      "targetY": 72.94166564941406,
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 310.65,
       "selected": false
     }
   ],
-  "createdAt": "2026-10-26T18:16:38.575Z",
+  "createdAt": "2026-11-06T02:09:06.211Z",
   "config_version": "1"
 }
