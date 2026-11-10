@@ -259,6 +259,7 @@ const saveDialogOpen = ref(false)
 const templateName = ref('')
 const templateDescription = ref('')
 const selectedWireOption = ref('')
+const originalTemplateId = ref<string | null>(null)  // Future versions should have better overwriting behavior
 const { screenToFlowCoordinate } = useVueFlow()
 
 
@@ -575,7 +576,7 @@ const saveTemplate = async () => {
   const config: TemplateData = getTemplate(templateName.value, templateDescription.value, nodes.value, edges.value)
 
   try {
-    await api.saveTemplate(config)
+    await api.saveTemplate(config, originalTemplateId.value)
     saveDialogOpen.value = false
   } catch (error) {
     console.error('Error saving template:', error)
@@ -618,7 +619,7 @@ const saveAndRunTemplate = async () => {
 
   try {
     try {
-      await api.saveTemplate(config)
+      await api.saveTemplate(config, originalTemplateId.value)
     } catch (error) {
       console.error('Error saving template:', error)
       alert('Failed to save template. Please try again.')
@@ -674,6 +675,7 @@ onActivated(() => {
     })
     templateName.value = config.name
     templateDescription.value = config.description
+    originalTemplateId.value = config.id
   } else {
     console.error('Error loading template:', config)
   }

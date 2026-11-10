@@ -436,7 +436,13 @@ def get_template(template_id: str, user: CurrentUser) -> dict[str, Any]:
 
 
 @app.post("/api/templates")
-def create_template(template: dict[str, Any], user: CurrentUser) -> dict[str, Any]:
+def create_template(
+    template: dict[str, Any],
+    user: CurrentUser,
+    original_template_id: str | None = None,
+) -> dict[str, Any]:
+    """Create a template. If `original_template_id` is given (the template this
+    one was copied from), its notebook is copied to the new template too."""
     if not template.get("id"):
         # Match the JS server: millisecond timestamp string.
         template["id"] = str(int(__import__("time").time() * 1000))
@@ -445,6 +451,13 @@ def create_template(template: dict[str, Any], user: CurrentUser) -> dict[str, An
 
     _validate_template_payload(template)
     _atomic_write_json(_template_path(user, template["id"]), template)
+
+    if original_template_id and original_template_id != template["id"]:
+        src = _template_notebook_path(user, original_template_id)
+        dest = _template_notebook_path(user, template["id"])
+        if src.exists() and not dest.exists():
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dest)
     return {
         "success": True,
         "id": template["id"],
