@@ -71,9 +71,17 @@ export const api = {
 
   // Save a template
   async saveTemplate(
-    template: TemplateData
+    template: TemplateData,
+    originalTemplateId: string | null
   ): Promise<{ success: boolean; id: string }> {
-    const response = await fetch(`${API_BASE_URL}/templates`, {
+    const searchString =
+      originalTemplateId === null
+        ? ''
+        : '?' +
+          new URLSearchParams({
+            original_template_id: originalTemplateId,
+          }).toString()
+    const response = await fetch(`${API_BASE_URL}/templates` + searchString, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -263,10 +271,9 @@ export const api = {
   async createNotebook(
     run_id: string
   ): Promise<{ exists: boolean; created: boolean; jupyter_url: string }> {
-    const response = await fetch(
-      `${API_BASE_URL}/runs/${run_id}/notebook`,
-      { method: 'POST' }
-    )
+    const response = await fetch(`${API_BASE_URL}/runs/${run_id}/notebook`, {
+      method: 'POST',
+    })
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       const errorMessage =
@@ -278,10 +285,9 @@ export const api = {
   async getNotebookStatus(
     run_id: string
   ): Promise<{ exists: boolean; jupyter_url: string }> {
-    const response = await fetch(
-      `${API_BASE_URL}/runs/${run_id}/notebook`,
-      { method: 'GET' }
-    )
+    const response = await fetch(`${API_BASE_URL}/runs/${run_id}/notebook`, {
+      method: 'GET',
+    })
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       const errorMessage =
@@ -291,10 +297,9 @@ export const api = {
     return await response.json()
   },
   async deleteNotebook(run_id: string): Promise<void> {
-    const response = await fetch(
-      `${API_BASE_URL}/runs/${run_id}/notebook`,
-      { method: 'DELETE' }
-    )
+    const response = await fetch(`${API_BASE_URL}/runs/${run_id}/notebook`, {
+      method: 'DELETE',
+    })
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
       const errorMessage =

@@ -250,3 +250,52 @@ def test_notebook_urls_multi_user_use_voila(
     assert server_main._jupyter_template_notebook_url("alice", "t1").startswith(
         "/voila/render/"
     )
+
+
+def _new_template_payload(template_id: str) -> dict:
+    return {
+        "id": template_id,
+        "name": "Copy",
+        "description": "",
+        "nodes": [],
+        "edges": [],
+    }
+
+
+def test_create_template_copies_notebook_from_original() -> None:
+    user = "dev"
+    original_id = "1793933721689"
+    _write_template_json(user, original_id)
+    _write_notebook(server_main._template_notebook_path(user, original_id), "x = 1")
+
+    server_main.create_template(
+        _new_template_payload("1794261184765"), user, original_template_id=original_id
+    )
+
+    copied = server_main._template_notebook_path(user, "1794261184765")
+    assert copied.exists()
+    assert nbformat.read(str(copied), as_version=4).cells[0].source == "x = 1"
+    # Original is untouched.
+    assert server_main._template_notebook_path(user, original_id).exists()
+
+
+def test_create_template_without_original_has_no_notebook() -> None:
+    user = "dev"
+    server_main.create_template(_new_template_payload("1794261184765"), user)
+    assert not server_main._template_notebook_path(user, "1794261184765").exists()
+
+
+def test_create_template_original_without_notebook_is_ok() -> None:
+    user = "dev"
+    _write_template_json(user, "111")
+    server_main.create_template(
+        _new_template_payload("222"), user, original_template_id="111"
+    )
+    assert not server_main._template_notebook_path(user, "222").exists()
+
+
+def test_create_template_rejects_invalid_original_id() -> None:
+    with pytest.raises(HTTPException):
+        server_main.create_template(
+            _new_template_payload("333"), "dev", original_template_id="../etc"
+        )
