@@ -1,0 +1,1065 @@
+{
+  "id": "1794512987065",
+  "name": "Inertia Estimation: CA1, Day 6, 24 Hours",
+  "description": "Regional inertia estimation for WECC region CA1 on all 24 DEMO2 snapshots of day 6, each 16 s snapshot placed at its hour of the day. Three Players replay ParaEMT-shaped frequency, generator power and tie-line flow, and the inertia estimator publishes one inertia estimate per snapshot.",
+  "nodes": [
+    {
+      "id": "PlayerComponent-1794512987065",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 0.0,
+        "y": 80.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PlayerComponent-1794512987065",
+            "position": "right",
+            "x": 113.1,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PlayerComponent-1794512987065",
+            "position": "left",
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 0.0,
+        "y": 80.0
+      },
+      "data": {
+        "label": "Player",
+        "componentType": "PlayerComponent",
+        "config": {
+          "name": "player_frequency",
+          "filename": "~/Programming/oedisi-inertia/scenarios/day_6_24h/frequency.csv",
+          "data_type": "MeasurementArray",
+          "number_of_timesteps": 46176,
+          "start_time_index": 0
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "PlayerComponent-1794512987066",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 0.0,
+        "y": 160.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PlayerComponent-1794512987066",
+            "position": "right",
+            "x": 113.1,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PlayerComponent-1794512987066",
+            "position": "left",
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 0.0,
+        "y": 160.0
+      },
+      "data": {
+        "label": "Player",
+        "componentType": "PlayerComponent",
+        "config": {
+          "name": "player_generator_electrical_power",
+          "filename": "~/Programming/oedisi-inertia/scenarios/day_6_24h/generator_electrical_power.csv",
+          "data_type": "MeasurementArray",
+          "number_of_timesteps": 46176,
+          "start_time_index": 0
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "PlayerComponent-1794512987067",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 0.0,
+        "y": 240.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "PlayerComponent-1794512987067",
+            "position": "right",
+            "x": 113.1,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "PlayerComponent-1794512987067",
+            "position": "left",
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 0.0,
+        "y": 240.0
+      },
+      "data": {
+        "label": "Player",
+        "componentType": "PlayerComponent",
+        "config": {
+          "name": "player_tie_line_flow",
+          "filename": "~/Programming/oedisi-inertia/scenarios/day_6_24h/tie_line_flow.csv",
+          "data_type": "MeasurementArray",
+          "number_of_timesteps": 46176,
+          "start_time_index": 0
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "InertiaEstimatorComponent-1794512987068",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 260.0,
+        "y": 160.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "InertiaEstimatorComponent-1794512987068",
+            "position": "right",
+            "x": 113.1,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "InertiaEstimatorComponent-1794512987068",
+            "position": "left",
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 260.0,
+        "y": 160.0
+      },
+      "data": {
+        "label": "Inertia Estimator",
+        "componentType": "InertiaEstimatorComponent",
+        "config": {
+          "name": "inertia",
+          "region": "CA1",
+          "window_sec": 16.01
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1794512987069",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 520.0,
+        "y": 120.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1794512987069",
+            "position": "right",
+            "x": 113.1,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1794512987069",
+            "position": "left",
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 520.0,
+        "y": 120.0
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_regional_signal",
+          "feather_filename": "regional_signal.feather",
+          "csv_filename": "regional_signal.csv",
+          "time_delta": 0.01
+        }
+      },
+      "events": {}
+    },
+    {
+      "id": "Recorder-1794512987070",
+      "type": "custom",
+      "dimensions": {
+        "width": 120,
+        "height": 64
+      },
+      "computedPosition": {
+        "x": 520.0,
+        "y": 200.0,
+        "z": 0
+      },
+      "handleBounds": {
+        "source": [
+          {
+            "id": null,
+            "type": "source",
+            "nodeId": "Recorder-1794512987070",
+            "position": "right",
+            "x": 113.1,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ],
+        "target": [
+          {
+            "id": null,
+            "type": "target",
+            "nodeId": "Recorder-1794512987070",
+            "position": "left",
+            "x": -3.100006103515625,
+            "y": 26.899993896484375,
+            "width": 10,
+            "height": 10
+          }
+        ]
+      },
+      "selected": false,
+      "dragging": false,
+      "resizing": false,
+      "initialized": false,
+      "isParent": false,
+      "position": {
+        "x": 520.0,
+        "y": 200.0
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_inertia",
+          "feather_filename": "inertia.feather",
+          "csv_filename": "inertia.csv",
+          "time_delta": 0.01
+        }
+      },
+      "events": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-PlayerComponent-1794512987065-InertiaEstimatorComponent-1794512987068-1794512987165",
+      "type": "wiring",
+      "source": "PlayerComponent-1794512987065",
+      "target": "InertiaEstimatorComponent-1794512987068",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "frequency"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PlayerComponent-1794512987065",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 0.0,
+          "y": 80.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PlayerComponent-1794512987065",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PlayerComponent-1794512987065",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 0.0,
+          "y": 80.0
+        },
+        "data": {
+          "label": "Player",
+          "componentType": "PlayerComponent",
+          "config": {
+            "name": "player_frequency",
+            "filename": "~/Programming/oedisi-inertia/scenarios/day_6_24h/frequency.csv",
+            "data_type": "MeasurementArray",
+            "number_of_timesteps": 46176,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "InertiaEstimatorComponent-1794512987068",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 260.0,
+          "y": 160.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 260.0,
+          "y": 160.0
+        },
+        "data": {
+          "label": "Inertia Estimator",
+          "componentType": "InertiaEstimatorComponent",
+          "config": {
+            "name": "inertia",
+            "region": "CA1",
+            "window_sec": 16.01
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 145.65,
+      "selected": false
+    },
+    {
+      "id": "edge-PlayerComponent-1794512987066-InertiaEstimatorComponent-1794512987068-1794512987166",
+      "type": "wiring",
+      "source": "PlayerComponent-1794512987066",
+      "target": "InertiaEstimatorComponent-1794512987068",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "generator_electrical_power"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PlayerComponent-1794512987066",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 0.0,
+          "y": 160.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PlayerComponent-1794512987066",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PlayerComponent-1794512987066",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 0.0,
+          "y": 160.0
+        },
+        "data": {
+          "label": "Player",
+          "componentType": "PlayerComponent",
+          "config": {
+            "name": "player_generator_electrical_power",
+            "filename": "~/Programming/oedisi-inertia/scenarios/day_6_24h/generator_electrical_power.csv",
+            "data_type": "MeasurementArray",
+            "number_of_timesteps": 46176,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "InertiaEstimatorComponent-1794512987068",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 260.0,
+          "y": 160.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 260.0,
+          "y": 160.0
+        },
+        "data": {
+          "label": "Inertia Estimator",
+          "componentType": "InertiaEstimatorComponent",
+          "config": {
+            "name": "inertia",
+            "region": "CA1",
+            "window_sec": 16.01
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 145.65,
+      "selected": false
+    },
+    {
+      "id": "edge-PlayerComponent-1794512987067-InertiaEstimatorComponent-1794512987068-1794512987167",
+      "type": "wiring",
+      "source": "PlayerComponent-1794512987067",
+      "target": "InertiaEstimatorComponent-1794512987068",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "tie_line_flow"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "PlayerComponent-1794512987067",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 0.0,
+          "y": 240.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "PlayerComponent-1794512987067",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "PlayerComponent-1794512987067",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 0.0,
+          "y": 240.0
+        },
+        "data": {
+          "label": "Player",
+          "componentType": "PlayerComponent",
+          "config": {
+            "name": "player_tie_line_flow",
+            "filename": "~/Programming/oedisi-inertia/scenarios/day_6_24h/tie_line_flow.csv",
+            "data_type": "MeasurementArray",
+            "number_of_timesteps": 46176,
+            "start_time_index": 0
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "InertiaEstimatorComponent-1794512987068",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 260.0,
+          "y": 160.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 260.0,
+          "y": 160.0
+        },
+        "data": {
+          "label": "Inertia Estimator",
+          "componentType": "InertiaEstimatorComponent",
+          "config": {
+            "name": "inertia",
+            "region": "CA1",
+            "window_sec": 16.01
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 145.65,
+      "selected": false
+    },
+    {
+      "id": "edge-InertiaEstimatorComponent-1794512987068-Recorder-1794512987069-1794512987168",
+      "type": "wiring",
+      "source": "InertiaEstimatorComponent-1794512987068",
+      "target": "Recorder-1794512987069",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "regional_signal",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "InertiaEstimatorComponent-1794512987068",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 260.0,
+          "y": 160.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 260.0,
+          "y": 160.0
+        },
+        "data": {
+          "label": "Inertia Estimator",
+          "componentType": "InertiaEstimatorComponent",
+          "config": {
+            "name": "inertia",
+            "region": "CA1",
+            "window_sec": 16.01
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1794512987069",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 520.0,
+          "y": 120.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1794512987069",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1794512987069",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 520.0,
+          "y": 120.0
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_regional_signal",
+            "feather_filename": "regional_signal.feather",
+            "csv_filename": "regional_signal.csv",
+            "time_delta": 0.01
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 145.65,
+      "selected": false
+    },
+    {
+      "id": "edge-InertiaEstimatorComponent-1794512987068-Recorder-1794512987070-1794512987169",
+      "type": "wiring",
+      "source": "InertiaEstimatorComponent-1794512987068",
+      "target": "Recorder-1794512987070",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "inertia",
+            "targetPortId": "subscription"
+          }
+        ]
+      },
+      "events": {},
+      "label": "MeasurementArray",
+      "sourceNode": {
+        "id": "InertiaEstimatorComponent-1794512987068",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 260.0,
+          "y": 160.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "InertiaEstimatorComponent-1794512987068",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 260.0,
+          "y": 160.0
+        },
+        "data": {
+          "label": "Inertia Estimator",
+          "componentType": "InertiaEstimatorComponent",
+          "config": {
+            "name": "inertia",
+            "region": "CA1",
+            "window_sec": 16.01
+          }
+        },
+        "events": {}
+      },
+      "targetNode": {
+        "id": "Recorder-1794512987070",
+        "type": "custom",
+        "dimensions": {
+          "width": 120,
+          "height": 64
+        },
+        "computedPosition": {
+          "x": 520.0,
+          "y": 200.0,
+          "z": 0
+        },
+        "handleBounds": {
+          "source": [
+            {
+              "id": null,
+              "type": "source",
+              "nodeId": "Recorder-1794512987070",
+              "position": "right",
+              "x": 113.1,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ],
+          "target": [
+            {
+              "id": null,
+              "type": "target",
+              "nodeId": "Recorder-1794512987070",
+              "position": "left",
+              "x": -3.100006103515625,
+              "y": 26.899993896484375,
+              "width": 10,
+              "height": 10
+            }
+          ]
+        },
+        "selected": false,
+        "dragging": false,
+        "resizing": false,
+        "initialized": false,
+        "isParent": false,
+        "position": {
+          "x": 520.0,
+          "y": 200.0
+        },
+        "data": {
+          "label": "Recorder",
+          "componentType": "Recorder",
+          "config": {
+            "name": "recorder_inertia",
+            "feather_filename": "inertia.feather",
+            "csv_filename": "inertia.csv",
+            "time_delta": 0.01
+          }
+        },
+        "events": {}
+      },
+      "sourceX": 104.6,
+      "sourceY": 200.65,
+      "targetX": 256.9,
+      "targetY": 145.65,
+      "selected": false
+    }
+  ],
+  "createdAt": "2026-11-12T19:49:47.065Z",
+  "config_version": "1"
+}
