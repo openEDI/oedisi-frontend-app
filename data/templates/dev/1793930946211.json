@@ -1,7 +1,7 @@
 {
   "id": "1793930946211",
   "name": "ParaEMT Demo 1: Generator Trip",
-  "description": "WECC 240-bus (system 7.3), 5 s run. A generator is tripped at 1 s.",
+  "description": "WECC 240-bus (system 7.3), 5 s run. Generator 14 (bus 1431, ID N) is tripped at 1 s. Records generator rotor speed, electrical power, and IBR bus frequency.",
   "nodes": [
     {
       "id": "ParaemtHelicsComponent-1793930947210",
@@ -97,7 +97,7 @@
           "gen_trip": {
             "enabled": true,
             "time": 1.0,
-            "target_gen": 33,
+            "target_gen": 13,
             "flag_reinit": 0
           },
           "bus_fault": {
@@ -426,7 +426,7 @@
             "gen_trip": {
               "enabled": true,
               "time": 1.0,
-              "target_gen": 33,
+              "target_gen": 13,
               "flag_reinit": 0
             },
             "bus_fault": {
@@ -641,7 +641,7 @@
             "gen_trip": {
               "enabled": true,
               "time": 1.0,
-              "target_gen": 33,
+              "target_gen": 13,
               "flag_reinit": 0
             },
             "bus_fault": {
@@ -856,7 +856,7 @@
             "gen_trip": {
               "enabled": true,
               "time": 1.0,
-              "target_gen": 33,
+              "target_gen": 13,
               "flag_reinit": 0
             },
             "bus_fault": {
