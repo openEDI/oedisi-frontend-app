@@ -1407,7 +1407,7 @@ wheels = [
 [[package]]
 name = "oedisi"
 version = "3.0.2"
-source = { git = "https://github.com/openEDI/oedisi.git?rev=f08e47660dffe3c3d30ecf1047913cbf5e9ebf47#f08e47660dffe3c3d30ecf1047913cbf5e9ebf47" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "helics" },
@@ -1415,6 +1415,10 @@ dependencies = [
     { name = "psutil" },
     { name = "pydantic" },
     { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/55/e1/3a0df85cb111859844903347ca7866be17940a0d16eff94de2abf1a93df9/oedisi-3.0.2.tar.gz", hash = "sha256:04924f57bcad5369c6017752555b9d68ae0d8978f4cbd1e3bb7243ee1a7521bb", size = 35322, upload-time = "2026-08-18T20:51:44.615Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/09/40/1c279c8aa5e232cfdcd940cf03cc6eca9c1821a32424b8ceb795a8380bef/oedisi-3.0.2-py3-none-any.whl", hash = "sha256:3b11a9800af3b739aed4cf73d48deed06003ad82201038018f519a9d7e1f705f", size = 54397, upload-time = "2026-08-18T20:51:43.324Z" },
 ]
 
 [[package]]
@@ -2279,7 +2283,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.8.0" },
     { name = "networkx", specifier = ">=3.2" },
     { name = "numpy", specifier = ">=1.26.0" },
-    { name = "oedisi", git = "https://github.com/openEDI/oedisi.git?rev=f08e47660dffe3c3d30ecf1047913cbf5e9ebf47" },
+    { name = "oedisi", specifier = ">=3.0.2" },
     { name = "opendssdirect-py", extras = ["extras"], specifier = "==0.7.0" },
     { name = "pandas", specifier = ">=2.2.0" },
     { name = "psutil", specifier = ">=7.2.2" },

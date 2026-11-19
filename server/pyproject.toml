@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.135.3",
-    "oedisi>=3.0.1",
+    "oedisi>=3.0.2",
     "psutil>=7.2.2",
     "pyarrow>=24.0.0",
     "uvicorn>=0.44.0",
@@ -31,6 +31,3 @@ dev = [
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
-
-[tool.uv.sources]
-oedisi = { git = "https://github.com/openEDI/oedisi.git", rev = "f08e47660dffe3c3d30ecf1047913cbf5e9ebf47" }
