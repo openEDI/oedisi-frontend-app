@@ -10,7 +10,7 @@
           {{ readOnly ? 'Read-only hosted preview for future simulation runs' : 'Starting point for future simulation runs' }}
         </p>
       </div>
-      <Button variant="destructive" size="sm" @click="handleDelete"
+      <Button v-if="!readOnly" variant="destructive" size="sm" @click="handleDelete"
         :disabled="!jupyterUrl">
         Delete Notebook
       </Button>

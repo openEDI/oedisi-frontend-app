@@ -14,7 +14,7 @@
         :disabled="saving">
         {{ saving ? 'Saving...' : '💾 Save to Template' }}
       </Button>
-      <Button variant="destructive" size="sm" @click="handleDelete">
+      <Button v-if="!readOnly" variant="destructive" size="sm" @click="handleDelete">
         Delete Notebook
       </Button>
     </div>

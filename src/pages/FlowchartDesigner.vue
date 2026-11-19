@@ -17,12 +17,7 @@
       </div>
     </div>
 
-    <div v-if="runAvailable === false" role="status" aria-live="polite"
-      class="border-b border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-      <span class="font-semibold">Simulation server busy.</span>
-      Another simulation is currently running. Please wait; this page checks
-      again automatically.
-    </div>
+    <RunBusyBanner v-if="runAvailable === false" class="border-b" />
 
     <div class="flex-1 flex min-h-0">
       <div class="w-64 bg-card border-r p-6 overflow-y-auto">
@@ -209,6 +204,7 @@ import { COMPONENT_CATALOG, makeDefaults } from '@/lib/componentCatalog'
 import type { Node, Edge, Connection } from '@vue-flow/core'
 import CustomNode from '@/components/CustomNode.vue'
 import CustomEdge from '@/components/CustomEdge.vue'
+import RunBusyBanner from '@/components/RunBusyBanner.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'

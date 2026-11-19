@@ -10,12 +10,7 @@
           configurations</p>
       </div>
 
-      <div v-if="runAvailable === false" role="status" aria-live="polite"
-        class="mb-6 rounded-md border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-        <span class="font-semibold">Simulation server busy.</span>
-        Another simulation is currently running. Please wait; this page checks
-        again automatically.
-      </div>
+      <RunBusyBanner v-if="runAvailable === false" class="mb-6 rounded-md border" />
 
       <div v-if="loading" class="bg-card rounded-lg p-8 text-center">
         <p class="text-muted-foreground">Loading templates...</p>
@@ -94,6 +89,7 @@ import { ref, onActivated, onDeactivated, toRaw, shallowRef } from 'vue'
 import { type HistoryState, useRouter } from 'vue-router'
 import { api, StartError } from '@/lib/api'
 import { Button } from '@/components/ui/button'
+import RunBusyBanner from '@/components/RunBusyBanner.vue'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { TemplateData } from '@/lib/flowTypes'
 import { toWiringDiagram } from '@/lib/wiringDiagram'
