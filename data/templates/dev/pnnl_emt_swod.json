@@ -14,7 +14,7 @@
         "componentType": "PlayerComponent",
         "config": {
           "name": "player_v",
-          "filename": "/components/pnnl-emt-swod/data/v_abc.csv",
+          "filename": "${OEDISI_COMPONENTS}/pnnl-emt-swod/data/v_abc.csv",
           "data_type": "VoltagesMagnitude",
           "number_of_timesteps": 100000,
           "start_time_index": 0,
@@ -34,7 +34,7 @@
         "componentType": "PlayerComponent",
         "config": {
           "name": "player_i",
-          "filename": "/components/pnnl-emt-swod/data/i_abc.csv",
+          "filename": "${OEDISI_COMPONENTS}/pnnl-emt-swod/data/i_abc.csv",
           "data_type": "CurrentsMagnitude",
           "number_of_timesteps": 100000,
           "start_time_index": 0,
