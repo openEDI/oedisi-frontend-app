@@ -16,7 +16,7 @@
         "componentType": "PlayerComponent",
         "config": {
           "name": "player",
-          "filename": "/components/ornl-od-prony/data/EI_OscillationEvent_20110427.csv",
+          "filename": "${OEDISI_COMPONENTS}/ornl-od-prony/data/EI_OscillationEvent_20110427.csv",
           "data_type": "MeasurementArray",
           "number_of_timesteps": 370,
           "start_time_index": 0,
