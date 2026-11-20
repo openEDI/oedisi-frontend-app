@@ -14,6 +14,10 @@ export interface RunSummary {
   run_dir: string
 }
 
+export interface RunAvailability {
+  available: boolean
+}
+
 export interface ResultEntry {
   id: string
   label: string
@@ -122,6 +126,15 @@ export const api = {
       throw new StartError(response.status, errorMessage)
     }
 
+    return await response.json()
+  },
+  async getRunAvailability(): Promise<RunAvailability> {
+    const response = await fetch(`${API_BASE_URL}/run-availability`, {
+      cache: 'no-store',
+    })
+    if (!response.ok) {
+      throw new Error('Failed to get simulation availability')
+    }
     return await response.json()
   },
   async runStatus(run_id: string): Promise<RunSummary> {
@@ -262,7 +275,7 @@ export const api = {
   },
   async createNotebook(
     run_id: string
-  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/runs/${run_id}/notebook`,
       { method: 'POST' }
@@ -277,7 +290,7 @@ export const api = {
   },
   async getNotebookStatus(
     run_id: string
-  ): Promise<{ exists: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/runs/${run_id}/notebook`,
       { method: 'GET' }
@@ -319,7 +332,7 @@ export const api = {
   },
   async createTemplateNotebook(
     templateId: string
-  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; created: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/templates/${templateId}/notebook`,
       { method: 'POST' }
@@ -334,7 +347,7 @@ export const api = {
   },
   async getTemplateNotebookStatus(
     templateId: string
-  ): Promise<{ exists: boolean; jupyter_url: string }> {
+  ): Promise<{ exists: boolean; jupyter_url: string; read_only: boolean }> {
     const response = await fetch(
       `${API_BASE_URL}/templates/${templateId}/notebook`,
       { method: 'GET' }
