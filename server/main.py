@@ -509,16 +509,6 @@ def _resolve_component_path(raw: str) -> str:
     return os.path.expanduser(raw)
 
 
-COMPONENT_EXECUTE_OVERRIDES = {
-    "NlpDopfComponent": "python -m nlpdopf.federate.fed",
-    "NlpDsseComponent": "python -m nlpdsse.federate.fed",
-    "PnnlDsseEkfComponent": (
-        "python -c \"from src.ekf_federate.server import run_sim_cli; "
-        "run_sim_cli()\""
-    ),
-}
-
-
 def _resolve_runtime_parameter(value: Any) -> Any:  # noqa: ANN401
     """Resolve portable component asset paths before building the runner."""
     prefix = "${OEDISI_COMPONENTS}/"
@@ -565,8 +555,6 @@ def load_component_descriptions() -> dict[str, ComponentDescription]:
         with open(path) as f:
             comp_desc = ComponentDescription.model_validate(json.load(f))
         comp_desc.directory = os.path.dirname(path)
-        if name in COMPONENT_EXECUTE_OVERRIDES:
-            comp_desc.execute_function = COMPONENT_EXECUTE_OVERRIDES[name]
         descriptions[name] = comp_desc
     return descriptions
 
