@@ -2,7 +2,7 @@ import type { Edge, Node } from '@vue-flow/core'
 
 import type { EdgeData, NodeData } from '@/lib/flowTypes'
 
-const ORNL_OD_DATA_PREFIX = '/components/ornl-od-prony/data/'
+const ORNL_OD_DATA_PREFIX = '${OEDISI_COMPONENTS}/ornl-od-prony/data/'
 const dropdownSchemaCache = new WeakMap<
   Record<string, unknown>,
   Record<string, unknown>

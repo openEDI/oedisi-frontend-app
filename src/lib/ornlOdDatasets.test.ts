@@ -74,7 +74,7 @@ describe('ORNL OD dataset presets', () => {
 
     for (const preset of ORNL_OD_DATASETS) {
       expect(preset.filename).toMatch(
-        /^\/components\/ornl-od-prony\/data\/[^/]+\.csv$/
+        /^\$\{OEDISI_COMPONENTS\}\/ornl-od-prony\/data\/[^/]+\.csv$/
       )
       expect(preset.numberOfTimesteps).toBeGreaterThan(0)
       expect(preset.sampleRateHz).toBe(10)
