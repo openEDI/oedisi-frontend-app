@@ -1,0 +1,443 @@
+{
+  "id": "1782355653557",
+  "name": "nlpdopf",
+  "description": "",
+  "nodes": [
+    {
+      "id": "Feeder-1776801555228",
+      "type": "custom",
+      "position": {
+        "x": 350,
+        "y": 264.5
+      },
+      "data": {
+        "label": "Feeder",
+        "componentType": "Feeder",
+        "config": {
+          "use_smartds": false,
+          "user_uploads_model": false,
+          "run_freq_sec": 900,
+          "topology_output": "topology.json",
+          "use_sparse_admittance": false,
+          "name": "feeder",
+          "profile_location": "gadal_ieee123/profiles",
+          "opendss_location": "gadal_ieee123/qsts",
+          "sensor_location": "gadal_ieee123/sensors.json",
+          "start_date": "2017-01-01 00:00:00",
+          "number_of_timesteps": 96,
+          "start_time_index": 0,
+          "tap_setting": 0
+        }
+      }
+    },
+    {
+      "id": "Recorder-1776801607029",
+      "type": "custom",
+      "position": {
+        "x": 1198.979022316309,
+        "y": 71.86482935605895
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_mag",
+          "feather_path": "voltage_mag.feather",
+          "csv_path": "voltage_mag.csv",
+          "csv_filename": "voltage_mag.csv",
+          "feather_filename": "voltage_mag.feather"
+        }
+      }
+    },
+    {
+      "id": "MeasurementComponent-1776801610044",
+      "type": "custom",
+      "position": {
+        "x": 615.9994298834755,
+        "y": 143.37647724771995
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "measurement_file": "../feeder/sensors/sensors.json",
+          "name": "sensor_powers_real"
+        }
+      }
+    },
+    {
+      "id": "Recorder-1776801630390",
+      "type": "custom",
+      "position": {
+        "x": 538.2180337066769,
+        "y": 43.40614259420025
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_imaginary_actual",
+          "csv_path": "voltage_imag.csv",
+          "feather_path": "voltage_imag.feather",
+          "csv_filename": "voltage_imaginary_actual.csv",
+          "feather_filename": "voltage_imaginary_actual.feather"
+        }
+      }
+    },
+    {
+      "id": "Recorder-1776801632526",
+      "type": "custom",
+      "position": {
+        "x": 538.7489136712836,
+        "y": -48.30527795459034
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_real_actual",
+          "feather_path": "voltage_real.feather",
+          "csv_path": "voltage_real.csv",
+          "csv_filename": "voltage_real_actual.csv",
+          "feather_filename": "voltage_real_actual.feather"
+        }
+      }
+    },
+    {
+      "id": "Recorder-1776801644340",
+      "type": "custom",
+      "position": {
+        "x": 1200.4308985036942,
+        "y": 186.91256721863536
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_voltage_angle",
+          "csv_path": "voltage_angle.csv",
+          "feather_path": "voltage_angle.feather",
+          "csv_filename": "voltage_angle.csv",
+          "feather_filename": "voltage_angle.feather"
+        }
+      }
+    },
+    {
+      "id": "MeasurementComponent-1782353885420",
+      "type": "custom",
+      "position": {
+        "x": 587.7561597666136,
+        "y": 390.5935166961752
+      },
+      "data": {
+        "label": "Sensor",
+        "componentType": "MeasurementComponent",
+        "config": {
+          "additive_noise_stddev": 0,
+          "multiplicative_noise_stddev": 0,
+          "run_freq_time_step": 1,
+          "name": "sensor_powers_imaginary",
+          "measurement_file": "../feeder/sensors/sensors.json"
+        }
+      }
+    },
+    {
+      "id": "NlpDopfComponent-1782354995606",
+      "type": "custom",
+      "position": {
+        "x": 927.5446653177435,
+        "y": 272.4807512222392
+      },
+      "data": {
+        "label": "NLP DOPF",
+        "componentType": "NlpDopfComponent",
+        "config": {
+          "start_date": null,
+          "run_freq_sec": 900,
+          "start_time_index": 0,
+          "number_of_timesteps": 8
+        }
+      }
+    },
+    {
+      "id": "Recorder-1782355152997",
+      "type": "custom",
+      "position": {
+        "x": 1206.0291931418249,
+        "y": 296.00140391008387
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_powers_real",
+          "csv_filename": "powers_real.csv",
+          "feather_filename": "powers_real.feather"
+        }
+      }
+    },
+    {
+      "id": "Recorder-1782355154814",
+      "type": "custom",
+      "position": {
+        "x": 1198.5025842817145,
+        "y": 377.8532752637834
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_powers_imaginary",
+          "csv_filename": "powers_imaginary.csv",
+          "feather_filename": "powers_imaginary.feather"
+        }
+      }
+    },
+    {
+      "id": "Recorder-1782355329301",
+      "type": "custom",
+      "position": {
+        "x": 572.0799882420573,
+        "y": 466.0470477950601
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_power_real_actual",
+          "csv_filename": "power_real_actual.csv",
+          "feather_filename": "power_real_actual.feather"
+        }
+      }
+    },
+    {
+      "id": "Recorder-1782355492384",
+      "type": "custom",
+      "position": {
+        "x": 560.213538481203,
+        "y": 544.3820047950115
+      },
+      "data": {
+        "label": "Recorder",
+        "componentType": "Recorder",
+        "config": {
+          "name": "recorder_power_imaginary_actual",
+          "csv_filename": "power_imaginary_actual.csv",
+          "feather_filename": "power_imaginary_actual.feather"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1776801630390-1776801653602",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1776801630390",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesImaginary",
+            "sourcePortId": "voltages_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1776801632526-1776801655577",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1776801632526",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesReal",
+            "sourcePortId": "voltages_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1776801610044-1776801657201",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1776801610044",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-Feeder-1776801555228-MeasurementComponent-1782353885420-1782353938724",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "MeasurementComponent-1782353885420",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-Feeder-1776801555228-NlpDopfComponent-1782354995606-1782355069108",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "NlpDopfComponent-1782354995606",
+      "data": {
+        "wires": [
+          {
+            "type": "Topology",
+            "sourcePortId": "topology",
+            "targetPortId": "topology"
+          },
+          {
+            "type": "Injection",
+            "sourcePortId": "injections",
+            "targetPortId": "injections"
+          },
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "available_power"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1776801607029-1782355128758",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1776801607029",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesMagnitude",
+            "sourcePortId": "voltage_mag",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1776801644340-1782355130784",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1776801644340",
+      "data": {
+        "wires": [
+          {
+            "type": "VoltagesAngle",
+            "sourcePortId": "voltage_angle",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1782355152997-1782355226198",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1782355152997",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-NlpDopfComponent-1782354995606-Recorder-1782355154814-1782355232997",
+      "type": "wiring",
+      "source": "NlpDopfComponent-1782354995606",
+      "target": "Recorder-1782355154814",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imaginary",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-MeasurementComponent-1776801610044-NlpDopfComponent-1782354995606-1782355248798",
+      "type": "wiring",
+      "source": "MeasurementComponent-1776801610044",
+      "target": "NlpDopfComponent-1782354995606",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "powers_real"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-MeasurementComponent-1782353885420-NlpDopfComponent-1782354995606-1782355251238",
+      "type": "wiring",
+      "source": "MeasurementComponent-1782353885420",
+      "target": "NlpDopfComponent-1782354995606",
+      "data": {
+        "wires": [
+          {
+            "type": "MeasurementArray",
+            "sourcePortId": "publication",
+            "targetPortId": "powers_imaginary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1782355329301-1782355359579",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1782355329301",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersReal",
+            "sourcePortId": "powers_real",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    },
+    {
+      "id": "edge-Feeder-1776801555228-Recorder-1782355492384-1782355509893",
+      "type": "wiring",
+      "source": "Feeder-1776801555228",
+      "target": "Recorder-1782355492384",
+      "data": {
+        "wires": [
+          {
+            "type": "PowersImaginary",
+            "sourcePortId": "powers_imag",
+            "targetPortId": "subscription"
+          }
+        ]
+      }
+    }
+  ],
+  "createdAt": "2026-06-25T02:47:33.557Z",
+  "config_version": "1"
+}
