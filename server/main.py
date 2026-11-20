@@ -509,7 +509,6 @@ def _resolve_component_path(raw: str) -> str:
     return os.path.expanduser(raw)
 
 
-PORTABLE_COMPONENT_PREFIX = "/components/"
 COMPONENT_EXECUTE_OVERRIDES = {
     "NlpDopfComponent": "python -m nlpdopf.federate.fed",
     "NlpDsseComponent": "python -m nlpdsse.federate.fed",
@@ -522,16 +521,13 @@ COMPONENT_EXECUTE_OVERRIDES = {
 
 def _resolve_runtime_parameter(value: Any) -> Any:  # noqa: ANN401
     """Resolve portable component asset paths before building the runner."""
-    if isinstance(value, str) and value.startswith(PORTABLE_COMPONENT_PREFIX):
-        components_root = os.environ.get("OEDISI_COMPONENTS")
-        if not components_root:
-            raise RuntimeError(
-                "OEDISI_COMPONENTS is required to resolve portable component assets"
-            )
-        parts = value[len(PORTABLE_COMPONENT_PREFIX) :].split("/")
+    prefix = "${OEDISI_COMPONENTS}/"
+    if isinstance(value, str) and value.startswith(prefix):
+        components_root = _resolve_component_path("${OEDISI_COMPONENTS}")
+        parts = value[len(prefix) :].split("/")
         if len(parts) < 2 or any(part in {"", ".", ".."} for part in parts):
             raise ValueError(f"Invalid portable component asset path: {value}")
-        root = Path(components_root).expanduser().resolve()
+        root = Path(components_root).resolve()
         resolved = root.joinpath(*parts).resolve()
         try:
             resolved.relative_to(root)

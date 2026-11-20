@@ -21,7 +21,7 @@ class RuntimeAssetTests(unittest.TestCase):
             with patch.dict(os.environ, {"OEDISI_COMPONENTS": str(components)}):
                 self.assertEqual(
                     main._resolve_runtime_parameter(
-                        "/components/pnnl-emt-swod/data/i_abc.csv"
+                        "${OEDISI_COMPONENTS}/pnnl-emt-swod/data/i_abc.csv"
                     ),
                     str(current.resolve()),
                 )
@@ -35,7 +35,7 @@ class RuntimeAssetTests(unittest.TestCase):
             signal.touch()
 
             parameters = {
-                "files": ["unchanged", "/components/ornl-od-prony/data/signal.csv"]
+                "files": ["unchanged", "${OEDISI_COMPONENTS}/ornl-od-prony/data/signal.csv"]
             }
             with patch.dict(os.environ, {"OEDISI_COMPONENTS": str(components)}):
                 self.assertEqual(
@@ -48,7 +48,7 @@ class RuntimeAssetTests(unittest.TestCase):
             with patch.dict(os.environ, {"OEDISI_COMPONENTS": temporary}):
                 with self.assertRaises(ValueError):
                     main._resolve_runtime_parameter(
-                        "/components/pnnl-emt-swod/../private.csv"
+                        "${OEDISI_COMPONENTS}/pnnl-emt-swod/../private.csv"
                     )
 
 
